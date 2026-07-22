@@ -22,7 +22,12 @@ export type BirthControlType =
   | 'NATURAL'
   | 'NONE';
 export type TrackingMode = 'CYCLE' | 'PREGNANT' | 'POSTPARTUM' | 'PERIMENOPAUSE';
-export type PrimaryGoal = 'TRACK_CYCLE' | 'UNDERSTAND_HEALTH' | 'TRY_TO_CONCEIVE' | 'LEARN';
+export enum UserGoal {
+  TrackCycle = 'TRACK_CYCLE',
+  Conceive = 'CONCEIVE',
+  AvoidPregnancy = 'AVOID_PREGNANCY',
+  GeneralHealth = 'GENERAL_HEALTH',
+}
 export type CyclePhase = 'MENSTRUAL' | 'FOLLICULAR' | 'OVULATORY' | 'LUTEAL' | 'UNKNOWN';
 export type HealthNoteType =
   | 'MEDICATION'

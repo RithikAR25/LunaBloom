@@ -57,6 +57,7 @@ export type { AvatarProps } from './Avatar';
 
 // Structure
 export { SectionHeader } from './SectionHeader';
+export * from './NumberStepper';
 export type { SectionHeaderProps } from './SectionHeader';
 
 // States

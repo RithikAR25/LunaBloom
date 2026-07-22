@@ -1,10 +1,10 @@
 import type {
   BirthControlType,
   MedicalCondition,
-  PrimaryGoal,
   SyncStatus,
   TrackingMode,
 } from './index';
+import { UserGoal } from './index';
 
 /** The user's personal profile and app preferences. Single row in V1. */
 export interface UserProfile {
@@ -18,7 +18,7 @@ export interface UserProfile {
   weightKg: number | null;
   avgCycleLength: number;
   avgPeriodDuration: number;
-  primaryGoal: PrimaryGoal;
+  primaryGoal: UserGoal;
   conditions: MedicalCondition[];
   birthControlType: BirthControlType;
   trackingMode: TrackingMode;
@@ -38,7 +38,7 @@ export const DEFAULT_PROFILE: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'
   weightKg: null,
   avgCycleLength: 28,
   avgPeriodDuration: 5,
-  primaryGoal: 'TRACK_CYCLE',
+  primaryGoal: UserGoal.TrackCycle,
   conditions: [],
   birthControlType: 'NONE',
   trackingMode: 'CYCLE',

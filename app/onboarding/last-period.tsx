@@ -1,33 +1,111 @@
-﻿import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, StyleSheet, Platform, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/presentation/hooks/useTheme';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { OnboardingLayout } from '../../src/presentation/components/onboarding/OnboardingLayout';
+import { useOnboardingStore } from '../../src/presentation/stores/useOnboardingStore';
+import { useTheme } from '../../src/presentation/hooks/useTheme';
+import { Text } from '../../src/presentation/components/ui/Text';
+import { Button } from '../../src/presentation/components/ui/Button';
+import { spacing } from '../../src/design-system';
 
-/** Onboarding Step — When did your last period start?. Placeholder: full UI in Phase 2. See docs/ui-prompts/06_onboarding.md */
-export default function Onboarding_last_periodScreen() {
+export default function LastPeriodScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const { lastPeriodDate, isPeriodActive, updateField } = useOnboardingStore();
+  const [showPicker, setShowPicker] = useState(false);
+
+  // Default to today if nothing is selected yet
+  useEffect(() => {
+    if (!lastPeriodDate) {
+      updateField('lastPeriodDate', new Date().toISOString().split('T')[0] || null);
+    }
+  }, [lastPeriodDate, updateField]);
+
+  const handleContinue = () => {
+    router.push('/onboarding/goal');
+  };
+
+  const handleBack = () => {
+    router.back();
+  };
+
+  const onDateChange = (_event: any, selectedDate?: Date) => {
+    setShowPicker(Platform.OS === 'ios');
+    if (selectedDate) {
+      updateField('lastPeriodDate', selectedDate.toISOString().split('T')[0] ?? null);
+    }
+  };
+
+  const isContinueDisabled = !lastPeriodDate;
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <OnboardingLayout
+      currentStep={4}
+      totalSteps={5}
+      title="Last Period"
+      subtitle="When did your last period start?"
+      onContinue={handleContinue}
+      onBack={handleBack}
+      isContinueDisabled={isContinueDisabled}
+    >
       <View style={styles.content}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>When did your last period start?</Text>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: colors.brand.primary }]}
-          onPress={() => router.push('/onboarding/goal' as never)}
-          accessibilityRole="button"
-        >
-          <Text style={[styles.buttonText, { color: colors.text.inverse }]}>Continue</Text>
-        </TouchableOpacity>
+        <View style={styles.dateContainer}>
+          {Platform.OS === 'ios' ? (
+            <DateTimePicker
+              value={lastPeriodDate ? new Date(lastPeriodDate) : new Date()}
+              mode="date"
+              display="inline"
+              onChange={onDateChange}
+              maximumDate={new Date()}
+            />
+          ) : (
+            <View>
+              <Button
+                variant="primary"
+                label={lastPeriodDate ? new Date(lastPeriodDate).toLocaleDateString() : 'Select Date'}
+                onPress={() => setShowPicker(true)}
+              />
+              {showPicker && (
+                <DateTimePicker
+                  value={lastPeriodDate ? new Date(lastPeriodDate) : new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={onDateChange}
+                  maximumDate={new Date()}
+                />
+              )}
+            </View>
+          )}
+        </View>
+
+        <View style={[styles.toggleContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text variant="body" style={{ color: colors.text.primary, flex: 1 }}>
+            My period is currently active
+          </Text>
+          <Switch
+            value={isPeriodActive}
+            onValueChange={(val) => updateField('isPeriodActive', val)}
+            trackColor={{ false: colors.border, true: colors.brand.primary }}
+          />
+        </View>
       </View>
-      <Text style={[styles.placeholder, { color: colors.text.tertiary }]}>Placeholder — Stitch UI in Phase 2</Text>
-    </SafeAreaView>
+    </OnboardingLayout>
   );
 }
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 24 },
-  title: { fontSize: 22, fontWeight: '700', textAlign: 'center' },
-  button: { paddingHorizontal: 40, paddingVertical: 16, borderRadius: 9999 },
-  buttonText: { fontSize: 16, fontWeight: '600' },
-  placeholder: { textAlign: 'center', fontSize: 12, paddingBottom: 24 },
+  content: {
+    flex: 1,
+  },
+  dateContainer: {
+    marginBottom: spacing[8],
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing[4],
+    borderWidth: 1,
+    borderRadius: 12,
+  },
 });

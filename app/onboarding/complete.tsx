@@ -1,33 +1,112 @@
-﻿import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useState } from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/presentation/hooks/useTheme';
+import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
+import { useOnboardingStore } from '../../src/presentation/stores/useOnboardingStore';
+import { Text } from '../../src/presentation/components/ui/Text';
+import { Heading } from '../../src/presentation/components/ui/Heading';
+import { Button } from '../../src/presentation/components/ui/Button';
+import { useTheme } from '../../src/presentation/hooks/useTheme';
+import { spacing, SCREEN_HORIZONTAL_PADDING } from '../../src/design-system';
 
-/** Onboarding Step — You're all set!. Placeholder: full UI in Phase 2. See docs/ui-prompts/06_onboarding.md */
-export default function Onboarding_completeScreen() {
+export default function CompleteScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const { completeOnboardingFlow } = useProfileStore();
+  const onboardingState = useOnboardingStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleFinish = async () => {
+    setIsSubmitting(true);
+    try {
+      const params: any = {
+        preferredName: onboardingState.preferredName,
+        dateOfBirth: onboardingState.dateOfBirth,
+        avgCycleLength: onboardingState.avgCycleLength,
+        avgPeriodDuration: onboardingState.avgPeriodDuration,
+        conditions: onboardingState.conditions,
+        lastPeriodDate: onboardingState.lastPeriodDate,
+        isPeriodActive: onboardingState.isPeriodActive,
+      };
+      if (onboardingState.primaryGoal) {
+        params.primaryGoal = onboardingState.primaryGoal;
+      }
+      await completeOnboardingFlow(params);
+      // Clear the temporary store once complete
+      onboardingState.reset();
+      
+      // Navigate to tabs
+      router.replace('/(tabs)');
+    } catch (e) {
+      console.error('Failed to complete onboarding:', e);
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>You're all set!</Text>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: colors.brand.primary }]}
-          onPress={() => router.replace('/(tabs)' as never)}
-          accessibilityRole="button"
-        >
-          <Text style={[styles.buttonText, { color: colors.text.inverse }]}>Go to Dashboard</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.header}>
+          <Heading level="h1" style={{ color: colors.text.primary, marginBottom: spacing[2], textAlign: 'center' }}>
+            You're all set!
+          </Heading>
+          <Text variant="body" style={{ color: colors.text.secondary, textAlign: 'center' }}>
+            Just one last thing before we begin.
+          </Text>
+        </View>
+
+        <View style={[styles.disclaimerBox, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
+          <Heading level="h3" style={{ color: colors.text.primary, marginBottom: spacing[3] }}>
+            Medical Disclaimer
+          </Heading>
+          <Text variant="body" style={{ color: colors.text.secondary, marginBottom: spacing[2] }}>
+            LunaBloom is a cycle tracking and informational tool. It is not intended to replace professional medical advice, diagnosis, or treatment.
+          </Text>
+          <Text variant="body" style={{ color: colors.text.secondary }}>
+            Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
+          </Text>
+        </View>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <Button 
+          variant="primary" 
+          label="I Understand — Let's Go!" 
+          onPress={handleFinish} 
+          disabled={isSubmitting}
+        />
+        <Button 
+          variant="ghost" 
+          label="Back" 
+          onPress={() => router.back()} 
+          disabled={isSubmitting}
+        />
       </View>
-      <Text style={[styles.placeholder, { color: colors.text.tertiary }]}>Placeholder — Stitch UI in Phase 2</Text>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 24 },
-  title: { fontSize: 22, fontWeight: '700', textAlign: 'center' },
-  button: { paddingHorizontal: 40, paddingVertical: 16, borderRadius: 9999 },
-  buttonText: { fontSize: 16, fontWeight: '600' },
-  placeholder: { textAlign: 'center', fontSize: 12, paddingBottom: 24 },
+  container: {
+    flex: 1,
+  },
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: SCREEN_HORIZONTAL_PADDING,
+    justifyContent: 'center',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: spacing[10],
+  },
+  disclaimerBox: {
+    padding: spacing[6],
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  footer: {
+    paddingHorizontal: SCREEN_HORIZONTAL_PADDING,
+    paddingVertical: spacing[4],
+  },
 });

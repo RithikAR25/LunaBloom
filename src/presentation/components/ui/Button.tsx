@@ -6,7 +6,7 @@
  * States: default, pressed (scale 0.97), disabled (40% opacity), loading
  * Shape: pill (borderRadius: full)
  */
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import {
   Animated,
   Pressable,

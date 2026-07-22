@@ -7,12 +7,13 @@
  *
  * For headings (h1, h2, h3, display), use the Heading component instead.
  */
-import React from 'react';
+
 import {
   Text as RNText,
   StyleSheet,
   type TextProps as RNTextProps,
   type TextStyle,
+  type StyleProp,
 } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { fontSize, lineHeight } from '@/design-system';
@@ -33,7 +34,7 @@ export interface TextProps extends RNTextProps {
   color?: TextColor;
   weight?: TextWeight;
   /** Override any style directly */
-  style?: TextStyle;
+  style?: StyleProp<TextStyle>;
   children: React.ReactNode;
 }
 

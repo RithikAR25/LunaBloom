@@ -1,0 +1,27 @@
+[
+  {
+    "id": "PCOS",
+    "label": "Polycystic Ovary Syndrome (PCOS)",
+    "description": "A hormonal disorder causing enlarged ovaries with small cysts."
+  },
+  {
+    "id": "ENDOMETRIOSIS",
+    "label": "Endometriosis",
+    "description": "A condition where tissue similar to the lining of the uterus grows outside it."
+  },
+  {
+    "id": "IRREGULAR_CYCLES",
+    "label": "Irregular Cycles",
+    "description": "Menstrual cycles that fall outside the typical 21-35 day range."
+  },
+  {
+    "id": "THYROID",
+    "label": "Thyroid Disorder",
+    "description": "Conditions affecting the thyroid gland, which can impact menstrual cycles."
+  },
+  {
+    "id": "OTHER",
+    "label": "Other",
+    "description": "Any other medical condition not listed above."
+  }
+]

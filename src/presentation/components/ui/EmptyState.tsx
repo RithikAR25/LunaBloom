@@ -9,7 +9,7 @@
  *   - "Track 2 cycles to unlock" on Insights
  *   - "No logs for this day" on Daily Log
  */
-import React from 'react';
+
 import { View, Text, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { fontSize, spacing } from '@/design-system';

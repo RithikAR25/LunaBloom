@@ -12,7 +12,7 @@
  *   green    → follicular phase chips
  *   neutral  → unselected / default
  */
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { Animated, Pressable, View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { borderRadius, fontSize, spacing } from '@/design-system';

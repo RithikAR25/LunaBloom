@@ -5,7 +5,7 @@
  * Optionally pressable (use onPress to make it tappable).
  * All cards use surface color (#16162A dark / #FFFFFF light) with 12pt radius.
  */
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import {
   Animated,
   Pressable,

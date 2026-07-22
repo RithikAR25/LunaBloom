@@ -8,7 +8,7 @@
  * The FAB itself renders at a fixed size with a drop shadow-equivalent effect
  * (React Native uses elevation on Android, shadowColor on iOS).
  */
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { Animated, Pressable, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { borderRadius } from '@/design-system';

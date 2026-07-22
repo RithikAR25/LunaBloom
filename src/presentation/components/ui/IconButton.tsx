@@ -4,7 +4,7 @@
  * Circular pressable button for icon-only actions.
  * accessibilityLabel is REQUIRED — no visible text means screen readers need it.
  */
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { borderRadius } from '@/design-system';

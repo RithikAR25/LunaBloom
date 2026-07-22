@@ -6,7 +6,7 @@
  *
  * Used for: Settings sections, card group headers, content separators.
  */
-import React from 'react';
+
 import { View, Text, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { fontSize, spacing } from '@/design-system';

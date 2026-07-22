@@ -6,7 +6,7 @@
  * Focus ring: 2pt, brand.primary color
  * States: default, focused, error, disabled
  */
-import React, { useState, useCallback, useId } from 'react';
+import { useState, useCallback, useId } from 'react';
 import {
   View,
   TextInput as RNTextInput,

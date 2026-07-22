@@ -1,48 +1,63 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/presentation/hooks/useTheme';
 
-/**
- * Onboarding Step 1 — Welcome screen.
- * Placeholder: full UI implemented in Phase 2 after Stitch design review.
- * See: docs/ui-prompts/06_onboarding.md
- */
-export default function OnboardingWelcomeScreen() {
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { OnboardingLayout } from '../../src/presentation/components/onboarding/OnboardingLayout';
+import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
+import { useOnboardingStore } from '../../src/presentation/stores/useOnboardingStore';
+import { Text } from '../../src/presentation/components/ui/Text';
+import { spacing } from '../../src/design-system';
+
+export default function WelcomeScreen() {
   const router = useRouter();
-  const { colors } = useTheme();
+  const { completeOnboardingFlow } = useProfileStore();
+  const resetOnboarding = useOnboardingStore(s => s.reset);
+
+  const handleContinue = () => {
+    router.push('/onboarding/name');
+  };
+
+  const handleSkip = async () => {
+    resetOnboarding();
+    await completeOnboardingFlow({});
+    router.replace('/(tabs)');
+  };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <OnboardingLayout
+      currentStep={1}
+      totalSteps={5}
+      title="Welcome to LunaBloom"
+      subtitle="Let's personalize your experience. We'll ask a few questions to tailor the app to your needs."
+      onContinue={handleContinue}
+      continueLabel="Get Started"
+      onSkip={handleSkip}
+      skipLabel="Skip Setup"
+    >
       <View style={styles.content}>
-        <Text style={[styles.logo, { color: colors.brand.primary }]}>◑</Text>
-        <Text style={[styles.title, { color: colors.text.primary }]}>Welcome to LunaBloom</Text>
-        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
-          Your private space to understand your cycle and body.
+        <View style={styles.imagePlaceholder} />
+        <Text variant="body" style={styles.description}>
+          LunaBloom is designed to respect your privacy. Your data stays on your device unless you choose to sync it.
         </Text>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: colors.brand.primary }]}
-          onPress={() => router.push('/onboarding/name')}
-          accessibilityRole="button"
-          accessibilityLabel="Get started with LunaBloom"
-        >
-          <Text style={[styles.buttonText, { color: colors.text.inverse }]}>Get Started</Text>
-        </TouchableOpacity>
       </View>
-      <Text style={[styles.placeholder, { color: colors.text.tertiary }]}>
-        Placeholder — Stitch UI in Phase 2
-      </Text>
-    </SafeAreaView>
+    </OnboardingLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 16 },
-  logo: { fontSize: 64 },
-  title: { fontSize: 28, fontWeight: '700', textAlign: 'center', letterSpacing: -0.5 },
-  subtitle: { fontSize: 15, textAlign: 'center', lineHeight: 24 },
-  button: { marginTop: 24, paddingHorizontal: 40, paddingVertical: 16, borderRadius: 9999 },
-  buttonText: { fontSize: 16, fontWeight: '600' },
-  placeholder: { textAlign: 'center', fontSize: 12, paddingBottom: 24 },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imagePlaceholder: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: '#E2E8F0', // slate200
+    marginBottom: spacing[8],
+  },
+  description: {
+    textAlign: 'center',
+    paddingHorizontal: spacing[4],
+  },
 });

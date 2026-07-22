@@ -13,7 +13,7 @@
  *   warning   → amber
  *   neutral   → slate
  */
-import React from 'react';
+
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { borderRadius, fontSize, spacing } from '@/design-system';

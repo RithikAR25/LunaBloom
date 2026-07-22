@@ -6,12 +6,13 @@
  *
  * For body text (body, label, caption, micro), use the Text component.
  */
-import React from 'react';
+
 import {
   Text,
   StyleSheet,
   type TextStyle,
   type TextProps,
+  type StyleProp,
 } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { fontSize, lineHeight, letterSpacing } from '@/design-system';
@@ -50,7 +51,7 @@ export interface HeadingProps extends Omit<TextProps, 'style' | 'children'> {
   level: HeadingLevel;
   children: React.ReactNode;
   color?: HeadingColor;
-  style?: TextStyle;
+  style?: StyleProp<TextStyle>;
   accessibilityRole?: 'header' | 'none';
 }
 

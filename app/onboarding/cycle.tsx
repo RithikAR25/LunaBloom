@@ -1,33 +1,66 @@
-﻿import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/presentation/hooks/useTheme';
 
-/** Onboarding Step — Tell us about your cycle. Placeholder: full UI in Phase 2. See docs/ui-prompts/06_onboarding.md */
-export default function Onboarding_cycleScreen() {
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { OnboardingLayout } from '../../src/presentation/components/onboarding/OnboardingLayout';
+import { useOnboardingStore } from '../../src/presentation/stores/useOnboardingStore';
+import { NumberStepper } from '../../src/presentation/components/ui/NumberStepper';
+import { spacing } from '../../src/design-system';
+
+export default function CycleScreen() {
   const router = useRouter();
-  const { colors } = useTheme();
+  const { avgCycleLength, avgPeriodDuration, updateField } = useOnboardingStore();
+
+  const handleContinue = () => {
+    router.push('/onboarding/last-period');
+  };
+
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <OnboardingLayout
+      currentStep={3}
+      totalSteps={5}
+      title="Your Cycle"
+      subtitle="This helps us make accurate predictions."
+      onContinue={handleContinue}
+      onBack={handleBack}
+      onSkip={handleContinue}
+      skipLabel="I don't know (Skip)"
+    >
       <View style={styles.content}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>Tell us about your cycle</Text>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: colors.brand.primary }]}
-          onPress={() => router.push('/onboarding/last-period' as never)}
-          accessibilityRole="button"
-        >
-          <Text style={[styles.buttonText, { color: colors.text.inverse }]}>Continue</Text>
-        </TouchableOpacity>
+        <View style={styles.section}>
+          <NumberStepper
+            label="Average Cycle Length"
+            value={avgCycleLength}
+            onChange={(val) => updateField('avgCycleLength', val)}
+            min={15}
+            max={60}
+            suffix=" days"
+          />
+        </View>
+
+        <View style={styles.section}>
+          <NumberStepper
+            label="Average Period Duration"
+            value={avgPeriodDuration}
+            onChange={(val) => updateField('avgPeriodDuration', val)}
+            min={1}
+            max={14}
+            suffix=" days"
+          />
+        </View>
       </View>
-      <Text style={[styles.placeholder, { color: colors.text.tertiary }]}>Placeholder — Stitch UI in Phase 2</Text>
-    </SafeAreaView>
+    </OnboardingLayout>
   );
 }
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 24 },
-  title: { fontSize: 22, fontWeight: '700', textAlign: 'center' },
-  button: { paddingHorizontal: 40, paddingVertical: 16, borderRadius: 9999 },
-  buttonText: { fontSize: 16, fontWeight: '600' },
-  placeholder: { textAlign: 'center', fontSize: 12, paddingBottom: 24 },
+  content: {
+    flex: 1,
+  },
+  section: {
+    marginBottom: spacing[6],
+  },
 });

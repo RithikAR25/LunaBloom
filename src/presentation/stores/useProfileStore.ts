@@ -14,7 +14,10 @@
 import { create } from 'zustand';
 import type { UserProfile } from '../../domain/models/UserProfile';
 import type { IUserProfileRepository } from '../../domain/repositories/IUserProfileRepository';
+
 import { RepositoryError } from '../../domain/errors';
+import { CompleteOnboarding, CompleteOnboardingParams } from '../../domain/use-cases/profile/CompleteOnboarding';
+import { useCycleStore } from './useCycleStore';
 
 type ProfileState = {
   profile: UserProfile | null;
@@ -28,6 +31,7 @@ type ProfileState = {
   setRepository: (repo: IUserProfileRepository) => void;
   loadProfile: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
+  completeOnboardingFlow: (params: CompleteOnboardingParams) => Promise<void>;
   clearError: () => void;
 };
 
@@ -66,6 +70,27 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     } catch (err) {
       const message = err instanceof RepositoryError ? err.message : 'Failed to update profile';
       set({ error: message, isLoading: false });
+    }
+  },
+
+  completeOnboardingFlow: async (params: CompleteOnboardingParams) => {
+    const { _repository } = get();
+    if (!_repository) throw new Error('[useProfileStore] Repository not injected');
+    
+    // We get the cycle repo from useCycleStore to inject into the use case
+    const cycleRepo = useCycleStore.getState()._repository;
+    if (!cycleRepo) throw new Error('[useProfileStore] Cycle repository not injected');
+
+    set({ isLoading: true, error: null });
+    try {
+      const uc = new CompleteOnboarding(_repository, cycleRepo);
+      await uc.execute(params);
+      const profile = await _repository.get();
+      set({ profile, isLoading: false });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to complete onboarding';
+      set({ error: message, isLoading: false });
+      throw err;
     }
   },
 

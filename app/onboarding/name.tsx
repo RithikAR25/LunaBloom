@@ -1,33 +1,95 @@
-﻿import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useState } from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/presentation/hooks/useTheme';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { OnboardingLayout } from '../../src/presentation/components/onboarding/OnboardingLayout';
+import { useOnboardingStore } from '../../src/presentation/stores/useOnboardingStore';
+import { TextInput } from '../../src/presentation/components/ui/TextInput';
+import { Text } from '../../src/presentation/components/ui/Text';
+import { Button } from '../../src/presentation/components/ui/Button';
+import { spacing } from '../../src/design-system';
 
-/** Onboarding Step — What should we call you?. Placeholder: full UI in Phase 2. See docs/ui-prompts/06_onboarding.md */
-export default function Onboarding_nameScreen() {
+export default function NameScreen() {
   const router = useRouter();
-  const { colors } = useTheme();
+  const { preferredName, dateOfBirth, updateField } = useOnboardingStore();
+  const [showPicker, setShowPicker] = useState(false);
+
+  const handleContinue = () => {
+    router.push('/onboarding/cycle');
+  };
+
+  const handleBack = () => {
+    router.back();
+  };
+
+  const onDateChange = (_event: any, selectedDate?: Date) => {
+    setShowPicker(Platform.OS === 'ios');
+    if (selectedDate) {
+      updateField('dateOfBirth', selectedDate.toISOString().split('T')[0] || null);
+    }
+  };
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <OnboardingLayout
+      currentStep={2}
+      totalSteps={5}
+      title="About You"
+      subtitle="What should we call you? When were you born?"
+      onContinue={handleContinue}
+      onBack={handleBack}
+      onSkip={handleContinue}
+      skipLabel="Skip this step"
+    >
       <View style={styles.content}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>What should we call you?</Text>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: colors.brand.primary }]}
-          onPress={() => router.push('/onboarding/cycle' as never)}
-          accessibilityRole="button"
-        >
-          <Text style={[styles.buttonText, { color: colors.text.inverse }]}>Continue</Text>
-        </TouchableOpacity>
+        <TextInput
+          label="Preferred Name (Optional)"
+          value={preferredName || ''}
+          onChangeText={(text) => updateField('preferredName', text)}
+          placeholder="e.g. Luna"
+        />
+
+        <View style={styles.dateContainer}>
+          <Text variant="body" style={styles.label}>Date of Birth (Optional)</Text>
+          {Platform.OS === 'ios' ? (
+            <DateTimePicker
+              value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
+              mode="date"
+              display="default"
+              onChange={onDateChange}
+              maximumDate={new Date()}
+            />
+          ) : (
+            <View>
+              <Button
+                variant="primary"
+                label={dateOfBirth ? new Date(dateOfBirth).toLocaleDateString() : 'Select Date'}
+                onPress={() => setShowPicker(true)}
+              />
+              {showPicker && (
+                <DateTimePicker
+                  value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={onDateChange}
+                  maximumDate={new Date()}
+                />
+              )}
+            </View>
+          )}
+        </View>
       </View>
-      <Text style={[styles.placeholder, { color: colors.text.tertiary }]}>Placeholder — Stitch UI in Phase 2</Text>
-    </SafeAreaView>
+    </OnboardingLayout>
   );
 }
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 24 },
-  title: { fontSize: 22, fontWeight: '700', textAlign: 'center' },
-  button: { paddingHorizontal: 40, paddingVertical: 16, borderRadius: 9999 },
-  buttonText: { fontSize: 16, fontWeight: '600' },
-  placeholder: { textAlign: 'center', fontSize: 12, paddingBottom: 24 },
+  content: {
+    flex: 1,
+  },
+  dateContainer: {
+    marginTop: spacing[4],
+  },
+  label: {
+    marginBottom: spacing[2],
+  },
 });
