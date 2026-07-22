@@ -1,0 +1,41 @@
+# LunaBloom — Git Attributes
+# Ensures consistent line endings across all contributors and platforms.
+
+# Default: normalize all text files to LF in the repository
+* text=auto eol=lf
+
+# Explicitly LF for source files
+*.ts        text eol=lf
+*.tsx       text eol=lf
+*.js        text eol=lf
+*.jsx       text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.css       text eol=lf
+*.html      text eol=lf
+*.xml       text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+*.sh        text eol=lf
+*.env       text eol=lf
+*.gitignore text eol=lf
+*.sql       text eol=lf
+
+# Windows-specific files (CRLF)
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
+
+# Binary files — do not apply line ending conversion
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.svg       binary
+*.pdf       binary
+*.zip       binary
+*.ttf       binary
+*.otf       binary
+*.woff      binary
+*.woff2     binary

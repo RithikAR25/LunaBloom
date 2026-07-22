@@ -29,6 +29,7 @@ Short documents recording *why* each major technical decision was made, what alt
 
 | # | Document | Description |
 |---|---|---|
+| — | [**DEVELOPMENT.md**](./DEVELOPMENT.md) | **Agent operating manual — read this before writing any code** |
 | 06 | [Coding Standards](./06_Coding_Standards.md) | TypeScript rules, naming, components, hooks, repositories, testing, Git conventions |
 | 07 | [Design System](./07_Design_System.md) | Color palette, typography, spacing, motion, component states, accessibility |
 | 08 | [API Contract](./08_API_Contract.md) | V2 REST API endpoints, request/response schemas, sync strategy |
