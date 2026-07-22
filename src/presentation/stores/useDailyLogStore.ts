@@ -5,6 +5,8 @@ import { create } from 'zustand';
 import type { DailyLog } from '../../domain/models/DailyLog';
 import type { IDailyLogRepository } from '../../domain/repositories/IDailyLogRepository';
 import { RepositoryError } from '../../domain/errors';
+import { SaveDailyLog } from '../../domain/use-cases/log/SaveDailyLog';
+import { useCycleStore } from './useCycleStore';
 
 
 type DailyLogState = {
@@ -17,7 +19,7 @@ type DailyLogState = {
   setRepository: (repo: IDailyLogRepository) => void;
   loadLogForDate: (date: string) => Promise<void>;
   loadLogsForRange: (fromDate: string, toDate: string) => Promise<void>;
-  saveLog: (log: DailyLog) => Promise<void>;
+  saveLogData: (date: string, data: Partial<DailyLog>) => Promise<void>;
   updateLog: (id: string, data: Partial<DailyLog>) => Promise<void>;
   deleteLog: (id: string) => Promise<void>;
   clearError: () => void;
@@ -72,20 +74,23 @@ export const useDailyLogStore = create<DailyLogState>((set, get) => ({
     }
   },
 
-  saveLog: async (log) => {
+  saveLogData: async (date: string, logData: Partial<DailyLog>) => {
     const { _repository } = get();
     if (!_repository) throw new Error('[useDailyLogStore] Repository not injected');
 
     set({ isLoading: true, error: null });
     try {
-      await _repository.save(log);
+      const activeCycle = useCycleStore.getState().activeCycle;
+      const useCase = new SaveDailyLog(_repository);
+      const savedLog = await useCase.execute(date, logData, activeCycle || null);
+      
       set((state) => ({
-        logs: { ...state.logs, [log.date]: log },
-        currentLog: state.currentLog?.date === log.date ? log : state.currentLog,
+        logs: { ...state.logs, [savedLog.date]: savedLog },
+        currentLog: state.currentLog?.date === savedLog.date ? savedLog : state.currentLog,
         isLoading: false,
       }));
     } catch (err) {
-      const message = err instanceof RepositoryError ? err.message : 'Failed to save daily log';
+      const message = err instanceof Error ? err.message : 'Failed to save daily log';
       set({ error: message, isLoading: false });
       throw err;
     }

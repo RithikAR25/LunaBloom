@@ -1,0 +1,26 @@
+{
+  "MENSTRUAL": [
+    "Stay hydrated! Drinking warm water can help reduce cramps and bloating.",
+    "Gentle stretching or yoga can alleviate lower back pain during your period.",
+    "Prioritize rest today. Your body is working hard, and it's okay to take it easy.",
+    "Iron-rich foods like spinach and lentils can help replenish what you lose during your period."
+  ],
+  "FOLLICULAR": [
+    "Your energy is rising! This is a great time to start a new project or try a new workout.",
+    "Include probiotic-rich foods like yogurt or kombucha to support gut health as your estrogen rises.",
+    "You might feel more social and creative right now. Lean into it and schedule a catch-up with friends.",
+    "Complex carbohydrates will give you sustained energy for your workouts during this phase."
+  ],
+  "OVULATORY": [
+    "You're at your peak energy! High-intensity workouts might feel amazing right now.",
+    "Focus on antioxidant-rich foods like berries and dark leafy greens to support ovulation.",
+    "Your communication skills are sharp. It's a great time for important conversations or presentations.",
+    "Drink plenty of water! Staying hydrated supports cervical mucus production."
+  ],
+  "LUTEAL": [
+    "As progesterone rises, you might feel the need to slow down. Swap HIIT for pilates or walking.",
+    "Cravings are normal. Pair dark chocolate with some nuts to balance blood sugar.",
+    "Prioritize sleep. A consistent bedtime routine can help combat premenstrual fatigue.",
+    "Foods rich in magnesium and vitamin B6 can help reduce PMS symptoms like bloating and mood swings."
+  ]
+}

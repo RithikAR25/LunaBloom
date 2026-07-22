@@ -1,0 +1,26 @@
+{
+  "moods": [
+    { "id": "mood_happy", "label": "Happy", "icon": "smile" },
+    { "id": "mood_calm", "label": "Calm", "icon": "meh" },
+    { "id": "mood_sad", "label": "Sad", "icon": "frown" },
+    { "id": "mood_anxious", "label": "Anxious", "icon": "wind" },
+    { "id": "mood_irritated", "label": "Irritated", "icon": "zap" },
+    { "id": "mood_energetic", "label": "Energetic", "icon": "activity" },
+    { "id": "mood_tired", "label": "Tired", "icon": "moon" },
+    { "id": "mood_mood_swings", "label": "Mood Swings", "icon": "refresh-cw" },
+    { "id": "mood_focused", "label": "Focused", "icon": "target" },
+    { "id": "mood_distracted", "label": "Distracted", "icon": "cloud" }
+  ],
+  "symptoms": [
+    { "id": "symp_cramps", "label": "Cramps", "category": "PHYSICAL" },
+    { "id": "symp_headache", "label": "Headache", "category": "PHYSICAL" },
+    { "id": "symp_bloating", "label": "Bloating", "category": "PHYSICAL" },
+    { "id": "symp_acne", "label": "Acne", "category": "PHYSICAL" },
+    { "id": "symp_tender_breasts", "label": "Tender Breasts", "category": "PHYSICAL" },
+    { "id": "symp_nausea", "label": "Nausea", "category": "PHYSICAL" },
+    { "id": "symp_backache", "label": "Backache", "category": "PHYSICAL" },
+    { "id": "symp_fatigue", "label": "Fatigue", "category": "PHYSICAL" },
+    { "id": "symp_cravings", "label": "Cravings", "category": "PHYSICAL" },
+    { "id": "symp_insomnia", "label": "Insomnia", "category": "PHYSICAL" }
+  ]
+}

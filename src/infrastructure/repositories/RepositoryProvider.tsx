@@ -9,7 +9,7 @@
  *
  * To swap SQLite for Firebase in V2: replace the concrete classes here only.
  */
-import React, { useRef } from 'react';
+import React from 'react';
 import { SQLiteCycleRepository } from '../repositories/SQLiteCycleRepository';
 import { SQLiteUserProfileRepository } from '../repositories/SQLiteUserProfileRepository';
 import { SQLiteDailyLogRepository } from '../repositories/SQLiteDailyLogRepository';
@@ -18,10 +18,8 @@ import { useProfileStore } from '../../presentation/stores/useProfileStore';
 import { useDailyLogStore } from '../../presentation/stores/useDailyLogStore';
 
 export function RepositoryProvider({ children }: { children: React.ReactNode }) {
-  const injectedRef = useRef(false);
-
-  if (!injectedRef.current) {
-    // Synchronous injection — happens before first render of children
+  // Synchronous injection — happens before first render of children
+  if (!useProfileStore.getState()._repository) {
     const cycleRepo = new SQLiteCycleRepository();
     const profileRepo = new SQLiteUserProfileRepository();
     const dailyLogRepo = new SQLiteDailyLogRepository();
@@ -29,8 +27,6 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
     useCycleStore.getState().setRepository(cycleRepo);
     useProfileStore.getState().setRepository(profileRepo);
     useDailyLogStore.getState().setRepository(dailyLogRepo);
-
-    injectedRef.current = true;
   }
 
 
