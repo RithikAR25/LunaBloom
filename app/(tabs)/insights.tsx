@@ -1,15 +1,126 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from 'expo-router';
 import { useTheme } from '@/presentation/hooks/useTheme';
+import { useInsightsStore } from '@/presentation/stores/useInsightsStore';
+import { InsightsEmptyState } from '@/presentation/components/insights/InsightsEmptyState';
+import { OverviewTab } from '@/presentation/components/insights/OverviewTab';
+import { CycleTab } from '@/presentation/components/insights/CycleTab';
+import { SymptomsTab } from '@/presentation/components/insights/SymptomsTab';
+import { WellbeingTab } from '@/presentation/components/insights/WellbeingTab';
 
-/** Insights Screen — Phase 3 */
+type Tab = 'Overview' | 'Cycle' | 'Symptoms' | 'Wellbeing';
+const TABS: Tab[] = ['Overview', 'Cycle', 'Symptoms', 'Wellbeing'];
+
 export default function InsightsScreen() {
   const { colors } = useTheme();
+  const [activeTab, setActiveTab] = useState<Tab>('Overview');
+  
+  const { 
+    cycleStats, symptomTrends, moodTrends, wellbeingTrends, 
+    isLoading, error, loadInsights 
+  } = useInsightsStore();
+
+  useFocusEffect(
+    useCallback(() => {
+      loadInsights();
+    }, [loadInsights])
+  );
+
+  const determineEmptyState = () => {
+    if (!cycleStats) return 'no-cycles';
+    if (cycleStats.averageCycleLength === null) return 'no-cycles';
+    if (cycleStats.cycleLengthTrend === 'UNKNOWN') return 'insufficient-cycles';
+    
+    // Check if there are any symptoms or wellbeing data
+    const hasLogs = symptomTrends?.some(t => t.topSymptoms.length > 0) || 
+                   wellbeingTrends?.some(w => w.metrics.painSampleCount > 0);
+                   
+    if (!hasLogs && (activeTab === 'Symptoms' || activeTab === 'Wellbeing')) {
+      return 'no-logs';
+    }
+    
+    return null;
+  };
+
+  const emptyState = determineEmptyState();
+
+  const renderContent = () => {
+    if (isLoading && !cycleStats) {
+      return (
+        <View style={styles.center} accessible={true} accessibilityLabel="Loading insights...">
+          <ActivityIndicator size="large" color={colors.brand.primary} />
+        </View>
+      );
+    }
+    if (error) {
+      return (
+        <View style={styles.center} accessible={true} accessibilityLabel={`Error loading insights: ${error}`}>
+          <Text style={{ color: colors.semantic.error }}>{error}</Text>
+        </View>
+      );
+    }
+
+    if (emptyState === 'no-cycles') {
+      return <InsightsEmptyState scenario={emptyState} />;
+    }
+    
+    // If we're on Symptoms/Wellbeing and there's no logs, show empty state for logs
+    if (emptyState === 'no-logs') {
+      return <InsightsEmptyState scenario={emptyState} />;
+    }
+
+    switch (activeTab) {
+      case 'Overview':
+        return emptyState === 'insufficient-cycles' ? (
+          <InsightsEmptyState scenario="insufficient-cycles" />
+        ) : (
+          <OverviewTab stats={cycleStats!} />
+        );
+      case 'Cycle':
+        return <CycleTab stats={cycleStats!} />;
+      case 'Symptoms':
+        return <SymptomsTab trends={symptomTrends!} />;
+      case 'Wellbeing':
+        return <WellbeingTab wellbeing={wellbeingTrends!} moods={moodTrends!} />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <Text style={[styles.headerTitle, { color: colors.text.primary }]} accessibilityRole="header">Insights</Text>
+      </View>
+      
+      <View style={styles.tabBar} accessibilityRole="tablist">
+        {TABS.map(tab => {
+          const isActive = activeTab === tab;
+          return (
+            <TouchableOpacity
+              key={tab}
+              style={[
+                styles.tabButton,
+                isActive && { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary },
+                !isActive && { backgroundColor: colors.surface, borderColor: colors.border }
+              ]}
+              onPress={() => setActiveTab(tab)}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: isActive }}
+            >
+              <Text style={[
+                styles.tabText,
+                { color: isActive ? '#fff' : colors.text.secondary }
+              ]}>{tab}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
       <View style={styles.content}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>Insights</Text>
-        <Text style={[styles.sub, { color: colors.text.secondary }]}>Analytics & trends — Phase 3</Text>
+        {renderContent()}
       </View>
     </SafeAreaView>
   );
@@ -17,7 +128,39 @@ export default function InsightsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
-  title: { fontSize: 22, fontWeight: '600' },
-  sub: { fontSize: 15 },
+  header: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  tabBar: {
+    flexDirection: 'row',
+    padding: 12,
+    gap: 8,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  tabText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  content: {
+    flex: 1,
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
 });

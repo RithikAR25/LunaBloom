@@ -18,6 +18,7 @@ import { useCycleStore } from '../../presentation/stores/useCycleStore';
 import { useProfileStore } from '../../presentation/stores/useProfileStore';
 import { useDailyLogStore } from '../../presentation/stores/useDailyLogStore';
 import { useContentStore } from '../../presentation/stores/useContentStore';
+import { useInsightsStore } from '../../presentation/stores/useInsightsStore';
 
 export function RepositoryProvider({ children }: { children: React.ReactNode }) {
   // Synchronous injection — happens before first render of children
@@ -31,6 +32,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
     useProfileStore.getState().setRepository(profileRepo);
     useDailyLogStore.getState().setRepository(dailyLogRepo);
     useContentStore.getState().setRepository(contentRepo);
+    useInsightsStore.getState().setRepositories(cycleRepo, dailyLogRepo, profileRepo);
   }
 
 
