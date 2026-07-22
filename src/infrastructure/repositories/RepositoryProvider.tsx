@@ -12,8 +12,10 @@
 import React, { useRef } from 'react';
 import { SQLiteCycleRepository } from '../repositories/SQLiteCycleRepository';
 import { SQLiteUserProfileRepository } from '../repositories/SQLiteUserProfileRepository';
+import { SQLiteDailyLogRepository } from '../repositories/SQLiteDailyLogRepository';
 import { useCycleStore } from '../../presentation/stores/useCycleStore';
 import { useProfileStore } from '../../presentation/stores/useProfileStore';
+import { useDailyLogStore } from '../../presentation/stores/useDailyLogStore';
 
 export function RepositoryProvider({ children }: { children: React.ReactNode }) {
   const injectedRef = useRef(false);
@@ -22,12 +24,15 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
     // Synchronous injection — happens before first render of children
     const cycleRepo = new SQLiteCycleRepository();
     const profileRepo = new SQLiteUserProfileRepository();
+    const dailyLogRepo = new SQLiteDailyLogRepository();
 
     useCycleStore.getState().setRepository(cycleRepo);
     useProfileStore.getState().setRepository(profileRepo);
+    useDailyLogStore.getState().setRepository(dailyLogRepo);
 
     injectedRef.current = true;
   }
+
 
   return <>{children}</>;
 }
