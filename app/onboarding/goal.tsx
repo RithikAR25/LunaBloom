@@ -1,17 +1,14 @@
-
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { OnboardingLayout } from '../../src/presentation/components/onboarding/OnboardingLayout';
 import { useOnboardingStore } from '../../src/presentation/stores/useOnboardingStore';
+import { useContentStore } from '../../src/presentation/stores/useContentStore';
 import { GoalCard } from '../../src/presentation/components/onboarding/GoalCard';
 import { UserGoal } from '../../src/domain/models/index';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { spacing, borderRadius } from '../../src/design-system';
-
-// Load medical conditions from JSON
-import medicalConditionsData from '../../assets/data/medicalConditions.json';
 
 const GOAL_OPTIONS = [
   { value: UserGoal.TrackCycle, title: 'Track My Cycle', description: 'Monitor my period, symptoms, and phases.' },
@@ -24,6 +21,7 @@ export default function GoalScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const { primaryGoal, conditions, updateField } = useOnboardingStore();
+  const { medicalConditions: medicalConditionsData } = useContentStore();
 
   const handleContinue = () => {
     router.push('/onboarding/complete');

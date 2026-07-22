@@ -14,7 +14,7 @@ import { QuickActionButton } from '../../src/presentation/components/dashboard/Q
 import { TodayLogCard } from '../../src/presentation/components/dashboard/TodayLogCard';
 import { HealthTipCard } from '../../src/presentation/components/dashboard/HealthTipCard';
 import { CycleHistoryChart } from '../../src/presentation/components/dashboard/CycleHistoryChart';
-import healthTips from '../../assets/data/healthTips.json';
+import { useContentStore } from '../../src/presentation/stores/useContentStore';
 import { useState, useEffect } from 'react';
 
 export default function DashboardScreen() {
@@ -26,6 +26,7 @@ export default function DashboardScreen() {
   const { profile } = useProfileStore();
   const { activeCycle, cycles, loadCycles } = useCycleStore();
   const { currentLog, loadLogForDate } = useDailyLogStore();
+  const { healthTips } = useContentStore();
 
   const todayStr = new Date().toISOString().split('T')[0] || '';
 
@@ -59,8 +60,8 @@ export default function DashboardScreen() {
   // Select a random tip for today based on phase
   // Using today's day to deterministically select the tip so it doesn't jump around on every render
   const todayDayOfMonth = new Date().getDate();
-  const phaseTips = (healthTips as any)[phaseDetails.tipCategory] || [];
-  const selectedTip = phaseTips.length > 0 ? phaseTips[todayDayOfMonth % phaseTips.length] : 'Stay hydrated and listen to your body.';
+  const phaseTips = healthTips ? healthTips[phaseDetails.tipCategory] || [] : [];
+  const selectedTip = (phaseTips.length > 0 ? phaseTips[todayDayOfMonth % phaseTips.length] : 'Stay hydrated and listen to your body.') ?? 'Stay hydrated and listen to your body.';
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

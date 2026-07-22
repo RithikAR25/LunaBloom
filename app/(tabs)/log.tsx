@@ -13,6 +13,7 @@ import { Button } from '@/presentation/components/ui/Button';
 
 import { useDailyLogStore } from '@/presentation/stores/useDailyLogStore';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
+import { useContentStore } from '@/presentation/stores/useContentStore';
 import type { FlowIntensity } from '@/domain/models';
 
 import { FlowSelector } from '@/presentation/components/log/FlowSelector';
@@ -21,7 +22,6 @@ import { SelectableChip } from '@/presentation/components/log/SelectableChip';
 import { RangeSlider } from '@/presentation/components/log/RangeSlider';
 import { DotRating } from '@/presentation/components/log/DotRating';
 
-import symptomsData from '@/../assets/data/symptoms.json';
 
 export default function LogScreen() {
   const { colors } = useTheme();
@@ -30,6 +30,7 @@ export default function LogScreen() {
 
   const { activeCycle } = useCycleStore();
   const { currentLog, saveLogData, isLoading, error } = useDailyLogStore();
+  const { symptomsData } = useContentStore();
 
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -150,7 +151,7 @@ export default function LogScreen() {
 
         <SectionCard title="Moods" description="Select up to 5" style={{ marginBottom: spacing[4] }}>
           <View style={styles.chipContainer}>
-            {symptomsData.moods.map((mood) => (
+            {symptomsData?.moods.map((mood) => (
               <SelectableChip
                 key={mood.id}
                 label={mood.label}
@@ -165,7 +166,7 @@ export default function LogScreen() {
 
         <SectionCard title="Symptoms" style={{ marginBottom: spacing[4] }}>
           <View style={styles.chipContainer}>
-            {symptomsData.symptoms.map((symp) => (
+            {symptomsData?.symptoms.map((symp) => (
               <SelectableChip
                 key={symp.id}
                 label={symp.label}

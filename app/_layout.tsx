@@ -7,6 +7,7 @@ import { DatabaseProvider } from '@/infrastructure/database/DatabaseProvider';
 import { RepositoryProvider } from '@/infrastructure/repositories/RepositoryProvider';
 import { useProfileStore } from '@/presentation/stores/useProfileStore';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
+import { useContentStore } from '@/presentation/stores/useContentStore';
 
 /**
  * NavigationGate — reads profile store and redirects to onboarding if needed.
@@ -48,11 +49,13 @@ function NavigationGate() {
 function AppProviders({ children }: { children: React.ReactNode }) {
   const loadProfile = useProfileStore((s) => s.loadProfile);
   const loadCycles = useCycleStore((s) => s.loadCycles);
+  const loadContent = useContentStore((s) => s.loadContent);
 
   useEffect(() => {
     void loadProfile();
     void loadCycles();
-  }, [loadProfile, loadCycles]);
+    void loadContent();
+  }, [loadProfile, loadCycles, loadContent]);
 
   return <>{children}</>;
 }
