@@ -1,46 +1,137 @@
-import { Stack } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { useEffect } from 'react';
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { useColorScheme, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { DatabaseProvider } from '@/infrastructure/database/DatabaseProvider';
+import { RepositoryProvider } from '@/infrastructure/repositories/RepositoryProvider';
+import { useProfileStore } from '@/presentation/stores/useProfileStore';
+import { useCycleStore } from '@/presentation/stores/useCycleStore';
 
 /**
- * Root Layout — _layout.tsx
+ * NavigationGate — reads profile store and redirects to onboarding if needed.
+ * Mounted inside providers so stores are populated before gate logic runs.
+ */
+function NavigationGate() {
+  const router = useRouter();
+  const segments = useSegments();
+
+  const profile = useProfileStore((s) => s.profile);
+  const profileLoading = useProfileStore((s) => s.isLoading);
+
+  useEffect(() => {
+    if (profileLoading) return; // Wait until data is loaded
+
+    const inOnboarding = segments[0] === 'onboarding';
+    const onboardingComplete = profile?.onboardingCompleted === true;
+
+    if (!onboardingComplete && !inOnboarding) {
+      // First launch or incomplete onboarding → go to onboarding
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      router.replace('/onboarding' as any);
+    } else if (onboardingComplete && inOnboarding) {
+      // Already onboarded, somehow in onboarding → go to tabs
+      router.replace('/(tabs)');
+    }
+  }, [profile, profileLoading, segments, router]);
+
+  return null;
+}
+
+/**
+ * AppProviders — wraps the entire app with required providers in the correct order.
+ * Order matters:
+ * 1. DatabaseProvider — must be first (everything needs DB)
+ * 2. RepositoryProvider — needs DB to be ready
+ * 3. Data Bootstrap — loads profile + cycles after repositories are injected
+ */
+function AppProviders({ children }: { children: React.ReactNode }) {
+  const loadProfile = useProfileStore((s) => s.loadProfile);
+  const loadCycles = useCycleStore((s) => s.loadCycles);
+
+  useEffect(() => {
+    void loadProfile();
+    void loadCycles();
+  }, [loadProfile, loadCycles]);
+
+  return <>{children}</>;
+}
+
+/**
+ * Root Layout — Entry point for Expo Router.
  *
- * This is the entry point for Expo Router. It:
- * 1. Wraps the app in required providers (GestureHandler, SafeArea)
- * 2. Defines the root navigation stack
- * 3. Will host DatabaseProvider and RepositoryProvider in Phase 5 (database)
- * 4. Will host auth gate logic in Phase 6 (auth/PIN lock)
- *
- * Current milestone: v0.2-foundation — skeleton only, no providers yet.
+ * Provider stack (outer → inner):
+ *   GestureHandlerRootView
+ *     SafeAreaProvider
+ *       DatabaseProvider          ← opens SQLite, runs migrations
+ *         RepositoryProvider      ← injects concrete repos into Zustand
+ *           AppProviders          ← loads initial data
+ *             NavigationGate      ← handles onboarding redirect
+ *               Stack             ← route definitions
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: 'fade',
-            contentStyle: {
-              backgroundColor: colorScheme === 'dark' ? '#0C0C14' : '#F8FAFC',
-            },
-          }}
-        >
-          {/* Main tab navigation */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          {/* Auth / PIN lock — presented as full-screen overlay */}
-          <Stack.Screen name="(auth)" options={{ headerShown: false, animation: 'fade' }} />
-          {/* Onboarding flow */}
-          <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'slide_from_right' }} />
-          {/* Learn / Educational content */}
-          <Stack.Screen name="learn" options={{ headerShown: false, animation: 'slide_from_right' }} />
-          {/* 404 */}
-          <Stack.Screen name="+not-found" />
-        </Stack>
+        <DatabaseProvider>
+          <RepositoryProvider>
+            <AppProviders>
+              <NavigationGate />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  animation: 'fade',
+                  contentStyle: {
+                    backgroundColor: isDark ? '#0C0C14' : '#F8FAFC',
+                  },
+                }}
+              >
+                {/* Main tab navigation */}
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+                {/* Onboarding — full screen, no back gesture to tabs */}
+                <Stack.Screen
+                  name="onboarding"
+                  options={{
+                    headerShown: false,
+                    animation: 'fade',
+                    gestureEnabled: false,
+                  }}
+                />
+
+                {/* Auth / PIN lock — full screen overlay */}
+                <Stack.Screen
+                  name="(auth)"
+                  options={{
+                    headerShown: false,
+                    animation: 'fade',
+                    gestureEnabled: false,
+                  }}
+                />
+
+                {/* Learn / Education — slides in from right */}
+                <Stack.Screen
+                  name="learn"
+                  options={{
+                    headerShown: false,
+                    animation: 'slide_from_right',
+                  }}
+                />
+
+                {/* 404 fallback */}
+                <Stack.Screen name="+not-found" />
+              </Stack>
+            </AppProviders>
+          </RepositoryProvider>
+        </DatabaseProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});
