@@ -100,6 +100,18 @@ export class SQLiteDailyLogRepository implements IDailyLogRepository {
     }
   }
 
+  async getAll(): Promise<DailyLog[]> {
+    try {
+      const db = getDatabase();
+      const rows = await db.getAllAsync<DailyLogRow>(
+        'SELECT * FROM daily_logs WHERE deleted_at IS NULL ORDER BY date DESC'
+      );
+      return rows.map(rowToModel);
+    } catch (err) {
+      throw new RepositoryError('Failed to fetch all daily logs', err);
+    }
+  }
+
   async getByDate(date: string): Promise<DailyLog | null> {
     try {
       const db = getDatabase();

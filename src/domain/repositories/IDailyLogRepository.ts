@@ -2,6 +2,7 @@ import type { DailyLog } from '../models/DailyLog';
 
 export interface IDailyLogRepository {
   save(log: DailyLog): Promise<void>;
+  getAll(): Promise<DailyLog[]>;
   getByDate(date: string): Promise<DailyLog | null>;
   getById(id: string): Promise<DailyLog | null>;
   /** Returns logs between fromDate and toDate (inclusive), ordered newest first */
