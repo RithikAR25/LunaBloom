@@ -6,6 +6,11 @@ import { create } from 'zustand';
 import type { CycleEntry } from '../../domain/models/Cycle';
 import type { ICycleRepository } from '../../domain/repositories/ICycleRepository';
 import { RepositoryError } from '../../domain/errors';
+import { StartPeriod } from '../../domain/use-cases/cycle/StartPeriod';
+import { EndPeriod } from '../../domain/use-cases/cycle/EndPeriod';
+import { EditCycleEntry } from '../../domain/use-cases/cycle/EditCycleEntry';
+import { DeleteCycleEntry } from '../../domain/use-cases/cycle/DeleteCycleEntry';
+import { ValidationService } from '../../domain/services/ValidationService';
 
 type CycleState = {
   cycles: CycleEntry[];
@@ -16,8 +21,9 @@ type CycleState = {
 
   setRepository: (repo: ICycleRepository) => void;
   loadCycles: () => Promise<void>;
-  saveCycle: (cycle: CycleEntry) => Promise<void>;
-  updateCycle: (id: string, data: Partial<CycleEntry>) => Promise<void>;
+  startPeriod: (startDate: string) => Promise<void>;
+  endPeriod: (endDate: string) => Promise<void>;
+  editCycle: (id: string, startDate: string, endDate: string | null, notes: string | null) => Promise<void>;
   deleteCycle: (id: string) => Promise<void>;
   clearError: () => void;
 };
@@ -46,46 +52,68 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     }
   },
 
-  saveCycle: async (cycle) => {
+  startPeriod: async (startDate: string) => {
     const { _repository } = get();
     if (!_repository) throw new Error('[useCycleStore] Repository not injected');
 
     set({ isLoading: true, error: null });
     try {
-      await _repository.save(cycle);
-      await get().loadCycles(); // refresh
+      const validationService = new ValidationService();
+      const startPeriodUC = new StartPeriod(_repository, validationService);
+      await startPeriodUC.execute(startDate);
+      await get().loadCycles();
     } catch (err) {
-      const message = err instanceof RepositoryError ? err.message : 'Failed to save cycle';
+      const message = err instanceof Error ? err.message : 'Failed to start period';
       set({ error: message, isLoading: false });
       throw err;
     }
   },
 
-  updateCycle: async (id, data) => {
+  endPeriod: async (endDate: string) => {
     const { _repository } = get();
     if (!_repository) throw new Error('[useCycleStore] Repository not injected');
 
     set({ isLoading: true, error: null });
     try {
-      await _repository.update(id, data);
+      const validationService = new ValidationService();
+      const endPeriodUC = new EndPeriod(_repository, validationService);
+      await endPeriodUC.execute(endDate);
       await get().loadCycles();
     } catch (err) {
-      const message = err instanceof RepositoryError ? err.message : 'Failed to update cycle';
+      const message = err instanceof Error ? err.message : 'Failed to end period';
       set({ error: message, isLoading: false });
       throw err;
     }
   },
 
-  deleteCycle: async (id) => {
+  editCycle: async (id: string, startDate: string, endDate: string | null, notes: string | null) => {
     const { _repository } = get();
     if (!_repository) throw new Error('[useCycleStore] Repository not injected');
 
     set({ isLoading: true, error: null });
     try {
-      await _repository.softDelete(id);
+      const validationService = new ValidationService();
+      const editCycleUC = new EditCycleEntry(_repository, validationService);
+      await editCycleUC.execute(id, startDate, endDate, notes);
       await get().loadCycles();
     } catch (err) {
-      const message = err instanceof RepositoryError ? err.message : 'Failed to delete cycle';
+      const message = err instanceof Error ? err.message : 'Failed to edit cycle';
+      set({ error: message, isLoading: false });
+      throw err;
+    }
+  },
+
+  deleteCycle: async (id: string) => {
+    const { _repository } = get();
+    if (!_repository) throw new Error('[useCycleStore] Repository not injected');
+
+    set({ isLoading: true, error: null });
+    try {
+      const deleteCycleUC = new DeleteCycleEntry(_repository);
+      await deleteCycleUC.execute(id);
+      await get().loadCycles();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to delete cycle';
       set({ error: message, isLoading: false });
       throw err;
     }
@@ -93,3 +121,4 @@ export const useCycleStore = create<CycleState>((set, get) => ({
 
   clearError: () => set({ error: null }),
 }));
+
