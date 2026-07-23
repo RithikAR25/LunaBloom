@@ -23,8 +23,35 @@ export interface SymptomsData {
 
 export type HealthTipsData = Record<string, string[]>;
 
+export type PhaseIdentifier = 'menstrual' | 'follicular' | 'ovulatory' | 'luteal';
+
+export interface LearnSection {
+  title: string;
+  summary: string;
+  details?: string;
+}
+
+export interface PhaseLearnContent {
+  id: PhaseIdentifier;
+  name: string;
+  tagline: string;
+  biology: LearnSection;
+  symptoms: LearnSection;
+  nutrition: LearnSection;
+  exercise: LearnSection;
+  selfCare: LearnSection;
+  whatToExpect: LearnSection;
+}
+
+export interface GlossaryTerm {
+  term: string;
+  definition: string;
+}
+
 export interface IContentRepository {
   getMedicalConditions(): Promise<MedicalConditionContent[]>;
   getSymptomsData(): Promise<SymptomsData>;
   getHealthTips(): Promise<HealthTipsData>;
+  getLearnContent(): Promise<PhaseLearnContent[]>;
+  getGlossary(): Promise<GlossaryTerm[]>;
 }

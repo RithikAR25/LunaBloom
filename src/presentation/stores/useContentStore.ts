@@ -3,26 +3,35 @@ import type {
   IContentRepository, 
   MedicalConditionContent, 
   SymptomsData, 
-  HealthTipsData 
+  HealthTipsData,
+  PhaseLearnContent,
+  GlossaryTerm
 } from '../../domain/repositories/IContentRepository';
 
 type ContentState = {
   medicalConditions: MedicalConditionContent[];
   symptomsData: SymptomsData | null;
   healthTips: HealthTipsData | null;
+  learnContent: PhaseLearnContent[] | null;
+  glossary: GlossaryTerm[] | null;
   isLoading: boolean;
+  isLearnContentLoading: boolean;
   error: string | null;
   _repository: IContentRepository | null;
 
   setRepository: (repo: IContentRepository) => void;
   loadContent: () => Promise<void>;
+  loadLearnContent: () => Promise<void>;
 };
 
 export const useContentStore = create<ContentState>((set, get) => ({
   medicalConditions: [],
   symptomsData: null,
   healthTips: null,
+  learnContent: null,
+  glossary: null,
   isLoading: false,
+  isLearnContentLoading: false,
   error: null,
   _repository: null,
 
@@ -48,6 +57,30 @@ export const useContentStore = create<ContentState>((set, get) => ({
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load content';
       set({ error: message, isLoading: false });
+    }
+  },
+
+  loadLearnContent: async () => {
+    const { _repository, learnContent, glossary } = get();
+    if (!_repository) throw new Error('[useContentStore] Repository not injected');
+    
+    // Skip if already loaded
+    if (learnContent !== null && glossary !== null) return;
+
+    set({ isLearnContentLoading: true, error: null });
+    try {
+      const [learn, gloss] = await Promise.all([
+        _repository.getLearnContent(),
+        _repository.getGlossary(),
+      ]);
+      set({ 
+        learnContent: learn, 
+        glossary: gloss, 
+        isLearnContentLoading: false 
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load learn content';
+      set({ error: message, isLearnContentLoading: false });
     }
   },
 }));

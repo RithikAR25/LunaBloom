@@ -1,0 +1,142 @@
+[
+  {
+    "id": "menstrual",
+    "name": "Menstrual Phase",
+    "tagline": "Rest, reflection, and reset.",
+    "biology": {
+      "title": "What's happening in your body",
+      "summary": "Estrogen and progesterone drop, causing the uterine lining to shed.",
+      "details": "The drop in hormones signals your uterus to contract and shed its lining, which is your period. This process requires energy and can cause inflammation, often leading to cramps and fatigue."
+    },
+    "symptoms": {
+      "title": "Common Symptoms",
+      "summary": "Cramps, fatigue, lower back pain, and mood changes.",
+      "details": "Prostaglandins (chemicals that cause uterine contractions) can also affect the digestive tract, leading to bloating or changes in bowel movements. You might also experience headaches or breast tenderness."
+    },
+    "nutrition": {
+      "title": "Nutrition Focus",
+      "summary": "Prioritize iron-rich foods, healthy fats, and warm, comforting meals.",
+      "details": "Replenish iron lost through bleeding with spinach, lentils, or red meat. Omega-3s (like salmon or chia seeds) can help reduce inflammation and cramping. Avoid excessive caffeine or salty foods to minimize bloating."
+    },
+    "exercise": {
+      "title": "Movement",
+      "summary": "Gentle movement like walking, restorative yoga, or simply resting.",
+      "details": "Your energy is typically at its lowest. Don't push yourself for high-intensity workouts unless you feel up to it. Stretching can help alleviate lower back and pelvic pain."
+    },
+    "selfCare": {
+      "title": "Self-Care",
+      "summary": "Focus on rest, warmth, and introspection.",
+      "details": "Use a heating pad for cramps, take warm baths, and allow yourself extra sleep. This is a great time for journaling and setting intentions for the upcoming cycle."
+    },
+    "whatToExpect": {
+      "title": "What to Expect",
+      "summary": "Your energy will likely be low for the first few days, slowly recovering as your period ends.",
+      "details": "As bleeding subsides, estrogen begins to slowly rise again, which will gradually improve your mood and energy levels heading into the follicular phase."
+    }
+  },
+  {
+    "id": "follicular",
+    "name": "Follicular Phase",
+    "tagline": "Rising energy and creativity.",
+    "biology": {
+      "title": "What's happening in your body",
+      "summary": "Estrogen rises as your body prepares to release an egg.",
+      "details": "The pituitary gland releases Follicle Stimulating Hormone (FSH), prompting your ovaries to produce follicles. As these grow, they produce estrogen, which thickens the uterine lining again."
+    },
+    "symptoms": {
+      "title": "Common Symptoms",
+      "summary": "Increased energy, clear skin, and improved mood.",
+      "details": "Rising estrogen typically brings a boost in serotonin, making you feel more optimistic and focused. You might notice your skin looking clearer and feeling more hydrated."
+    },
+    "nutrition": {
+      "title": "Nutrition Focus",
+      "summary": "Fresh, vibrant foods like salads, fermented foods, and lean proteins.",
+      "details": "Support estrogen metabolism with cruciferous vegetables (broccoli, kale). Fermented foods (kimchi, sauerkraut) support gut health, which helps process excess hormones."
+    },
+    "exercise": {
+      "title": "Movement",
+      "summary": "Great time for cardio, running, and trying new workouts.",
+      "details": "With rising energy and stamina, this is the optimal time for higher-intensity workouts, strength training, or pushing your personal bests."
+    },
+    "selfCare": {
+      "title": "Self-Care",
+      "summary": "Socialize, brainstorm, and tackle complex tasks.",
+      "details": "Your brain chemistry is optimized for learning and socializing. Schedule important meetings, start new projects, or plan social events during this window."
+    },
+    "whatToExpect": {
+      "title": "What to Expect",
+      "summary": "You will likely feel your best, with peaking physical and mental energy.",
+      "details": "This phase leads directly into ovulation. You may notice an increase in clear, stretchy cervical mucus as your body prepares for potential conception."
+    }
+  },
+  {
+    "id": "ovulatory",
+    "name": "Ovulatory Phase",
+    "tagline": "Peak energy and communication.",
+    "biology": {
+      "title": "What's happening in your body",
+      "summary": "An egg is released from the ovary, triggered by a spike in luteinizing hormone (LH).",
+      "details": "Estrogen peaks, and testosterone surges briefly. The egg travels down the fallopian tube, surviving for 12-24 hours. This is your fertile window."
+    },
+    "symptoms": {
+      "title": "Common Symptoms",
+      "summary": "High libido, slight pelvic twinges, and peak sociability.",
+      "details": "You might feel a mild twinge on one side of your lower abdomen (mittelschmerz) as the egg is released. Senses (like smell) may be heightened, and you'll likely feel very confident."
+    },
+    "nutrition": {
+      "title": "Nutrition Focus",
+      "summary": "Raw veggies, fiber, and antioxidant-rich foods.",
+      "details": "Fiber helps your body process and eliminate the peak levels of estrogen. Foods high in antioxidants (berries, dark chocolate) support cellular health during this high-energy phase."
+    },
+    "exercise": {
+      "title": "Movement",
+      "summary": "High-intensity interval training (HIIT), spinning, or heavy lifting.",
+      "details": "Your energy is at its absolute peak. Capitalize on this with group fitness classes or demanding workouts, but ensure you warm up properly to avoid injury."
+    },
+    "selfCare": {
+      "title": "Self-Care",
+      "summary": "Connect with others and have important conversations.",
+      "details": "Your communication skills are sharpest now. It's the best time for public speaking, dates, or having difficult conversations. Be mindful of potential burnout from over-scheduling."
+    },
+    "whatToExpect": {
+      "title": "What to Expect",
+      "summary": "A brief window of maximum energy, followed by a transition into a calmer state.",
+      "details": "As the egg is released and estrogen drops sharply, you might experience a brief 'ovulation dip' in mood or energy before progesterone starts rising in the luteal phase."
+    }
+  },
+  {
+    "id": "luteal",
+    "name": "Luteal Phase",
+    "tagline": "Nesting, finishing tasks, and winding down.",
+    "biology": {
+      "title": "What's happening in your body",
+      "summary": "Progesterone rises to maintain the uterine lining. If not pregnant, hormones eventually drop.",
+      "details": "The empty follicle turns into the corpus luteum, which pumps out progesterone. This hormone is naturally sedating, preparing the body for potential pregnancy, or signaling it's time to rest."
+    },
+    "symptoms": {
+      "title": "Common Symptoms",
+      "summary": "PMS symptoms like bloating, cravings, breast tenderness, and mood swings.",
+      "details": "As hormones fluctuate and drop near the end of this phase, serotonin levels can dip, leading to irritability or sadness. Water retention and changes in digestion are also very common."
+    },
+    "nutrition": {
+      "title": "Nutrition Focus",
+      "summary": "Complex carbs, magnesium-rich foods, and warm root vegetables.",
+      "details": "Cravings for carbs are normal as your body needs more calories. Choose complex carbs (sweet potatoes, brown rice) to stabilize blood sugar. Magnesium (dark chocolate, pumpkin seeds) helps reduce PMS symptoms."
+    },
+    "exercise": {
+      "title": "Movement",
+      "summary": "Transition from moderate to low-intensity exercise like pilates or walking.",
+      "details": "In the first half, you may still have energy for strength training. In the second half, listen to your body and shift to gentler activities as your energy naturally wanes."
+    },
+    "selfCare": {
+      "title": "Self-Care",
+      "summary": "Focus on completion, organization, and saying 'no'.",
+      "details": "You might feel more introverted and detail-oriented. Use this time for organizing, deep cleaning, or wrapping up projects rather than starting new ones. Protect your energy and boundaries."
+    },
+    "whatToExpect": {
+      "title": "What to Expect",
+      "summary": "A gradual slowing down of energy leading up to your next period.",
+      "details": "The final days (often called the late luteal phase) can be challenging emotionally and physically. Honor your need for rest as your body prepares to begin the cycle again."
+    }
+  }
+]

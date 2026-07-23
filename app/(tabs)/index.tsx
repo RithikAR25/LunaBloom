@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -95,14 +95,24 @@ export default function DashboardScreen() {
             </Text>
           </View>
         ) : (
-          <CyclePhaseHeroCard
-            phaseName={phaseDetails.name}
-            phaseIcon={phaseDetails.icon as any}
-            phaseColor={phaseDetails.color}
-            cycleDay={cycleDay || 1}
-            totalDays={profile?.avgCycleLength || 28}
-            periodCountdown={currentPhase === 'LUTEAL' && cycleDay ? (profile?.avgCycleLength || 28) - cycleDay : null}
-          />
+          <Pressable 
+            onPress={() => {
+              if (currentPhase) {
+                router.push(`/learn/${currentPhase.toLowerCase()}` as any);
+              } else {
+                router.push('/learn');
+              }
+            }}
+          >
+            <CyclePhaseHeroCard
+              phaseName={phaseDetails.name}
+              phaseIcon={phaseDetails.icon as any}
+              phaseColor={phaseDetails.color}
+              cycleDay={cycleDay || 1}
+              totalDays={profile?.avgCycleLength || 28}
+              periodCountdown={currentPhase === 'LUTEAL' && cycleDay ? (profile?.avgCycleLength || 28) - cycleDay : null}
+            />
+          </Pressable>
         )}
 
         <View style={styles.quickActionsContainer}>
@@ -155,7 +165,13 @@ export default function DashboardScreen() {
         <View style={styles.section}>
           <HealthTipCard 
             tip={selectedTip}
-            onLearnMore={() => {}}
+            onLearnMore={() => {
+              if (currentPhase) {
+                router.push(`/learn/${currentPhase.toLowerCase()}` as any);
+              } else {
+                router.push('/learn');
+              }
+            }}
           />
         </View>
 
