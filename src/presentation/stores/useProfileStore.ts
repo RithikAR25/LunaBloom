@@ -17,6 +17,7 @@ import type { IUserProfileRepository } from '../../domain/repositories/IUserProf
 
 import { RepositoryError } from '../../domain/errors';
 import { CompleteOnboarding, CompleteOnboardingParams } from '../../domain/use-cases/profile/CompleteOnboarding';
+import { UpdateProfile } from '../../domain/use-cases/profile/UpdateProfile';
 import { useCycleStore } from './useCycleStore';
 
 type ProfileState = {
@@ -63,7 +64,8 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
-      await _repository.update(data);
+      const uc = new UpdateProfile(_repository);
+      await uc.execute(data);
       // Refresh from source of truth
       const profile = await _repository.get();
       set({ profile, isLoading: false });

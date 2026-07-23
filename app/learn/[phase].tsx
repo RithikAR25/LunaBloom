@@ -1,4 +1,4 @@
-import { useState } from 'react';
+
 import { View, StyleSheet, ScrollView, Switch } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
@@ -9,11 +9,16 @@ import { useContentStore } from '../../src/presentation/stores/useContentStore';
 import { ContentSection } from '../../src/presentation/components/learn/ContentSection';
 import { MedicalDisclaimer } from '../../src/presentation/components/learn/MedicalDisclaimer';
 
+import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
+
 export default function PhaseDetailsScreen() {
   const { phase } = useLocalSearchParams<{ phase: string }>();
   const { colors } = useTheme();
   
-  const [isLearnMode, setIsLearnMode] = useState(false);
+  const profile = useProfileStore((state) => state.profile);
+  const updateProfile = useProfileStore((state) => state.updateProfile);
+  const isLearnMode = profile?.learnModeEnabled ?? true;
+
   const learnContent = useContentStore((state) => state.learnContent);
   
   const phaseData = learnContent?.find(p => p.id === phase);
@@ -78,7 +83,7 @@ export default function PhaseDetailsScreen() {
           <Text variant="caption" weight="bold" style={styles.learnModeText}>Detailed Learn Mode</Text>
           <Switch 
             value={isLearnMode} 
-            onValueChange={setIsLearnMode}
+            onValueChange={(val) => updateProfile({ learnModeEnabled: val })}
             trackColor={{ false: 'rgba(0,0,0,0.1)', true: colors.brand.primary }}
             thumbColor={'#fff'}
           />

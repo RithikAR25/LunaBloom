@@ -1,23 +1,99 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/presentation/hooks/useTheme';
+import { useRouter } from 'expo-router';
+import { useTheme } from '../../src/presentation/hooks/useTheme';
+import { spacing } from '@/design-system';
+import { Heading } from '../../src/presentation/components/ui/Heading';
+import { SettingsSection } from '../../src/presentation/components/settings/SettingsSection';
+import { SettingsRow } from '../../src/presentation/components/settings/SettingsRow';
+import { SettingsToggle } from '../../src/presentation/components/settings/SettingsToggle';
+import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
+import { Text } from '../../src/presentation/components/ui/Text';
 
-/** Settings Screen — Phase 2 */
 export default function SettingsScreen() {
   const { colors } = useTheme();
+  const router = useRouter();
+  const profile = useProfileStore((state) => state.profile);
+  const updateProfile = useProfileStore((state) => state.updateProfile);
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>Settings</Text>
-        <Text style={[styles.sub, { color: colors.text.secondary }]}>Privacy, notifications, profile — Phase 2</Text>
-      </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+        <View style={styles.header}>
+          <Heading level="h1" style={{ color: colors.text.primary }}>Settings</Heading>
+        </View>
+
+        <SettingsSection title="Account">
+          <SettingsRow 
+            icon="person-outline" 
+            label="Profile" 
+            value={profile?.preferredName || 'Setup'}
+            onPress={() => router.push('/settings/profile' as any)} 
+          />
+          <SettingsRow 
+            icon="calendar-outline" 
+            label="Cycle Info" 
+            onPress={() => router.push('/settings/cycle' as any)} 
+          />
+          <SettingsRow 
+            icon="fitness-outline" 
+            label="Health & Goals" 
+            onPress={() => router.push('/settings/health' as any)} 
+            isLast
+          />
+        </SettingsSection>
+
+        <SettingsSection title="Preferences">
+          <SettingsToggle 
+            icon="book-outline" 
+            label="Detailed Learn Mode" 
+            value={profile?.learnModeEnabled ?? true}
+            onValueChange={(val) => updateProfile({ learnModeEnabled: val })}
+            isLast
+          />
+        </SettingsSection>
+
+        <SettingsSection title="App (Phase 6)">
+          <SettingsRow icon="notifications-outline" label="Notifications" onPress={() => {}} />
+          <SettingsRow icon="lock-closed-outline" label="Privacy & PIN" onPress={() => {}} />
+          <SettingsRow icon="download-outline" label="Data Export & Import" onPress={() => {}} isLast />
+        </SettingsSection>
+
+        <SettingsSection title="About">
+          <SettingsRow icon="information-circle-outline" label="About LunaBloom" onPress={() => {}} />
+          <SettingsRow icon="document-text-outline" label="Terms of Service" onPress={() => {}} />
+          <SettingsRow icon="shield-checkmark-outline" label="Privacy Policy" onPress={() => {}} isLast />
+        </SettingsSection>
+        
+        <View style={styles.footer}>
+          <Text variant="caption" style={{ color: colors.text.tertiary }}>
+            LunaBloom v1.0.0 (Phase 6)
+          </Text>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
-  title: { fontSize: 22, fontWeight: '600' },
-  sub: { fontSize: 15 },
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    padding: spacing[4],
+    paddingBottom: spacing[8],
+  },
+  header: {
+    marginBottom: spacing[6],
+    marginTop: spacing[2],
+  },
+  footer: {
+    alignItems: 'center',
+    marginTop: spacing[4],
+    marginBottom: spacing[8],
+  },
 });
+
