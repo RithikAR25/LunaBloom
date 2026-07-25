@@ -10,9 +10,10 @@ interface QuickActionButtonProps {
   color: string;
   onPress: () => void;
   accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
-export function QuickActionButton({ label, icon, color, onPress, accessibilityLabel }: QuickActionButtonProps) {
+export function QuickActionButton({ label, icon, color, onPress, accessibilityLabel, accessibilityHint }: QuickActionButtonProps) {
   const { colors } = useTheme();
 
   return (
@@ -25,6 +26,7 @@ export function QuickActionButton({ label, icon, color, onPress, accessibilityLa
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel || label}
+      accessibilityHint={accessibilityHint}
     >
       <View style={[styles.iconContainer, { backgroundColor: `${color}15` }]}>
         <Feather name={icon} size={24} color={color} />

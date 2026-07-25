@@ -1,4 +1,6 @@
 import type { CycleEntry } from '../models/Cycle';
+import { MIN_NORMAL_CYCLE_LENGTH_DAYS } from '../models/Cycle';
+import { daysBetween } from '../../utils/dateUtils';
 
 
 export class ValidationService {
@@ -48,5 +50,28 @@ export class ValidationService {
     }
 
     return false;
+  }
+
+  /**
+   * Checks if starting a cycle on targetStartDate would result in a very short cycle gap.
+   * Returns true if a warning should be shown.
+   */
+  public isShortCycleWarning(targetStartDate: string, existingCycles: CycleEntry[]): boolean {
+    if (existingCycles.length === 0) return false;
+
+    // Find the most recent cycle start date that is BEFORE the targetStartDate
+    let mostRecentStart = '';
+    for (const cycle of existingCycles) {
+      if (cycle.startDate < targetStartDate) {
+        if (!mostRecentStart || cycle.startDate > mostRecentStart) {
+          mostRecentStart = cycle.startDate;
+        }
+      }
+    }
+
+    if (!mostRecentStart) return false; // Target is older than all existing cycles
+
+    const gap = daysBetween(mostRecentStart, targetStartDate);
+    return gap < MIN_NORMAL_CYCLE_LENGTH_DAYS;
   }
 }

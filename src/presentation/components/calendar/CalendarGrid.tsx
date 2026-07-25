@@ -1,12 +1,15 @@
 import { View, StyleSheet, Text } from 'react-native';
-import { DayCell, DayState } from './DayCell';
+import type { DayState } from './DayCell';
+import { DayCell } from './DayCell';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing } from '@/design-system';
+import { spacing, fontSize, fontFamily } from '@/design-system';
+import type { FertilityStatus } from '@/domain/services/CyclePredictionService';
 
 export interface CalendarDayData {
   dateStr: string;
   dayNumber: number;
   state: DayState;
+  fertilityStatus?: FertilityStatus;
 }
 
 interface CalendarGridProps {
@@ -42,6 +45,7 @@ export function CalendarGrid({ days, selectedDate, todayDate, onSelectDate }: Ca
               dateStr={day.dateStr}
               dayNumber={day.dayNumber}
               state={day.state}
+              fertilityStatus={day.fertilityStatus}
               isToday={day.dateStr === todayDate}
               isSelected={day.dateStr === selectedDate}
               onPress={onSelectDate}
@@ -64,8 +68,8 @@ const styles = StyleSheet.create({
   weekDayText: {
     flex: 1,
     textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: fontSize.caption,
+    fontFamily: fontFamily.semiBold,
   },
   grid: {
     flexDirection: 'row',

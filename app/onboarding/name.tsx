@@ -41,7 +41,9 @@ export default function NameScreen() {
       skipLabel="Skip this step"
     >
       <View style={styles.content}>
-        <TextInput
+        <TextInput 
+          accessibilityLabel="Text input field"
+          accessibilityHint="Enter your preferred name"
           label="Preferred Name (Optional)"
           value={preferredName || ''}
           onChangeText={(text) => updateField('preferredName', text)}

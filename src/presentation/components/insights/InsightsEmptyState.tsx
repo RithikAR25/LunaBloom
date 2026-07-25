@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
+import { fontSize, fontFamily, lineHeight } from '@/design-system';
 
 type EmptyStateScenario = 'no-cycles' | 'insufficient-cycles' | 'no-logs';
 
@@ -37,7 +38,7 @@ export function InsightsEmptyState({ scenario }: Props) {
   const { icon, title, message } = getContent();
 
   return (
-    <View style={styles.container} accessible={true} accessibilityLabel={`Empty state: ${title}. ${message}`}>
+    <View style={styles.container} accessible={true} accessibilityLabel={`Empty state: ${title}. ${message}`} accessibilityHint="Indicates that more data is needed to generate insights">
       <View style={[styles.iconContainer, { backgroundColor: colors.surface }]}>
         <Ionicons name={icon} size={32} color={colors.brand.primary} />
       </View>
@@ -64,13 +65,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: fontSize.bodyLg,
+    fontFamily: fontFamily.semiBold,
     textAlign: 'center',
   },
   message: {
-    fontSize: 14,
+    fontSize: fontSize.labelMd,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: fontSize.labelMd * lineHeight.normal,
   },
 });

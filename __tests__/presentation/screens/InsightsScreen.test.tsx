@@ -58,14 +58,9 @@ describe.skip('InsightsScreen', () => {
 
   it('renders loading state initially', () => {
     useInsightsStore.setState({ isLoading: true });
-    try {
-      const tree = renderer.create(<InsightsScreen />);
-      const activityIndicator = tree.root.findAllByProps({ accessibilityLabel: 'Loading insights...' });
-      expect(activityIndicator.length).toBeGreaterThan(0);
-    } catch (e: any) {
-      console.log('CREATE ERROR:', e.message);
-      throw e;
-    }
+    const tree = renderer.create(<InsightsScreen />);
+    const activityIndicator = tree.root.findAllByProps({ accessibilityLabel: 'Loading insights...' });
+    expect(activityIndicator.length).toBeGreaterThan(0);
   });
 
   it('renders no-cycles empty state when cycleStats is null', () => {

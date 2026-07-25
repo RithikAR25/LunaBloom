@@ -57,7 +57,7 @@ export const PhaseCard = ({ id, name, tagline, onPress }: PhaseCardProps) => {
       width: 48,
       height: 48,
       borderRadius: 24,
-      backgroundColor: 'rgba(0,0,0,0.05)',
+      backgroundColor: colors.surfaceNeutral,
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: spacing[4],
@@ -83,6 +83,7 @@ export const PhaseCard = ({ id, name, tagline, onPress }: PhaseCardProps) => {
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`Learn about the ${name} phase`}
+      accessibilityHint="Navigates to detailed educational content about this phase"
     >
       <View style={styles.iconContainer}>
         <Ionicons name={iconName} size={24} color={color} />

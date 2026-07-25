@@ -16,8 +16,7 @@
 
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius, fontSize, spacing } from '@/design-system';
-import { palette } from '@/design-system';
+import { borderRadius, fontSize, spacing, fontFamily, letterSpacing, palette } from '@/design-system';
 
 export type BadgeVariant =
   | 'primary'
@@ -118,7 +117,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    fontWeight: '600',
-    letterSpacing: 0.3,
+    fontFamily: fontFamily.semiBold,
+    letterSpacing: letterSpacing.medium,
   },
 });

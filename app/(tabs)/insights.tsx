@@ -1,8 +1,11 @@
 import { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '@/presentation/hooks/useTheme';
+import { spacing, borderRadius } from '@/design-system';
+import { Text } from '@/presentation/components/ui/Text';
+import { Heading } from '@/presentation/components/ui/Heading';
 import { useInsightsStore } from '@/presentation/stores/useInsightsStore';
 import { InsightsEmptyState } from '@/presentation/components/insights/InsightsEmptyState';
 import { OverviewTab } from '@/presentation/components/insights/OverviewTab';
@@ -49,14 +52,14 @@ export default function InsightsScreen() {
   const renderContent = () => {
     if (isLoading && !cycleStats) {
       return (
-        <View style={styles.center} accessible={true} accessibilityLabel="Loading insights...">
+        <View style={styles.center} accessible={true} accessibilityLabel="Loading insights..." accessibilityHint="Wait while your data is being processed">
           <ActivityIndicator size="large" color={colors.brand.primary} />
         </View>
       );
     }
     if (error) {
       return (
-        <View style={styles.center} accessible={true} accessibilityLabel={`Error loading insights: ${error}`}>
+        <View style={styles.center} accessible={true} accessibilityLabel={`Error loading insights: ${error}`} accessibilityHint="Pull down to refresh and try again">
           <Text style={{ color: colors.semantic.error }}>{error}</Text>
         </View>
       );
@@ -92,7 +95,7 @@ export default function InsightsScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]} accessibilityRole="header">Insights</Text>
+        <Heading level="h2" style={{ color: colors.text.primary }} accessibilityRole="header">Insights</Heading>
       </View>
       
       <View style={styles.tabBar} accessibilityRole="tablist">
@@ -110,10 +113,9 @@ export default function InsightsScreen() {
               accessibilityRole="tab"
               accessibilityState={{ selected: isActive }}
             >
-              <Text style={[
-                styles.tabText,
-                { color: isActive ? '#fff' : colors.text.secondary }
-              ]}>{tab}</Text>
+              <Text variant="label" weight="medium" style={{ color: isActive ? '#fff' : colors.text.secondary }}>
+                {tab}
+              </Text>
             </TouchableOpacity>
           );
         })}
@@ -129,30 +131,22 @@ export default function InsightsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
   },
   tabBar: {
     flexDirection: 'row',
-    padding: 12,
-    gap: 8,
+    padding: spacing.sm,
+    gap: spacing.xs,
   },
   tabButton: {
     flex: 1,
-    paddingVertical: 6,
+    paddingVertical: spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 16,
+    borderRadius: borderRadius.DEFAULT,
     borderWidth: 1,
-  },
-  tabText: {
-    fontSize: 12,
-    fontWeight: '600',
   },
   content: {
     flex: 1,
@@ -161,6 +155,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
+    padding: spacing.md,
   },
 });

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontSize } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
@@ -29,7 +29,7 @@ export default function ProfileSettingsScreen() {
         weightKg: weight ? parseFloat(weight) : null,
       });
       router.back();
-    } catch (e) {
+    } catch {
       Alert.alert('Error', 'Failed to save profile. Please try again.');
     }
   };
@@ -44,7 +44,9 @@ export default function ProfileSettingsScreen() {
           <Text variant="caption" weight="bold" style={[styles.label, { color: colors.text.secondary }]}>
             PREFERRED NAME
           </Text>
-          <TextInput
+          <TextInput 
+            accessibilityLabel="Text input field"
+            accessibilityHint="Enter your preferred name"
             style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.borderSubtle }]}
             value={name}
             onChangeText={setName}
@@ -57,7 +59,9 @@ export default function ProfileSettingsScreen() {
           <Text variant="caption" weight="bold" style={[styles.label, { color: colors.text.secondary }]}>
             DATE OF BIRTH
           </Text>
-          <TextInput
+          <TextInput 
+            accessibilityLabel="Text input field"
+            accessibilityHint="Enter your date of birth"
             style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.borderSubtle }]}
             value={dob}
             onChangeText={setDob}
@@ -70,7 +74,9 @@ export default function ProfileSettingsScreen() {
           <Text variant="caption" weight="bold" style={[styles.label, { color: colors.text.secondary }]}>
             HEIGHT (CM)
           </Text>
-          <TextInput
+          <TextInput 
+            accessibilityLabel="Text input field"
+            accessibilityHint="Enter your height"
             style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.borderSubtle }]}
             value={height}
             onChangeText={setHeight}
@@ -84,7 +90,9 @@ export default function ProfileSettingsScreen() {
           <Text variant="caption" weight="bold" style={[styles.label, { color: colors.text.secondary }]}>
             WEIGHT (KG)
           </Text>
-          <TextInput
+          <TextInput 
+            accessibilityLabel="Text input field"
+            accessibilityHint="Enter your weight"
             style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.borderSubtle }]}
             value={weight}
             onChangeText={setWeight}
@@ -126,7 +134,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[4],
-    fontSize: 16,
+    fontSize: fontSize.bodyMd,
   },
   saveButton: {
     marginTop: spacing[4],

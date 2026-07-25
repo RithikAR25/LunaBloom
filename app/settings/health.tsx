@@ -59,7 +59,7 @@ export default function HealthSettingsScreen() {
         conditions: conditions,
       });
       router.back();
-    } catch (e) {
+    } catch {
       Alert.alert('Error', 'Failed to save health info. Please try again.');
     }
   };
@@ -71,8 +71,8 @@ export default function HealthSettingsScreen() {
   );
 
   const renderCheckbox = (selected: boolean) => (
-    <View style={[styles.checkbox, selected && { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary }]}>
-      {selected && <Ionicons name="checkmark" size={16} color="#fff" />}
+    <View style={[styles.checkbox, { borderColor: colors.borderSubtle }, selected && { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary }]}>
+      {selected && <Ionicons name="checkmark" size={16} color={colors.text.inverse} />}
     </View>
   );
 
@@ -85,7 +85,7 @@ export default function HealthSettingsScreen() {
         </Text>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
           {GOALS.map((g, i) => (
-            <Pressable 
+            <Pressable accessibilityRole="button" 
               key={g.value}
               style={[styles.row, i < GOALS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSubtle }]}
               onPress={() => setGoal(g.value)}
@@ -103,7 +103,7 @@ export default function HealthSettingsScreen() {
         </Text>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
           {BIRTH_CONTROLS.map((bc, i) => (
-            <Pressable 
+            <Pressable accessibilityRole="button" 
               key={bc.value}
               style={[styles.row, i < BIRTH_CONTROLS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSubtle }]}
               onPress={() => setBcType(bc.value as BirthControlType)}
@@ -121,7 +121,7 @@ export default function HealthSettingsScreen() {
         </Text>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
           {CONDITIONS.map((cond, i) => (
-            <Pressable 
+            <Pressable accessibilityRole="button" 
               key={cond.value}
               style={[styles.row, i < CONDITIONS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSubtle }]}
               onPress={() => toggleCondition(cond.value as MedicalCondition)}
@@ -176,7 +176,6 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#9ca3af',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -190,7 +189,6 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: '#9ca3af',
     alignItems: 'center',
     justifyContent: 'center',
   },

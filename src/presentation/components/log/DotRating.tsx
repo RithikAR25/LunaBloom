@@ -36,6 +36,7 @@ export function DotRating({ value, onValueChange, max = 5, color, size = 32 }: D
             ]}
             accessibilityRole="button"
             accessibilityLabel={`Rate ${val} out of ${max}`}
+            accessibilityHint={`Sets the rating to ${val}`}
           >
             <View 
               style={[

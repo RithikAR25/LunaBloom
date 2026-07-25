@@ -6,7 +6,7 @@
  * States: default, pressed (scale 0.97), disabled (40% opacity), loading
  * Shape: pill (borderRadius: full)
  */
-import { useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Animated,
   Pressable,
@@ -17,7 +17,7 @@ import {
   type PressableProps,
 } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius, fontSize, spacing } from '@/design-system';
+import { borderRadius, fontSize, spacing, fontFamily, letterSpacing } from '@/design-system';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -38,12 +38,13 @@ export interface ButtonProps extends Omit<PressableProps, 'style' | 'children'> 
   /** Stretches button to container width */
   fullWidth?: boolean;
   accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
 const SIZE_MAP = {
-  sm: { paddingVertical: spacing[2], paddingHorizontal: spacing[4], textSize: fontSize.label },
-  md: { paddingVertical: spacing[3] + 1, paddingHorizontal: spacing[6], textSize: fontSize.body },
-  lg: { paddingVertical: spacing[4], paddingHorizontal: spacing[8], textSize: fontSize.body + 1 },
+  sm: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, textSize: fontSize.labelMd },
+  md: { paddingVertical: spacing.sm - 4, paddingHorizontal: spacing.md, textSize: fontSize.bodyMd },
+  lg: { paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, textSize: fontSize.bodyLg },
 } as const;
 
 export function Button({
@@ -57,10 +58,11 @@ export function Button({
   rightIcon,
   fullWidth = false,
   accessibilityLabel,
+  accessibilityHint,
   ...rest
 }: ButtonProps) {
   const { colors } = useTheme();
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [scaleAnim] = useState(() => new Animated.Value(1));
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scaleAnim, {
@@ -113,6 +115,7 @@ export function Button({
         disabled={isDisabled}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel ?? label}
+        accessibilityHint={accessibilityHint}
         accessibilityState={{ disabled: isDisabled, busy: loading }}
         style={[
           styles.base,
@@ -133,6 +136,7 @@ export function Button({
             size="small"
             color={textColor}
             accessibilityLabel="Loading"
+            accessibilityHint="Please wait while the action completes"
           />
         ) : (
           <View style={styles.row}>
@@ -150,10 +154,10 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: borderRadius.full,
+    borderRadius: borderRadius.sm, // 8px
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44,
+    minHeight: 48, // slightly taller for better touch target
   },
   fullWidth: {
     width: '100%',
@@ -163,9 +167,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    fontWeight: '600',
-    letterSpacing: 0.2,
+    fontFamily: fontFamily.semiBold,
+    letterSpacing: letterSpacing.button,
   },
-  iconLeft: { marginRight: spacing[2] },
-  iconRight: { marginLeft: spacing[2] },
+  iconLeft: { marginRight: spacing.xs },
+  iconRight: { marginLeft: spacing.xs },
 });

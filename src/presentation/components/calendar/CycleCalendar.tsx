@@ -5,8 +5,9 @@ import { CalendarGrid, CalendarDayData } from './CalendarGrid';
 import { CalendarLegend } from './CalendarLegend';
 import { DayState } from './DayCell';
 import type { CycleEntry } from '../../../domain/models/Cycle';
+import { todayISO } from '../../../utils/dateUtils';
+import { useProfileStore } from '../../../presentation/stores/useProfileStore';
 import { CyclePredictionService } from '../../../domain/services/CyclePredictionService';
-import { todayISO, addDays } from '../../../utils/dateUtils';
 
 interface CycleCalendarProps {
   cycles: CycleEntry[];
@@ -25,14 +26,7 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalen
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
   };
 
-  // Pre-calculate predictions
-  const predictionService = new CyclePredictionService();
-  
-  // Use useMemo to avoid recalculating predictions on every render
-  const predictions = useMemo(() => {
-    if (cycles.length === 0) return null;
-    return predictionService.predictOvulation(cycles);
-  }, [cycles]);
+  const profile = useProfileStore((s) => s.profile);
 
   // Generate grid days
   const days = useMemo(() => {
@@ -51,48 +45,26 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalen
       result.push(null);
     }
 
+    const avgCycleLength = profile?.avgCycleLength || 28;
+    const avgPeriodDuration = profile?.avgPeriodDuration || 5;
+    const predictionService = new CyclePredictionService();
+
     // Actual days
     for (let i = 1; i <= totalDays; i++) {
       const d = new Date(Date.UTC(year, month, i));
       const dateStr = d.toISOString().split('T')[0]!;
-
-      // Determine state for this date based on `cycles` and `predictions`
+      
+      const phaseInfo = predictionService.getPhaseForDate(dateStr, cycles, avgCycleLength, avgPeriodDuration);
+      
       let state: DayState = 'none';
-
-      // Check confirmed periods
-      let isMenstrual = false;
-      for (const cycle of cycles) {
-        if (cycle.endDate) {
-          if (dateStr >= cycle.startDate && dateStr <= cycle.endDate) {
-            isMenstrual = true;
-            break;
-          }
-        } else {
-          if (dateStr >= cycle.startDate && dateStr <= todayISO()) {
-            isMenstrual = true;
-            break;
-          }
-        }
-      }
-
-      if (isMenstrual) {
-        state = 'menstrual';
-      } else if (predictions) {
-        // Check predictions
-        // We know predicted ovulation window and next period start date.
-        // What about luteal / follicular?
-        // Let's keep it simple for now:
-        const { fertileWindowStart, fertileWindowEnd } = predictions;
-        const predictedNextPeriod = predictionService.predictNextPeriod(cycles).predictedStartDate;
-
-        if (dateStr >= predictedNextPeriod && dateStr <= addDays(predictedNextPeriod, 4)) {
-          state = 'predicted_menstrual';
-        } else if (dateStr >= fertileWindowStart && dateStr <= fertileWindowEnd) {
-          state = 'ovulatory';
-        } else if (dateStr > (cycles[0]?.endDate ?? '') && dateStr < fertileWindowStart) {
-          state = 'follicular';
-        } else if (dateStr > fertileWindowEnd && dateStr < predictedNextPeriod) {
-          state = 'luteal';
+      if (phaseInfo.isPredictedMenstrual) {
+        state = 'predicted_menstrual';
+      } else {
+        switch (phaseInfo.phase) {
+          case 'MENSTRUAL': state = 'menstrual'; break;
+          case 'FOLLICULAR': state = 'follicular'; break;
+          case 'OVULATORY': state = 'ovulatory'; break;
+          case 'LUTEAL': state = 'luteal'; break;
         }
       }
 
@@ -100,11 +72,12 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalen
         dateStr,
         dayNumber: i,
         state,
+        fertilityStatus: phaseInfo.fertilityStatus,
       });
     }
 
     return result;
-  }, [currentMonth, cycles, predictions]);
+  }, [currentMonth, cycles, profile]);
 
   return (
     <View style={styles.container}>

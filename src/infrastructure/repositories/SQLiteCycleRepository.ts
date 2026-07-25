@@ -20,6 +20,7 @@ type CycleRow = {
   duration_days: number | null;
   cycle_length_days: number | null;
   notes: string | null;
+  is_excluded_from_predictions: number;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -34,6 +35,7 @@ function rowToModel(row: CycleRow): CycleEntry {
     durationDays: row.duration_days,
     cycleLengthDays: row.cycle_length_days,
     notes: row.notes,
+    isExcludedFromPredictions: row.is_excluded_from_predictions === 1,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     deletedAt: row.deleted_at,
@@ -48,8 +50,8 @@ export class SQLiteCycleRepository implements ICycleRepository {
       await db.runAsync(
         `INSERT INTO cycles
           (id, start_date, end_date, duration_days, cycle_length_days, notes,
-           created_at, updated_at, deleted_at, sync_status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           is_excluded_from_predictions, created_at, updated_at, deleted_at, sync_status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           cycle.id,
           cycle.startDate,
@@ -57,6 +59,7 @@ export class SQLiteCycleRepository implements ICycleRepository {
           cycle.durationDays,
           cycle.cycleLengthDays,
           cycle.notes,
+          cycle.isExcludedFromPredictions ? 1 : 0,
           cycle.createdAt,
           cycle.updatedAt,
           cycle.deletedAt,
@@ -114,18 +117,22 @@ export class SQLiteCycleRepository implements ICycleRepository {
 
       await db.runAsync(
         `UPDATE cycles SET
+          start_date = ?,
           end_date = ?,
           duration_days = ?,
           cycle_length_days = ?,
           notes = ?,
+          is_excluded_from_predictions = ?,
           updated_at = ?,
           sync_status = ?
          WHERE id = ?`,
         [
-          data.endDate ?? existing.endDate,
-          data.durationDays ?? existing.durationDays,
-          data.cycleLengthDays ?? existing.cycleLengthDays,
-          data.notes ?? existing.notes,
+          data.startDate !== undefined ? data.startDate : existing.startDate,
+          data.endDate !== undefined ? data.endDate : existing.endDate,
+          data.durationDays !== undefined ? data.durationDays : existing.durationDays,
+          data.cycleLengthDays !== undefined ? data.cycleLengthDays : existing.cycleLengthDays,
+          data.notes !== undefined ? data.notes : existing.notes,
+          data.isExcludedFromPredictions !== undefined ? (data.isExcludedFromPredictions ? 1 : 0) : (existing.isExcludedFromPredictions ? 1 : 0),
           nowISO(),
           'LOCAL',
           id,

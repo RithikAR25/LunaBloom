@@ -11,6 +11,7 @@ import { EndPeriod } from '../../domain/use-cases/cycle/EndPeriod';
 import { EditCycleEntry } from '../../domain/use-cases/cycle/EditCycleEntry';
 import { DeleteCycleEntry } from '../../domain/use-cases/cycle/DeleteCycleEntry';
 import { ValidationService } from '../../domain/services/ValidationService';
+import { NotificationService } from '../../application/services/NotificationService';
 
 type CycleState = {
   cycles: CycleEntry[];
@@ -23,7 +24,7 @@ type CycleState = {
   loadCycles: () => Promise<void>;
   startPeriod: (startDate: string) => Promise<void>;
   endPeriod: (endDate: string) => Promise<void>;
-  editCycle: (id: string, startDate: string, endDate: string | null, notes: string | null) => Promise<void>;
+  editCycle: (id: string, startDate: string, endDate: string | null, notes: string | null, isExcludedFromPredictions?: boolean) => Promise<void>;
   deleteCycle: (id: string) => Promise<void>;
   clearError: () => void;
 };
@@ -46,6 +47,9 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       const cycles = await _repository.getAll();
       const activeCycle = cycles.find((c) => c.endDate === null) ?? null;
       set({ cycles, activeCycle, isLoading: false });
+      
+      // Reschedule any local notifications based on new cycle data
+      void NotificationService.rescheduleIfEnabled(cycles);
     } catch (err) {
       const message = err instanceof RepositoryError ? err.message : 'Failed to load cycles';
       set({ error: message, isLoading: false });
@@ -86,7 +90,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     }
   },
 
-  editCycle: async (id: string, startDate: string, endDate: string | null, notes: string | null) => {
+  editCycle: async (id: string, startDate: string, endDate: string | null, notes: string | null, isExcludedFromPredictions?: boolean) => {
     const { _repository } = get();
     if (!_repository) throw new Error('[useCycleStore] Repository not injected');
 
@@ -94,7 +98,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     try {
       const validationService = new ValidationService();
       const editCycleUC = new EditCycleEntry(_repository, validationService);
-      await editCycleUC.execute(id, startDate, endDate, notes);
+      await editCycleUC.execute(id, startDate, endDate, notes, isExcludedFromPredictions);
       await get().loadCycles();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to edit cycle';

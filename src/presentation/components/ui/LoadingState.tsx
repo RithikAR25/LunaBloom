@@ -17,6 +17,8 @@ export interface LoadingStateProps {
   /** Whether to fill the full parent height */
   fullScreen?: boolean;
   style?: ViewStyle;
+  /** Describes what is loading or will happen after loading */
+  accessibilityHint?: string;
 }
 
 export function LoadingState({
@@ -25,6 +27,7 @@ export function LoadingState({
   color,
   fullScreen = true,
   style,
+  accessibilityHint,
 }: LoadingStateProps) {
   const { colors } = useTheme();
   const spinnerColor = color ?? colors.brand.primary;
@@ -34,12 +37,14 @@ export function LoadingState({
       style={[styles.container, fullScreen && styles.fullScreen, style]}
       accessibilityRole="none"
       accessibilityLabel={message ?? 'Loading'}
+      accessibilityHint={accessibilityHint}
       accessibilityLiveRegion="polite"
     >
       <ActivityIndicator
         size={size}
         color={spinnerColor}
         accessibilityLabel={message ?? 'Loading'}
+        accessibilityHint={accessibilityHint}
       />
       {message !== undefined && (
         <Text style={[styles.message, { color: colors.text.secondary }]}>

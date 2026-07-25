@@ -8,29 +8,29 @@ import type { Theme } from './light';
 export const darkTheme: Theme = {
   colors: {
     brand: {
-      primary: palette.purple400,
-      secondary: palette.teal400,
-      accent: palette.amber400,
+      primary: palette.sanguineOnPrimaryContainer, // #ff816e (lighter for contrast)
+      secondary: palette.sanguineSecondaryContainer, // #feb9a9
+      accent: palette.sanguineTertiaryContainer, // #443a34
     },
     phase: {
-      menstrual: palette.rose400,
-      follicular: palette.green400,
-      ovulatory: palette.amber400,
-      luteal: palette.purple400,
+      menstrual: palette.rose700,
+      follicular: palette.green700,
+      ovulatory: palette.amber600,
+      luteal: palette.sanguineOutlineVariant,
       predicted: palette.slate600,
     },
-    background: palette.darkBg,
-    surface: palette.darkSurface,
-    surfaceElevated: palette.darkSurfaceElevated,
+    background: palette.darkBg, // #0C0C14
+    surface: palette.darkSurface, // #16162A
+    surfaceElevated: palette.darkSurfaceElevated, // #1E1E35
     border: palette.darkBorder,
     borderSubtle: palette.darkBorderSubtle,
     text: {
-      primary: palette.slate50,
+      primary: palette.sanguineSurface,
       secondary: palette.slate400,
       tertiary: palette.slate600,
-      inverse: palette.slate900,
+      inverse: palette.sanguineOnSurface,
       disabled: palette.slate700,
-      link: palette.purple400,
+      link: palette.sanguineOnPrimaryContainer,
     },
     semantic: {
       success: palette.green500,
@@ -39,6 +39,14 @@ export const darkTheme: Theme = {
       info: palette.blue500,
     },
     overlay: 'rgba(0,0,0,0.7)',
+    overlaySubtle: 'rgba(255,255,255,0.15)',
+    overlayMuted: 'rgba(255,255,255,0.05)',
+    shadow: '#000',
+    switchTrackOff: 'rgba(255,255,255,0.1)',
+    onPrimaryOverlay: 'rgba(255,255,255,0.2)',
+    onPrimarySubtle: 'rgba(255,255,255,0.7)',
+    borderSubtleDark: 'rgba(255,255,255,0.05)',
+    surfaceNeutral: 'rgba(150,150,150,0.2)',
   },
   isDark: true,
 };

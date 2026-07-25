@@ -35,6 +35,14 @@ export interface Theme {
       info: string;
     };
     overlay: string;
+    overlaySubtle: string;
+    overlayMuted: string;
+    shadow: string;
+    switchTrackOff: string;
+    onPrimaryOverlay: string;
+    onPrimarySubtle: string;
+    borderSubtleDark: string;
+    surfaceNeutral: string;
   };
   isDark: boolean;
 }
@@ -46,29 +54,30 @@ export interface Theme {
 export const lightTheme: Theme = {
   colors: {
     brand: {
-      primary: palette.purple600,
-      secondary: palette.teal600,
-      accent: palette.amber600,
+      primary: palette.sanguinePrimary,
+      secondary: palette.sanguinePrimaryContainer,
+      accent: palette.sanguineTertiary,
     },
     phase: {
-      menstrual: palette.rose700,
+      // Maintaining functional colors for phases, but slightly more muted where possible
+      menstrual: palette.sanguinePrimaryContainer,
       follicular: palette.green700,
       ovulatory: palette.amber600,
-      luteal: palette.purple600,
+      luteal: palette.sanguineOutline,
       predicted: palette.slate400,
     },
-    background: palette.slate50,
-    surface: palette.white,
-    surfaceElevated: palette.white,
-    border: palette.slate200,
-    borderSubtle: palette.slate100,
+    background: palette.sanguineSurface, // #faf9f6 - warm white
+    surface: palette.sanguineSurfaceContainerLowest, // #ffffff
+    surfaceElevated: palette.sanguineSurfaceContainerLow, // #f4f3f1
+    border: palette.sanguineOutline,
+    borderSubtle: palette.sanguineOutlineVariant,
     text: {
-      primary: palette.slate900,
-      secondary: palette.slate600,
-      tertiary: palette.slate400,
-      inverse: palette.white,
+      primary: palette.sanguineOnSurface,
+      secondary: palette.sanguineOnSurfaceVariant,
+      tertiary: palette.slate500,
+      inverse: palette.sanguineInverseOnSurface,
       disabled: palette.slate300,
-      link: palette.purple600,
+      link: palette.sanguinePrimary,
     },
     semantic: {
       success: palette.green500,
@@ -76,7 +85,15 @@ export const lightTheme: Theme = {
       error: palette.red500,
       info: palette.blue500,
     },
-    overlay: 'rgba(0,0,0,0.4)',
+    overlay: 'rgba(87, 66, 62, 0.4)', // sanguineOnSurfaceVariant with opacity
+    overlaySubtle: 'rgba(0,0,0,0.15)',
+    overlayMuted: 'rgba(0,0,0,0.05)',
+    shadow: '#000',
+    switchTrackOff: 'rgba(0,0,0,0.1)',
+    onPrimaryOverlay: 'rgba(255,255,255,0.2)',
+    onPrimarySubtle: 'rgba(255,255,255,0.7)',
+    borderSubtleDark: 'rgba(255,255,255,0.05)',
+    surfaceNeutral: 'rgba(150,150,150,0.2)',
   },
   isDark: false,
 };

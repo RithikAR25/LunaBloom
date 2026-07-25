@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing } from '@/design-system';
+import { spacing, fontSize, fontFamily } from '@/design-system';
 
 interface CalendarHeaderProps {
   currentMonth: Date;
@@ -16,16 +16,16 @@ export function CalendarHeader({ currentMonth, onPrevMonth, onNextMonth }: Calen
 
   return (
     <View style={[styles.container, { padding: spacing[4] }]}>
-      <Pressable onPress={onPrevMonth} style={styles.button}>
-        <Text style={{ color: colors.brand.primary, fontSize: 18 }}>{'<'}</Text>
+      <Pressable accessibilityRole="button" onPress={onPrevMonth} style={styles.button}>
+        <Text style={{ color: colors.brand.primary, fontSize: fontSize.bodyLg }}>{'<'}</Text>
       </Pressable>
       
       <Text style={[styles.title, { color: colors.text.primary }]}>
         {monthName} {year}
       </Text>
       
-      <Pressable onPress={onNextMonth} style={styles.button}>
-        <Text style={{ color: colors.brand.primary, fontSize: 18 }}>{'>'}</Text>
+      <Pressable accessibilityRole="button" onPress={onNextMonth} style={styles.button}>
+        <Text style={{ color: colors.brand.primary, fontSize: fontSize.bodyLg }}>{'>'}</Text>
       </Pressable>
     </View>
   );
@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: fontSize.headlineSm,
+    fontFamily: fontFamily.semiBold,
   },
   button: {
     paddingHorizontal: 16,

@@ -8,7 +8,37 @@
  */
 
 export const palette = {
-  // Brand
+  // Sanguine Vitality Brand
+  sanguinePrimary: '#550000',            //#550000',
+  sanguineOnPrimary: '#ffffff',
+  sanguinePrimaryContainer: '#76160d',
+  sanguineOnPrimaryContainer: '#ff816e',
+  sanguineSecondary: '#855145',
+  sanguineOnSecondary: '#ffffff',
+  sanguineSecondaryContainer: '#feb9a9',
+  sanguineOnSecondaryContainer: '#7a473b',
+  sanguineTertiary: '#2d2520',
+  sanguineOnTertiary: '#ffffff',
+  sanguineTertiaryContainer: '#443a34',
+  sanguineOnTertiaryContainer: '#b2a49c',
+
+  // Sanguine Surfaces
+  sanguineSurface: '#faf9f6',
+  sanguineSurfaceDim: '#dbdad7',
+  sanguineSurfaceBright: '#faf9f6',
+  sanguineSurfaceContainerLowest: '#ffffff',
+  sanguineSurfaceContainerLow: '#f4f3f1',
+  sanguineSurfaceContainer: '#efeeeb',
+  sanguineSurfaceContainerHigh: '#e9e8e5',
+  sanguineSurfaceContainerHighest: '#e3e2e0',
+  sanguineOnSurface: '#1a1c1a',
+  sanguineOnSurfaceVariant: '#57423e',
+  sanguineInverseSurface: '#2f312f',
+  sanguineInverseOnSurface: '#f2f1ee',
+  sanguineOutline: '#8b716d',
+  sanguineOutlineVariant: '#dec0bb',
+
+  // Existing Brand
   purple300: '#C4B5FD',
   purple400: '#A78BFA',
   purple600: '#7C3AED',
@@ -32,10 +62,6 @@ export const palette = {
   green400: '#4ADE80',
   green700: '#15803D',
 
-  // Phase — Ovulatory (amber) — uses amber scale above
-
-  // Phase — Luteal (purple) — uses purple scale above
-
   // Neutral
   slate50: '#F8FAFC',
   slate100: '#F1F5F9',
@@ -48,7 +74,7 @@ export const palette = {
   slate800: '#1E293B',
   slate900: '#0F172A',
 
-  // Dark mode surfaces
+  // Dark mode surfaces (Sanguine adapted)
   darkBg: '#0C0C14',
   darkSurface: '#16162A',
   darkSurfaceElevated: '#1E1E35',

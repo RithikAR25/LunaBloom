@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
@@ -37,7 +37,7 @@ export default function CycleSettingsScreen() {
         avgPeriodDuration: period,
       });
       router.back();
-    } catch (e) {
+    } catch {
       Alert.alert('Error', 'Failed to save cycle info. Please try again.');
     }
   };
@@ -50,7 +50,7 @@ export default function CycleSettingsScreen() {
       <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
         
         <View style={[styles.infoBox, { backgroundColor: colors.semantic.info + '20' }]}>
-          <Text variant="caption" style={{ color: colors.semantic.info, lineHeight: 20 }}>
+          <Text variant="caption" style={{ color: colors.semantic.info, lineHeight: fontSize.caption * lineHeight.normal }}>
             Updating these values will recalculate your future cycle predictions. Past logs will not be affected.
           </Text>
         </View>
@@ -59,7 +59,9 @@ export default function CycleSettingsScreen() {
           <Text variant="caption" weight="bold" style={[styles.label, { color: colors.text.secondary }]}>
             AVERAGE CYCLE LENGTH (DAYS)
           </Text>
-          <TextInput
+          <TextInput 
+            accessibilityLabel="Text input field"
+            accessibilityHint="Enter your average cycle length in days"
             style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.borderSubtle }]}
             value={cycleLength}
             onChangeText={setCycleLength}
@@ -71,7 +73,9 @@ export default function CycleSettingsScreen() {
           <Text variant="caption" weight="bold" style={[styles.label, { color: colors.text.secondary }]}>
             AVERAGE PERIOD DURATION (DAYS)
           </Text>
-          <TextInput
+          <TextInput 
+            accessibilityLabel="Text input field"
+            accessibilityHint="Enter your average period duration in days"
             style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.borderSubtle }]}
             value={periodDuration}
             onChangeText={setPeriodDuration}
@@ -116,7 +120,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[4],
-    fontSize: 16,
+    fontSize: fontSize.bodyMd,
   },
   saveButton: {
     marginTop: spacing[4],

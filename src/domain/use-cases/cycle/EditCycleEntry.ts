@@ -1,4 +1,5 @@
 import type { ICycleRepository } from '../../repositories/ICycleRepository';
+import type { CycleEntry } from '../../models/Cycle';
 import { daysBetween, isBefore } from '../../../utils/dateUtils';
 import type { ValidationService } from '../../services/ValidationService';
 
@@ -12,7 +13,8 @@ export class EditCycleEntry {
     id: string,
     startDate: string,
     endDate: string | null,
-    notes: string | null = null
+    notes: string | null = null,
+    isExcludedFromPredictions?: boolean
   ): Promise<void> {
     const existing = await this.cycleRepository.getById(id);
     if (!existing) throw new Error(`Cycle entry ${id} not found.`);
@@ -28,12 +30,18 @@ export class EditCycleEntry {
 
     const durationDays = endDate ? daysBetween(startDate, endDate) + 1 : null;
 
-    await this.cycleRepository.update(id, {
+    const dataToUpdate: Partial<CycleEntry> = {
       startDate,
       endDate,
       durationDays,
       notes,
-    });
+    };
+    
+    if (isExcludedFromPredictions !== undefined) {
+      dataToUpdate.isExcludedFromPredictions = isExcludedFromPredictions;
+    }
+
+    await this.cycleRepository.update(id, dataToUpdate);
 
     // Recalculate cycle lengths for all cycles to ensure consistency
     await this.recalculateAllCycleLengths();

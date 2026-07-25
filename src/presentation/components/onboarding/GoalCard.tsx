@@ -16,7 +16,7 @@ export function GoalCard({ title, description, isSelected, onSelect }: GoalCardP
   const { colors } = useTheme();
 
   return (
-    <Pressable
+    <Pressable accessibilityRole="button"
       onPress={onSelect}
       style={({ pressed }) => [
         styles.container,

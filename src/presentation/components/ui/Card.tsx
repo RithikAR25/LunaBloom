@@ -1,11 +1,12 @@
 /**
  * LunaBloom Card Component
  *
+ *
  * Surface container that groups related content.
  * Optionally pressable (use onPress to make it tappable).
- * All cards use surface color (#16162A dark / #FFFFFF light) with 12pt radius.
+ * All cards use a soft tertiary background (surfaceElevated) with no border and 16px radius.
  */
-import { useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Animated,
   Pressable,
@@ -14,7 +15,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius, spacing } from '@/design-system';
+import { borderRadius, spacing, elevation } from '@/design-system';
 
 export interface CardProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export interface CardProps {
   /** Uses surfaceElevated color for depth layering */
   elevated?: boolean;
   accessibilityLabel?: string;
+  accessibilityHint?: string;
   accessibilityRole?: 'none' | 'button' | 'link';
 }
 
@@ -37,10 +39,11 @@ export function Card({
   padding = spacing[6],
   elevated = false,
   accessibilityLabel,
+  accessibilityHint,
   accessibilityRole,
 }: CardProps) {
   const { colors } = useTheme();
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [scaleAnim] = useState(() => new Animated.Value(1));
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scaleAnim, { toValue: 0.98, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
@@ -52,9 +55,10 @@ export function Card({
 
   const cardStyle: ViewStyle = {
     backgroundColor: elevated ? colors.surfaceElevated : colors.surface,
-    borderColor: colors.border,
-    borderWidth: 1,
     padding,
+    // Cards have no visible border, boundaries defined by soft background
+    borderWidth: 0,
+    ...(elevated ? elevation.level1 : elevation.level0),
   };
 
   if (onPress !== undefined) {
@@ -66,6 +70,7 @@ export function Card({
           onPressOut={handlePressOut}
           accessibilityRole={accessibilityRole ?? 'button'}
           accessibilityLabel={accessibilityLabel}
+          accessibilityHint={accessibilityHint}
           style={[styles.card, cardStyle, style]}
         >
           {children}
@@ -79,6 +84,7 @@ export function Card({
       style={[styles.card, cardStyle, style]}
       accessibilityRole={accessibilityRole ?? 'none'}
       accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
     >
       {children}
     </View>
@@ -87,7 +93,7 @@ export function Card({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.DEFAULT, // 16px
     overflow: 'hidden',
   },
 });

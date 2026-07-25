@@ -1,8 +1,8 @@
-import { Stack } from 'expo-router';
+import { Stack , useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { fontFamily } from '@/design-system';
 
 export default function SettingsLayout() {
   const { colors } = useTheme();
@@ -16,12 +16,12 @@ export default function SettingsLayout() {
         },
         headerTintColor: colors.text.primary,
         headerTitleStyle: {
-          fontWeight: '600',
+          fontFamily: fontFamily.semiBold,
         },
         headerShadowVisible: false,
         animation: 'slide_from_right',
         headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 8, marginRight: 16 }}>
+          <TouchableOpacity accessibilityRole="button" onPress={() => router.back()} style={{ marginLeft: 8, marginRight: 16 }}>
             <Ionicons name="chevron-back" size={24} color={colors.text.primary} />
           </TouchableOpacity>
         ),
@@ -43,6 +43,24 @@ export default function SettingsLayout() {
         name="health"
         options={{
           title: 'Health & Goals',
+        }}
+      />
+      <Stack.Screen
+        name="privacy"
+        options={{
+          title: 'Privacy & PIN',
+        }}
+      />
+      <Stack.Screen
+        name="notifications"
+        options={{
+          title: 'Notifications',
+        }}
+      />
+      <Stack.Screen
+        name="data"
+        options={{
+          title: 'Data Management',
         }}
       />
     </Stack>

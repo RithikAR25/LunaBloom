@@ -1,6 +1,6 @@
 import type { ICycleRepository } from '../../repositories/ICycleRepository';
 import type { CycleEntry } from '../../models/Cycle';
-import { generateId, nowISO, todayISO, daysBetween } from '../../../utils/dateUtils';
+import { generateId, nowISO, todayISO, daysBetween, addDays } from '../../../utils/dateUtils';
 import type { ValidationService } from '../../services/ValidationService';
 
 export class StartPeriod {
@@ -10,29 +10,53 @@ export class StartPeriod {
   ) {}
 
   public async execute(startDate: string = todayISO()): Promise<CycleEntry> {
-    const activeCycle = (await this.cycleRepository.getAll()).find(c => c.endDate === null);
-    
+    const allCycles = await this.cycleRepository.getAll();
     const now = nowISO();
 
-    // If there is an active cycle, end it before starting the new one
-    if (activeCycle) {
-      if (activeCycle.startDate === startDate) {
-        throw new Error('A cycle is already active and started on this date.');
+    const sortedCycles = [...allCycles].sort((a,b) => a.startDate.localeCompare(b.startDate));
+    const subsequentCycles = sortedCycles.filter(c => c.startDate > startDate);
+    const isHistoric = subsequentCycles.length > 0;
+    
+    let targetEndDate: string | null = null;
+    let targetDurationDays: number | null = null;
+
+    if (isHistoric) {
+      const nextCycleStart = subsequentCycles[0]!.startDate;
+      const defaultEnd = addDays(startDate, 4); 
+      
+      if (defaultEnd < nextCycleStart) {
+        targetEndDate = defaultEnd;
+      } else {
+        targetEndDate = addDays(nextCycleStart, -1);
       }
-      
-      const durationDays = daysBetween(activeCycle.startDate, startDate);
-      
-      await this.cycleRepository.update(activeCycle.id, {
-        endDate: startDate,
-        cycleLengthDays: durationDays,
-      });
+      targetDurationDays = daysBetween(startDate, targetEndDate) + 1;
+    } else {
+      const activeCycle = allCycles.find(c => c.endDate === null);
+      if (activeCycle) {
+        if (activeCycle.startDate === startDate) {
+          throw new Error('A cycle is already active and started on this date.');
+        }
+        
+        if (activeCycle.startDate < startDate) {
+          const newEndDate = addDays(startDate, -1);
+          const durationDays = daysBetween(activeCycle.startDate, newEndDate) + 1;
+          await this.cycleRepository.update(activeCycle.id, {
+            endDate: newEndDate,
+            durationDays: durationDays,
+          });
+        }
+      }
+    }
+
+    if (this.validationService.hasOverlap(startDate, targetEndDate, allCycles)) {
+      throw new Error('This period overlaps with an existing logged period.');
     }
 
     const newCycle: CycleEntry = {
       id: generateId(),
       startDate,
-      endDate: null,
-      durationDays: null,
+      endDate: targetEndDate,
+      durationDays: targetDurationDays,
       cycleLengthDays: null,
       notes: null,
       createdAt: now,
@@ -40,11 +64,6 @@ export class StartPeriod {
       deletedAt: null,
       syncStatus: 'LOCAL',
     };
-
-    const allCycles = await this.cycleRepository.getAll();
-    if (this.validationService.hasOverlap(startDate, null, allCycles)) {
-      throw new Error('This period overlaps with an existing logged period.');
-    }
 
     await this.cycleRepository.save(newCycle);
     await this.recalculateAllCycleLengths();

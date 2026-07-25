@@ -176,6 +176,15 @@ const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    version: 2,
+    description: 'Add is_excluded_from_predictions to cycles table',
+    up: async (db) => {
+      await db.execAsync(`
+        ALTER TABLE cycles ADD COLUMN is_excluded_from_predictions INTEGER NOT NULL DEFAULT 0;
+      `);
+    },
+  },
 ];
 
 async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {

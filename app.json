@@ -2,7 +2,7 @@
   "expo": {
     "name": "LunaBloom",
     "slug": "lunabloom",
-    "version": "0.2.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -14,10 +14,8 @@
     "android": {
       "package": "com.lunabloom.app",
       "adaptiveIcon": {
-        "backgroundColor": "#7C3AED",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/icon.png"
       },
       "predictiveBackGestureEnabled": false
     },
@@ -31,7 +29,10 @@
       "expo-font",
       "expo-sqlite",
       "expo-secure-store",
-      "@react-native-community/datetimepicker"
+      "expo-local-authentication",
+      "@react-native-community/datetimepicker",
+      "expo-sharing",
+      "expo-splash-screen"
     ],
     "experiments": {
       "typedRoutes": true

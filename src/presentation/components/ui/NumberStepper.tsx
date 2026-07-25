@@ -13,6 +13,10 @@ export interface NumberStepperProps {
   step?: number;
   label?: string;
   suffix?: string;
+  decrementAccessibilityLabel?: string;
+  incrementAccessibilityLabel?: string;
+  decrementAccessibilityHint?: string;
+  incrementAccessibilityHint?: string;
 }
 
 export function NumberStepper({
@@ -23,6 +27,10 @@ export function NumberStepper({
   step = 1,
   label,
   suffix = '',
+  decrementAccessibilityLabel = 'Decrease value',
+  incrementAccessibilityLabel = 'Increase value',
+  decrementAccessibilityHint = 'Lowers the current value by one step',
+  incrementAccessibilityHint = 'Raises the current value by one step',
 }: NumberStepperProps) {
   const { colors } = useTheme();
 
@@ -46,7 +54,10 @@ export function NumberStepper({
       {label && <Text variant="body" style={[styles.label, { color: colors.text.secondary }]}>{label}</Text>}
       
       <View style={[styles.stepperContainer, { borderColor: colors.border, backgroundColor: colors.surface }]}>
-        <Pressable
+        <Pressable 
+          accessibilityRole="button"
+          accessibilityLabel={decrementAccessibilityLabel}
+          accessibilityHint={decrementAccessibilityHint}
           style={({ pressed }) => [
             styles.button,
             { backgroundColor: pressed ? colors.borderSubtle : 'transparent' },
@@ -65,7 +76,10 @@ export function NumberStepper({
           </Heading>
         </View>
         
-        <Pressable
+        <Pressable 
+          accessibilityRole="button"
+          accessibilityLabel={incrementAccessibilityLabel}
+          accessibilityHint={incrementAccessibilityHint}
           style={({ pressed }) => [
             styles.button,
             { backgroundColor: pressed ? colors.borderSubtle : 'transparent' },

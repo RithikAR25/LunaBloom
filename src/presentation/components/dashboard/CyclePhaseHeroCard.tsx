@@ -4,7 +4,8 @@ import { Feather } from '@expo/vector-icons';
 import { Text } from '../ui/Text';
 import { Heading } from '../ui/Heading';
 import { ProgressBar } from '../ui/ProgressBar';
-import { spacing, borderRadius } from '@/design-system';
+import { useTheme } from '@/presentation/hooks/useTheme';
+import { spacing, borderRadius, letterSpacing } from '@/design-system';
 
 export interface CyclePhaseHeroCardProps {
   phaseName: string;
@@ -23,53 +24,54 @@ export function CyclePhaseHeroCard({
   totalDays,
   periodCountdown,
 }: CyclePhaseHeroCardProps) {
+  const { colors } = useTheme();
   // Progress is clamped between 0 and 1
   const progress = Math.min(Math.max(cycleDay / totalDays, 0), 1) * 100;
 
   return (
     <LinearGradient
-      colors={['#7C3AED', '#1E1E35']}
+      colors={[colors.brand.primary, colors.brand.secondary]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={[styles.container, { borderRadius: borderRadius.xl }]}
+      style={[styles.container, { borderRadius: borderRadius.DEFAULT }]}
     >
       <View style={styles.header}>
         <View style={[styles.badge, { backgroundColor: phaseColor }]}>
-          <Feather name={phaseIcon} size={14} color="#FFF" />
-          <Text variant="micro" weight="bold" style={styles.badgeText}>
+          <Feather name={phaseIcon} size={14} color={colors.text.inverse} />
+          <Text variant="micro" weight="bold" style={[styles.badgeText, { color: colors.text.inverse }]}>
             {phaseName.toUpperCase()}
           </Text>
         </View>
       </View>
 
       <View style={styles.content}>
-        <Heading level="display" style={styles.dayText}>
+        <Heading level="display" style={{ color: colors.text.inverse }}>
           Day {cycleDay}
         </Heading>
       </View>
 
       <View style={styles.progressContainer}>
-        <ProgressBar progress={progress} color="#A78BFA" height={8} />
+        <ProgressBar progress={progress} color={colors.text.inverse} height={8} />
       </View>
 
-      <View style={styles.statsRow}>
+      <View style={[styles.statsRow, { backgroundColor: colors.overlaySubtle }]}>
         <View style={styles.stat}>
-          <Text variant="caption" style={styles.statLabel}>Period in</Text>
-          <Text variant="body" weight="bold" style={styles.statValue}>
+          <Text variant="caption" style={[styles.statLabel, { color: colors.onPrimarySubtle }]}>Period in</Text>
+          <Text variant="body" weight="bold" style={{ color: colors.text.inverse }}>
             {periodCountdown !== null ? `${periodCountdown}d` : '--'}
           </Text>
         </View>
-        <View style={styles.statDivider} />
+        <View style={[styles.statDivider, { backgroundColor: colors.onPrimaryOverlay }]} />
         <View style={styles.stat}>
-          <Text variant="caption" style={styles.statLabel}>Cycle Day</Text>
-          <Text variant="body" weight="bold" style={styles.statValue}>
+          <Text variant="caption" style={[styles.statLabel, { color: colors.onPrimarySubtle }]}>Cycle Day</Text>
+          <Text variant="body" weight="bold" style={{ color: colors.text.inverse }}>
             {cycleDay}
           </Text>
         </View>
-        <View style={styles.statDivider} />
+        <View style={[styles.statDivider, { backgroundColor: colors.onPrimaryOverlay }]} />
         <View style={styles.stat}>
-          <Text variant="caption" style={styles.statLabel}>Cycle Length</Text>
-          <Text variant="body" weight="bold" style={styles.statValue}>
+          <Text variant="caption" style={[styles.statLabel, { color: colors.onPrimarySubtle }]}>Cycle Length</Text>
+          <Text variant="body" weight="bold" style={{ color: colors.text.inverse }}>
             {totalDays}d
           </Text>
         </View>
@@ -80,7 +82,7 @@ export function CyclePhaseHeroCard({
 
 const styles = StyleSheet.create({
   container: {
-    padding: spacing[4],
+    padding: spacing.md,
     width: '100%',
   },
   header: {
@@ -97,15 +99,11 @@ const styles = StyleSheet.create({
     gap: spacing[1],
   },
   badgeText: {
-    color: '#FFF',
-    letterSpacing: 0.5,
+    letterSpacing: letterSpacing.wide,
   },
   content: {
     alignItems: 'center',
     marginVertical: spacing[4],
-  },
-  dayText: {
-    color: '#FFF',
   },
   progressContainer: {
     marginBottom: spacing[4],
@@ -114,9 +112,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    padding: spacing[3],
-    borderRadius: borderRadius.lg,
+    padding: spacing.sm,
+    borderRadius: borderRadius.DEFAULT,
   },
   stat: {
     flex: 1,
@@ -125,13 +122,8 @@ const styles = StyleSheet.create({
   statDivider: {
     width: 1,
     height: 24,
-    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   statLabel: {
-    color: 'rgba(255,255,255,0.7)',
     marginBottom: spacing[1],
-  },
-  statValue: {
-    color: '#FFF',
   },
 });

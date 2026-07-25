@@ -1,6 +1,7 @@
 
-import { View, StyleSheet, ScrollView, Switch } from 'react-native';
+import { View, StyleSheet, ScrollView, Switch, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
+import { useEffect } from 'react';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { spacing, borderRadius } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
@@ -20,7 +21,15 @@ export default function PhaseDetailsScreen() {
   const isLearnMode = profile?.learnModeEnabled ?? true;
 
   const learnContent = useContentStore((state) => state.learnContent);
+  const loadLearnContent = useContentStore((state) => state.loadLearnContent);
+  const isLearnContentLoading = useContentStore((state) => state.isLearnContentLoading);
   
+  useEffect(() => {
+    if (!learnContent) {
+      loadLearnContent();
+    }
+  }, [learnContent, loadLearnContent]);
+
   const phaseData = learnContent?.find(p => p.id === phase);
 
   const styles = StyleSheet.create({
@@ -61,6 +70,14 @@ export default function PhaseDetailsScreen() {
       alignItems: 'center',
     },
   });
+
+  if (isLearnContentLoading || !learnContent) {
+    return (
+      <View style={[styles.container, styles.center]}>
+        <ActivityIndicator size="large" color={colors.brand.primary} />
+      </View>
+    );
+  }
 
   if (!phaseData) {
     return (

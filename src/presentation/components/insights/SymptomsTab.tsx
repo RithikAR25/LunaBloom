@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useContentStore } from '../../stores/useContentStore';
 import type { PhaseSymptomTrends } from '../../../domain/models/Insights';
@@ -13,11 +14,11 @@ export function SymptomsTab({ trends }: Props) {
 
   const getPhaseColor = (phase: string) => {
     switch (phase) {
-      case 'MENSTRUAL': return '#ef4444';
-      case 'FOLLICULAR': return '#3b82f6';
-      case 'OVULATORY': return '#a855f7';
-      case 'LUTEAL': return '#f59e0b';
-      default: return '#9ca3af';
+      case 'MENSTRUAL': return colors.phase.menstrual;
+      case 'FOLLICULAR': return colors.phase.follicular;
+      case 'OVULATORY': return colors.phase.ovulatory;
+      case 'LUTEAL': return colors.phase.luteal;
+      default: return colors.text.disabled;
     }
   };
 
@@ -41,7 +42,7 @@ export function SymptomsTab({ trends }: Props) {
 
   if (maxCount === 0) {
     return (
-      <View style={[styles.emptyContainer, { backgroundColor: colors.background }]} accessible={true} accessibilityLabel="No symptoms logged.">
+      <View style={[styles.emptyContainer, { backgroundColor: colors.background }]} accessible={true} accessibilityLabel="No symptoms logged." accessibilityHint="Indicates no symptoms have been logged yet">
         <Text style={{ color: colors.text.secondary }}>No symptoms logged yet.</Text>
       </View>
     );
@@ -52,6 +53,7 @@ export function SymptomsTab({ trends }: Props) {
       contentContainerStyle={styles.container}
       accessible={true}
       accessibilityLabel="Symptoms Tab. Shows top symptoms grouped by cycle phase."
+      accessibilityHint="Displays symptom occurrences grouped by cycle phase"
     >
       {trends.map(trend => {
         if (trend.topSymptoms.length === 0) return null;
@@ -75,6 +77,7 @@ export function SymptomsTab({ trends }: Props) {
                     style={styles.barContainer}
                     accessible={true}
                     accessibilityLabel={`${getSymptomName(symp.symptomId)}, logged ${symp.count} times.`}
+                    accessibilityHint="Shows the frequency of this symptom in this phase"
                   >
                     <View style={styles.barLabelRow}>
                       <Text style={[styles.symptomName, { color: colors.text.primary }]}>
@@ -84,7 +87,7 @@ export function SymptomsTab({ trends }: Props) {
                         {symp.count} logs
                       </Text>
                     </View>
-                    <View style={styles.barBackground}>
+                    <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral }]}>
                       <View style={[styles.barFill, { width: `${widthPct}%`, backgroundColor: getPhaseColor(trend.phase) }]} />
                     </View>
                   </View>
@@ -104,12 +107,12 @@ const styles = StyleSheet.create({
   card: { borderRadius: 16, padding: 16 },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   phaseDot: { width: 12, height: 12, borderRadius: 6, marginRight: 8 },
-  cardTitle: { fontSize: 16, fontWeight: '600' },
+  cardTitle: { fontSize: fontSize.bodyMd, fontFamily: fontFamily.semiBold },
   list: { gap: 12 },
   barContainer: { gap: 6 },
   barLabelRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
-  symptomName: { fontSize: 14, fontWeight: '500' },
-  symptomCount: { fontSize: 12 },
-  barBackground: { height: 8, backgroundColor: 'rgba(150,150,150,0.1)', borderRadius: 4, overflow: 'hidden' },
+  symptomName: { fontSize: fontSize.labelMd, fontFamily: fontFamily.medium },
+  symptomCount: { fontSize: fontSize.caption },
+  barBackground: { height: 8, borderRadius: 4, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 4 },
 });

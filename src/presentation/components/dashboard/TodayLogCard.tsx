@@ -1,9 +1,9 @@
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontFamily } from '@/design-system';
 import { Text } from '../ui/Text';
-import { Heading } from '../ui/Heading';
+
 import type { DailyLog } from '@/domain/models/DailyLog';
 
 interface TodayLogCardProps {
@@ -20,10 +20,10 @@ export function TodayLogCard({ log, onEdit }: TodayLogCardProps) {
         <View style={styles.emptyContent}>
           <Feather name="file-text" size={32} color={colors.text.tertiary} style={{ marginBottom: spacing[2] }} />
           <Text variant="body" style={{ color: colors.text.secondary, textAlign: 'center', marginBottom: spacing[4] }}>
-            You haven't logged any symptoms or moods today.
+            You haven&apos;t logged any symptoms or moods today.
           </Text>
-          <Pressable onPress={onEdit} style={[styles.actionButton, { backgroundColor: `${colors.brand.primary}15` }]}>
-            <Text variant="label" style={{ color: colors.brand.primary }}>Log Today's Data</Text>
+          <Pressable accessibilityRole="button" onPress={onEdit} style={[styles.actionButton, { backgroundColor: `${colors.brand.primary}15` }]}>
+            <Text variant="label" style={{ color: colors.brand.primary }}>Log Today&apos;s Data</Text>
           </Pressable>
         </View>
       </View>
@@ -37,9 +37,11 @@ export function TodayLogCard({ log, onEdit }: TodayLogCardProps) {
   return (
     <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <View style={styles.header}>
-        <Heading level="h3" style={{ color: colors.text.primary }}>Today's Log</Heading>
-        <Pressable onPress={onEdit} hitSlop={10}>
-          <Text variant="label" style={{ color: colors.brand.primary }}>Edit</Text>
+        <Text style={{ fontFamily: fontFamily.headingBold, fontSize: 22, color: colors.brand.primary }}>
+          Today&apos;s Log
+        </Text>
+        <Pressable accessibilityRole="button" onPress={onEdit} hitSlop={10}>
+          <Feather name="plus-circle" size={22} color={colors.brand.primary} />
         </Pressable>
       </View>
 
@@ -109,8 +111,8 @@ export function TodayLogCard({ log, onEdit }: TodayLogCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: borderRadius.lg,
-    padding: spacing[4],
+    borderRadius: borderRadius.DEFAULT,
+    padding: spacing.md,
     width: '100%',
   },
   emptyContent: {
@@ -126,10 +128,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing[3],
+    marginBottom: spacing.sm,
   },
   summaryContainer: {
-    gap: spacing[3],
+    gap: spacing.sm,
   },
   row: {
     flexDirection: 'row',

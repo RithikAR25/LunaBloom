@@ -15,35 +15,35 @@ import {
   type StyleProp,
 } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { fontSize, lineHeight, letterSpacing } from '@/design-system';
+import { fontSize, lineHeight, letterSpacing, fontFamily } from '@/design-system';
 
 export type HeadingLevel = 'display' | 'h1' | 'h2' | 'h3';
 export type HeadingColor = 'primary' | 'secondary' | 'tertiary' | 'inverse' | 'brand';
 
 const LEVEL_STYLES: Record<HeadingLevel, TextStyle> = {
   display: {
-    fontSize: fontSize.display,
-    fontWeight: '700',
+    fontFamily: fontFamily.headingBold,
+    fontSize: fontSize.headlineLg,
     letterSpacing: letterSpacing.tight,
-    lineHeight: fontSize.display * lineHeight.tight,
+    lineHeight: fontSize.headlineLg * lineHeight.tight,
   },
   h1: {
-    fontSize: fontSize.heading1,
-    fontWeight: '700',
+    fontFamily: fontFamily.headingBold,
+    fontSize: fontSize.headlineLgMobile,
     letterSpacing: letterSpacing.tight,
-    lineHeight: fontSize.heading1 * lineHeight.tight,
+    lineHeight: fontSize.headlineLgMobile * lineHeight.tight,
   },
   h2: {
-    fontSize: fontSize.heading2,
-    fontWeight: '600',
+    fontFamily: fontFamily.headingSemiBold,
+    fontSize: fontSize.headlineMd,
     letterSpacing: letterSpacing.normal,
-    lineHeight: fontSize.heading2 * lineHeight.snug,
+    lineHeight: fontSize.headlineMd * lineHeight.snug,
   },
   h3: {
-    fontSize: fontSize.heading3,
-    fontWeight: '600',
+    fontFamily: fontFamily.headingMedium,
+    fontSize: fontSize.bodyLg,
     letterSpacing: letterSpacing.normal,
-    lineHeight: fontSize.heading3 * lineHeight.snug,
+    lineHeight: fontSize.bodyLg * lineHeight.snug,
   },
 };
 

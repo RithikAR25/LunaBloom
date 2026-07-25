@@ -12,7 +12,7 @@
 
 import { View, Text, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { fontSize, spacing } from '@/design-system';
+import { fontSize, spacing, fontFamily } from '@/design-system';
 import { Button } from './Button';
 
 export interface EmptyStateAction {
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSize.heading3,
-    fontWeight: '600',
+    fontFamily: fontFamily.semiBold,
     textAlign: 'center',
   },
   subtitle: {

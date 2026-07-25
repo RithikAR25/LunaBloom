@@ -40,8 +40,9 @@ export function RangeSlider({ value, onValueChange, min = 1, max = 10, color }: 
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
               accessibilityLabel={`Level ${val}`}
+              accessibilityHint={`Sets the severity level to ${val}`}
             >
-              <Text variant="label" style={{ color: isSelected ? '#FFF' : colors.text.secondary }}>
+              <Text variant="label" style={{ color: isSelected ? colors.text.inverse : colors.text.secondary }}>
                 {val}
               </Text>
             </Pressable>

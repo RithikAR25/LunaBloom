@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useContentStore } from '../../stores/useContentStore';
 import type { PhaseWellbeingTrends, PhaseMoodTrends } from '../../../domain/models/Insights';
@@ -15,11 +16,11 @@ export function WellbeingTab({ wellbeing, moods }: Props) {
 
   const getPhaseColor = (phase: string) => {
     switch (phase) {
-      case 'MENSTRUAL': return '#ef4444';
-      case 'FOLLICULAR': return '#3b82f6';
-      case 'OVULATORY': return '#a855f7';
-      case 'LUTEAL': return '#f59e0b';
-      default: return '#9ca3af';
+      case 'MENSTRUAL': return colors.phase.menstrual;
+      case 'FOLLICULAR': return colors.phase.follicular;
+      case 'OVULATORY': return colors.phase.ovulatory;
+      case 'LUTEAL': return colors.phase.luteal;
+      default: return colors.text.disabled;
     }
   };
 
@@ -40,6 +41,7 @@ export function WellbeingTab({ wellbeing, moods }: Props) {
         style={styles.metricCard} 
         accessible={true} 
         accessibilityLabel={`${label}. Average is ${avg} out of 5, based on ${samples} logs.`}
+        accessibilityHint="Shows your average rating for this metric during this phase"
       >
         <Ionicons name={icon as any} size={24} color={color} />
         <Text style={[styles.metricValue, { color: colors.text.primary }]}>{avg.toFixed(1)}</Text>
@@ -54,7 +56,7 @@ export function WellbeingTab({ wellbeing, moods }: Props) {
 
   if (isEmpty) {
     return (
-      <View style={[styles.emptyContainer, { backgroundColor: colors.background }]} accessible={true} accessibilityLabel="No wellbeing data logged.">
+      <View style={[styles.emptyContainer, { backgroundColor: colors.background }]} accessible={true} accessibilityLabel="No wellbeing data logged." accessibilityHint="Indicates no wellbeing data has been logged yet">
         <Text style={{ color: colors.text.secondary }}>No wellbeing data logged yet.</Text>
       </View>
     );
@@ -65,6 +67,7 @@ export function WellbeingTab({ wellbeing, moods }: Props) {
       contentContainerStyle={styles.container}
       accessible={true}
       accessibilityLabel="Wellbeing Tab. Shows average pain, energy, sleep, and top moods grouped by cycle phase."
+      accessibilityHint="Displays wellbeing and mood trends grouped by cycle phase"
     >
       {wellbeing.map((trend) => {
         const hasMetrics = trend.metrics.painSampleCount > 0 || trend.metrics.energySampleCount > 0 || trend.metrics.sleepSampleCount > 0;
@@ -84,9 +87,9 @@ export function WellbeingTab({ wellbeing, moods }: Props) {
 
             {hasMetrics && (
               <View style={styles.metricsRow}>
-                {renderMetric('Pain', 'medical-outline', trend.metrics.averagePain, trend.metrics.painSampleCount, '#ef4444')}
-                {renderMetric('Energy', 'flash-outline', trend.metrics.averageEnergy, trend.metrics.energySampleCount, '#eab308')}
-                {renderMetric('Sleep', 'moon-outline', trend.metrics.averageSleep, trend.metrics.sleepSampleCount, '#3b82f6')}
+                {renderMetric('Pain', 'medical-outline', trend.metrics.averagePain, trend.metrics.painSampleCount, colors.semantic.error)}
+                {renderMetric('Energy', 'flash-outline', trend.metrics.averageEnergy, trend.metrics.energySampleCount, colors.semantic.warning)}
+                {renderMetric('Sleep', 'moon-outline', trend.metrics.averageSleep, trend.metrics.sleepSampleCount, colors.semantic.info)}
               </View>
             )}
 
@@ -95,7 +98,7 @@ export function WellbeingTab({ wellbeing, moods }: Props) {
                 <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>Top Moods</Text>
                 <View style={styles.moodChips}>
                   {moodTrend.topMoods.map((m: any) => (
-                    <View key={m.moodId} style={[styles.moodChip, { backgroundColor: 'rgba(150,150,150,0.1)' }]}>
+                    <View key={m.moodId} style={[styles.moodChip, { backgroundColor: colors.surfaceNeutral }]}>
                       <Text style={[styles.moodName, { color: colors.text.primary }]}>{getMoodName(m.moodId)}</Text>
                       <Text style={[styles.moodCount, { color: colors.text.secondary }]}>{m.count}</Text>
                     </View>
@@ -116,16 +119,16 @@ const styles = StyleSheet.create({
   card: { borderRadius: 16, padding: 16 },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   phaseDot: { width: 12, height: 12, borderRadius: 6, marginRight: 8 },
-  cardTitle: { fontSize: 16, fontWeight: '600' },
+  cardTitle: { fontSize: fontSize.bodyMd, fontFamily: fontFamily.semiBold },
   metricsRow: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 16 },
   metricCard: { alignItems: 'center', gap: 4 },
-  metricValue: { fontSize: 20, fontWeight: 'bold' },
-  metricLabel: { fontSize: 12 },
+  metricValue: { fontSize: fontSize.headlineSm, fontFamily: fontFamily.bold },
+  metricLabel: { fontSize: fontSize.caption },
   sampleCount: { fontSize: 10 },
   moodsSection: { marginTop: 8 },
-  sectionTitle: { fontSize: 13, marginBottom: 8 },
+  sectionTitle: { fontSize: fontSize.caption, marginBottom: 8 },
   moodChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   moodChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, gap: 6 },
-  moodName: { fontSize: 14, fontWeight: '500' },
-  moodCount: { fontSize: 12 },
+  moodName: { fontSize: fontSize.labelMd, fontFamily: fontFamily.medium },
+  moodCount: { fontSize: fontSize.caption },
 });

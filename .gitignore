@@ -39,3 +39,20 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# IDEs & Agents
+.vscode/
+.idea/
+.claude/
+CLAUDE.md
+AGENTS.md
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+
+# Environment
+.env
+.env.*

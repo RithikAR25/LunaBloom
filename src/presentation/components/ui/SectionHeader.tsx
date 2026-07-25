@@ -9,7 +9,7 @@
 
 import { View, Text, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { fontSize, spacing } from '@/design-system';
+import { fontSize, spacing, fontFamily, letterSpacing } from '@/design-system';
 
 export interface SectionHeaderProps {
   /** Section label — rendered UPPERCASE */
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSize.caption,
-    fontWeight: '600',
-    letterSpacing: 0.8,
+    fontFamily: fontFamily.semiBold,
+    letterSpacing: letterSpacing.wider,
   },
   trailing: {
     alignItems: 'flex-end',

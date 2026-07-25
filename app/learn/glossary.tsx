@@ -1,6 +1,6 @@
 import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
 import { useContentStore } from '../../src/presentation/stores/useContentStore';
@@ -29,7 +29,7 @@ export default function GlossaryScreen() {
     },
     subtitle: {
       color: colors.text.secondary,
-      lineHeight: 24,
+      lineHeight: fontSize.bodyMd * lineHeight.normal,
     },
     termContainer: {
       backgroundColor: colors.surface,
@@ -45,7 +45,7 @@ export default function GlossaryScreen() {
     },
     defText: {
       color: colors.text.secondary,
-      lineHeight: 22,
+      lineHeight: fontSize.bodyMd * lineHeight.normal,
     },
     center: {
       flex: 1,

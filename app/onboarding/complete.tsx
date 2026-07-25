@@ -49,7 +49,7 @@ export default function CompleteScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <Heading level="h1" style={{ color: colors.text.primary, marginBottom: spacing[2], textAlign: 'center' }}>
-            You're all set!
+            You&apos;re all set!
           </Heading>
           <Text variant="body" style={{ color: colors.text.secondary, textAlign: 'center' }}>
             Just one last thing before we begin.

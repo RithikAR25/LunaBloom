@@ -16,7 +16,7 @@ export function SettingsRow({ icon, label, value, onPress, isLast = false }: Set
   const { colors } = useTheme();
 
   return (
-    <Pressable
+    <Pressable accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [
         styles.container,

@@ -36,7 +36,7 @@ export function SectionCard({ title, description, children, style }: SectionCard
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.DEFAULT,
     width: '100%',
     overflow: 'hidden',
   },

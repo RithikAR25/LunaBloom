@@ -1,0 +1,6 @@
+appId: com.lunabloom.app
+---
+- launchApp:
+    clearState: true
+- assertVisible: ".*" # Wait for any element to be visible
+- takeScreenshot: "app_launch"

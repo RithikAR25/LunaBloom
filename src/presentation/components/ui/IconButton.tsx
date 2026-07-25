@@ -4,7 +4,7 @@
  * Circular pressable button for icon-only actions.
  * accessibilityLabel is REQUIRED — no visible text means screen readers need it.
  */
-import { useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { borderRadius } from '@/design-system';
@@ -23,6 +23,8 @@ export interface IconButtonProps {
   variant?: IconButtonVariant;
   size?: IconButtonSize;
   disabled?: boolean;
+  /** Describes the outcome of the action for screen readers */
+  accessibilityHint?: string;
 }
 
 export function IconButton({
@@ -32,9 +34,10 @@ export function IconButton({
   variant = 'surface',
   size = 'md',
   disabled = false,
+  accessibilityHint,
 }: IconButtonProps) {
   const { colors } = useTheme();
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [scaleAnim] = useState(() => new Animated.Value(1));
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scaleAnim, { toValue: 0.92, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
@@ -67,6 +70,7 @@ export function IconButton({
         disabled={disabled}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
         accessibilityState={{ disabled }}
         style={[
           styles.base,

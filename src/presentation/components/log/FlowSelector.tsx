@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontSize, fontFamily } from '@/design-system';
 import type { FlowIntensity } from '../../../domain/models';
 
 interface FlowSelectorProps {
@@ -28,7 +28,7 @@ export function FlowSelector({ value, onChange }: FlowSelectorProps) {
         {options.map((opt) => {
           const isSelected = value === opt.value;
           return (
-            <Pressable
+            <Pressable accessibilityRole="button"
               key={opt.value}
               style={[
                 styles.option,
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: fontSize.bodyMd,
+    fontFamily: fontFamily.semiBold,
   },
   row: {
     flexDirection: 'row',
@@ -83,11 +83,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   optionText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: fontSize.labelMd,
+    fontFamily: fontFamily.medium,
   },
   description: {
-    fontSize: 13,
+    fontSize: fontSize.caption,
     fontStyle: 'italic',
   },
 });

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing } from '@/design-system';
+import { spacing, fontSize } from '@/design-system';
 
 export function CalendarLegend() {
   const { colors } = useTheme();
@@ -49,6 +49,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   label: {
-    fontSize: 12,
+    fontSize: fontSize.caption,
   },
 });

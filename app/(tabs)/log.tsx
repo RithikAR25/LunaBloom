@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -43,8 +43,10 @@ export default function LogScreen() {
   const [energyLevel, setEnergyLevel] = useState<number | null>(null);
   const [sleepQuality, setSleepQuality] = useState<number | null>(null);
   
-  // Sync form state when currentLog changes
-  useEffect(() => {
+  const [prevLog, setPrevLog] = useState<any>(null);
+
+  if (currentLog !== prevLog) {
+    setPrevLog(currentLog);
     if (currentLog) {
       setFlow(currentLog.flowIntensity);
       setMoods(currentLog.moods);
@@ -60,7 +62,7 @@ export default function LogScreen() {
       setEnergyLevel(null);
       setSleepQuality(null);
     }
-  }, [currentLog]);
+  }
 
   const toggleMood = (id: string) => {
     setMoods(prev => {
@@ -89,7 +91,7 @@ export default function LogScreen() {
         sleepQuality,
       });
       router.back();
-    } catch (err) {
+    } catch {
       // Error is handled by the store and displayed in UI
     }
   };
@@ -99,7 +101,7 @@ export default function LogScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={15}>
+        <Pressable accessibilityRole="button" onPress={() => router.back()} hitSlop={15}>
           <Feather name="arrow-left" size={24} color={colors.text.primary} />
         </Pressable>
         <Heading level="h2" style={{ color: colors.text.primary }}>Daily Log</Heading>
@@ -108,7 +110,7 @@ export default function LogScreen() {
 
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}>
         <View style={styles.datePickerContainer}>
-          <Pressable 
+          <Pressable accessibilityRole="button" 
             style={[styles.dateButton, { backgroundColor: colors.surface }]} 
             onPress={() => setShowDatePicker(true)}
           >
@@ -197,7 +199,7 @@ export default function LogScreen() {
       </ScrollView>
 
       {/* Fixed Save Button */}
-      <View style={[styles.footer, { paddingBottom: insets.bottom || spacing[4], backgroundColor: colors.background }]}>
+      <View style={[styles.footer, { paddingBottom: insets.bottom || spacing[4], backgroundColor: colors.background, borderTopColor: colors.borderSubtleDark }]}>
         <Button 
           label="Save Log" 
           onPress={handleSave} 
@@ -250,7 +252,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[4],
     paddingTop: spacing[4],
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.05)',
   },
   errorContainer: {
     flexDirection: 'row',

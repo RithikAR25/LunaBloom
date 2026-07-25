@@ -35,8 +35,8 @@ export function SettingsToggle({ icon, label, value, onValueChange, isLast = fal
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: 'rgba(0,0,0,0.1)', true: colors.brand.primary }}
-        thumbColor={'#fff'}
+        trackColor={{ false: colors.overlaySubtle, true: colors.brand.primary }}
+        thumbColor={colors.text.inverse}
       />
     </View>
   );

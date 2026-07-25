@@ -1,7 +1,7 @@
 import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
 import { useContentStore } from '../../src/presentation/stores/useContentStore';
@@ -44,7 +44,7 @@ export default function LearnHomeScreen() {
     },
     subtitle: {
       color: colors.text.secondary,
-      lineHeight: 24,
+      lineHeight: fontSize.bodyMd * lineHeight.normal,
     },
     glossaryButton: {
       flexDirection: 'row',
@@ -114,7 +114,7 @@ export default function LearnHomeScreen() {
         />
       ))}
 
-      <Pressable 
+      <Pressable accessibilityRole="button" 
         style={styles.glossaryButton}
         onPress={() => router.push('/learn/glossary' as any)}
       >

@@ -16,7 +16,7 @@ import {
   type StyleProp,
 } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { fontSize, lineHeight } from '@/design-system';
+import { fontSize, lineHeight, fontFamily } from '@/design-system';
 
 export type TextVariant = 'body' | 'label' | 'caption' | 'micro';
 export type TextColor =
@@ -39,17 +39,17 @@ export interface TextProps extends RNTextProps {
 }
 
 const VARIANT_STYLES: Record<TextVariant, TextStyle> = {
-  body: { fontSize: fontSize.body, lineHeight: fontSize.body * lineHeight.relaxed },
-  label: { fontSize: fontSize.label, lineHeight: fontSize.label * lineHeight.normal },
+  body: { fontSize: fontSize.bodyMd, lineHeight: fontSize.bodyMd * lineHeight.relaxed },
+  label: { fontSize: fontSize.labelMd, lineHeight: fontSize.labelMd * lineHeight.normal, letterSpacing: 0.05 * fontSize.labelMd },
   caption: { fontSize: fontSize.caption, lineHeight: fontSize.caption * lineHeight.normal },
   micro: { fontSize: fontSize.micro, lineHeight: fontSize.micro * lineHeight.snug },
 };
 
-const WEIGHT_MAP: Record<TextWeight, TextStyle['fontWeight']> = {
-  regular: '400',
-  medium: '500',
-  semiBold: '600',
-  bold: '700',
+const WEIGHT_MAP: Record<TextWeight, { fontWeight: TextStyle['fontWeight']; fontFamily: string }> = {
+  regular: { fontWeight: '400', fontFamily: fontFamily.regular },
+  medium: { fontWeight: '500', fontFamily: fontFamily.medium },
+  semiBold: { fontWeight: '600', fontFamily: fontFamily.semiBold },
+  bold: { fontWeight: '700', fontFamily: fontFamily.bold },
 };
 
 export function Text({
@@ -77,7 +77,11 @@ export function Text({
       style={[
         styles.base,
         VARIANT_STYLES[variant],
-        { color: resolvedColor, fontWeight: WEIGHT_MAP[weight] },
+        { 
+          color: resolvedColor, 
+          fontWeight: WEIGHT_MAP[weight].fontWeight,
+          fontFamily: WEIGHT_MAP[weight].fontFamily 
+        },
         style,
       ]}
       {...rest}

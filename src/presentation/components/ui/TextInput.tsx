@@ -16,7 +16,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius, fontSize, spacing } from '@/design-system';
+import { borderRadius, fontSize, spacing, fontFamily } from '@/design-system';
 
 export interface TextInputProps extends Omit<RNTextInputProps, 'style'> {
   /** Visible label above the input */
@@ -137,33 +137,35 @@ export function TextInput({
 
 const styles = StyleSheet.create({
   wrapper: {
-    gap: spacing[1],
+    gap: spacing.base,
   },
   label: {
-    fontSize: fontSize.label,
-    fontWeight: '500',
-    marginBottom: 2,
+    fontSize: fontSize.labelMd,
+    fontFamily: fontFamily.bold,
+    marginBottom: 4,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: borderRadius.sm,
-    paddingHorizontal: spacing[3],
+    paddingHorizontal: spacing.sm,
     minHeight: 48,
   },
   input: {
-    fontSize: fontSize.body,
-    paddingVertical: spacing[3],
+    fontSize: fontSize.bodyMd,
+    fontFamily: fontFamily.regular,
+    paddingVertical: spacing.sm,
     includeFontPadding: false,
   },
   leftIcon: {
-    marginRight: spacing[2],
+    marginRight: spacing.xs,
   },
   rightIcon: {
-    marginLeft: spacing[2],
+    marginLeft: spacing.xs,
   },
   helperText: {
     fontSize: fontSize.caption,
+    fontFamily: fontFamily.regular,
     marginTop: 2,
   },
 });

@@ -6,6 +6,7 @@
  */
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { useTheme } from '@/presentation/hooks/useTheme';
 import { initDatabase } from './database';
 
 type DatabaseState = 'INITIALIZING' | 'READY' | 'ERROR';
@@ -15,6 +16,7 @@ const DatabaseContext = createContext<{ state: DatabaseState }>({
 });
 
 export function DatabaseProvider({ children }: { children: React.ReactNode }) {
+  const { colors } = useTheme();
   const [state, setState] = useState<DatabaseState>('INITIALIZING');
 
   useEffect(() => {
@@ -28,8 +30,8 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
 
   if (state === 'INITIALIZING') {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#A78BFA" />
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.brand.primary} />
       </View>
     );
   }
@@ -37,8 +39,8 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
   if (state === 'ERROR') {
     // Will be replaced with a proper ErrorState component in Phase 0 UI work
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#EF4444" />
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.semantic.error} />
       </View>
     );
   }
@@ -59,6 +61,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0C0C14',
+    // backgroundColor applied dynamically via theme in each render branch
   },
 });

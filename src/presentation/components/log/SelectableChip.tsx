@@ -16,17 +16,17 @@ export function SelectableChip({ label, icon, selected, onPress, variant }: Sele
   const { colors } = useTheme();
   
   const activeColor = variant === 'mood' ? colors.brand.primary : colors.brand.secondary;
-  const backgroundColor = selected ? activeColor : colors.surface;
-  const textColor = selected ? '#FFF' : colors.text.primary;
-  const iconColor = selected ? '#FFF' : activeColor;
+  const backgroundColor = selected ? activeColor : 'transparent';
+  const textColor = selected ? colors.text.inverse : colors.text.primary;
+  const iconColor = selected ? colors.text.inverse : activeColor;
   
   return (
     <Pressable
       onPress={onPress}
       style={[
         styles.container,
-        { backgroundColor },
-        !selected && { borderWidth: 1, borderColor: colors.borderSubtle }
+        { backgroundColor, borderWidth: selected ? 0 : 2 },
+        !selected && { borderColor: colors.borderSubtle }
       ]}
       accessibilityRole="button"
       accessibilityState={{ selected }}

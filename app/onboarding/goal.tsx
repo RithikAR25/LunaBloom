@@ -75,7 +75,7 @@ export default function GoalScreen() {
         {medicalConditionsData.map((condition: any) => {
           const isSelected = conditions.includes(condition.id);
           return (
-            <Pressable
+            <Pressable accessibilityRole="button"
               key={condition.id}
               onPress={() => toggleCondition(condition.id)}
               style={[

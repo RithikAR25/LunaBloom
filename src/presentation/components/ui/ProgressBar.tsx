@@ -7,7 +7,7 @@
  * progress: 0.0 → 1.0
  * Animates via React Native Animated.Value when animated=true.
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Animated, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { borderRadius } from '@/design-system';
@@ -26,6 +26,8 @@ export interface ProgressBarProps {
   rounded?: boolean;
   style?: ViewStyle;
   accessibilityLabel?: string;
+  /** Describes what the progress represents for screen readers */
+  accessibilityHint?: string;
 }
 
 export function ProgressBar({
@@ -37,9 +39,10 @@ export function ProgressBar({
   rounded = true,
   style,
   accessibilityLabel,
+  accessibilityHint,
 }: ProgressBarProps) {
   const { colors } = useTheme();
-  const widthAnim = useRef(new Animated.Value(0)).current;
+  const [widthAnim] = useState(() => new Animated.Value(0));
 
   const clampedProgress = Math.max(0, Math.min(1, progress));
 
@@ -65,6 +68,7 @@ export function ProgressBar({
       style={[styles.track, { height, backgroundColor: bgColor, borderRadius: radius }, style]}
       accessibilityRole="progressbar"
       accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
       accessibilityValue={{ min: 0, max: 100, now: Math.round(clampedProgress * 100) }}
     >
       <Animated.View

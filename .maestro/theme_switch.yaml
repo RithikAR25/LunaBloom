@@ -1,0 +1,9 @@
+appId: com.lunabloom.app
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "settings-tab"
+- tapOn:
+    id: "theme-toggle"
+- takeScreenshot: "theme_switch"

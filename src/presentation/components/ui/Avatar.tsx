@@ -8,7 +8,7 @@
  */
 import { View, Text, Image, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius } from '@/design-system';
+import { borderRadius, fontFamily } from '@/design-system';
 
 export interface AvatarProps {
   /** User initials to show when no image is available (e.g. 'MR') */
@@ -20,6 +20,7 @@ export interface AvatarProps {
   backgroundColor?: string;
   style?: ViewStyle;
   accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
 export function Avatar({
@@ -29,6 +30,7 @@ export function Avatar({
   backgroundColor,
   style,
   accessibilityLabel = 'User avatar',
+  accessibilityHint = 'Displays your profile settings',
 }: AvatarProps) {
   const { colors } = useTheme();
 
@@ -54,7 +56,9 @@ export function Avatar({
             { width: size, height: size, borderRadius: borderRadius.full },
           ]}
           accessibilityLabel={accessibilityLabel}
+          accessibilityHint={accessibilityHint}
           accessibilityRole="image"
+          accessibilityIgnoresInvertColors={true}
         />
       </View>
     );
@@ -69,6 +73,7 @@ export function Avatar({
       style={[styles.container, containerStyle, style]}
       accessibilityRole="image"
       accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
     >
       <Text style={[styles.initials, { color: colors.brand.primary, fontSize }]}>
         {displayText}
@@ -87,7 +92,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   initials: {
-    fontWeight: '700',
+    fontFamily: fontFamily.bold,
     includeFontPadding: false,
   },
 });

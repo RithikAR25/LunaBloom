@@ -8,10 +8,10 @@
  * The FAB itself renders at a fixed size with a drop shadow-equivalent effect
  * (React Native uses elevation on Android, shadowColor on iOS).
  */
-import { useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Animated, Pressable, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius } from '@/design-system';
+import { borderRadius, elevation } from '@/design-system';
 
 export type FABSize = 'regular' | 'large';
 
@@ -21,6 +21,8 @@ export interface FloatingActionButtonProps {
   onPress: () => void;
   /** Required — screen readers cannot infer purpose from icon alone */
   accessibilityLabel: string;
+  /** Describes the outcome of the action for screen readers */
+  accessibilityHint?: string;
   size?: FABSize;
   /** Override background color — defaults to brand.primary */
   backgroundColor?: string;
@@ -35,13 +37,14 @@ export function FloatingActionButton({
   icon,
   onPress,
   accessibilityLabel,
+  accessibilityHint,
   size = 'regular',
   backgroundColor,
   style,
   disabled = false,
 }: FloatingActionButtonProps) {
   const { colors } = useTheme();
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [scaleAnim] = useState(() => new Animated.Value(1));
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scaleAnim, { toValue: 0.92, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
@@ -69,6 +72,7 @@ export function FloatingActionButton({
         disabled={disabled}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
         accessibilityState={{ disabled }}
         style={[
           styles.button,
@@ -88,13 +92,8 @@ export function FloatingActionButton({
 
 const styles = StyleSheet.create({
   shadow: {
-    // Android
-    elevation: 8,
-    // iOS
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    // Sanguine Ambient Depth
+    ...elevation.level2,
     borderRadius: borderRadius.full,
   },
   button: {

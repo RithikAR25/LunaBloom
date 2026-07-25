@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
@@ -53,16 +53,16 @@ export default function SettingsScreen() {
           />
         </SettingsSection>
 
-        <SettingsSection title="App (Phase 6)">
-          <SettingsRow icon="notifications-outline" label="Notifications" onPress={() => {}} />
-          <SettingsRow icon="lock-closed-outline" label="Privacy & PIN" onPress={() => {}} />
-          <SettingsRow icon="download-outline" label="Data Export & Import" onPress={() => {}} isLast />
+        <SettingsSection title="App (Phase 7)">
+          <SettingsRow icon="notifications-outline" label="Notifications" onPress={() => router.push('/settings/notifications' as any)} />
+          <SettingsRow icon="lock-closed-outline" label="Privacy & PIN" onPress={() => router.push('/settings/privacy' as any)} />
+          <SettingsRow icon="download-outline" label="Data Export & Import" onPress={() => router.push('/settings/data' as any)} isLast />
         </SettingsSection>
 
         <SettingsSection title="About">
-          <SettingsRow icon="information-circle-outline" label="About LunaBloom" onPress={() => {}} />
-          <SettingsRow icon="document-text-outline" label="Terms of Service" onPress={() => {}} />
-          <SettingsRow icon="shield-checkmark-outline" label="Privacy Policy" onPress={() => {}} isLast />
+          <SettingsRow icon="information-circle-outline" label="About LunaBloom" onPress={() => router.push('/settings/about' as any)} />
+          <SettingsRow icon="document-text-outline" label="Terms of Service" onPress={() => Alert.alert('Terms of Service', 'Available at lunabloom.app/terms (placeholder)')} />
+          <SettingsRow icon="shield-checkmark-outline" label="Privacy Policy" onPress={() => Alert.alert('Privacy Policy', 'Available at lunabloom.app/privacy (placeholder)')} isLast />
         </SettingsSection>
         
         <View style={styles.footer}>

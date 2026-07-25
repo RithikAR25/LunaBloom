@@ -1,5 +1,7 @@
 import type { FlowIntensity, SyncStatus } from './index';
 
+export const MIN_NORMAL_CYCLE_LENGTH_DAYS = 15;
+
 /** Represents a single menstrual period entry. */
 export interface CycleEntry {
   /** UUID v4 — generated client-side */
@@ -13,6 +15,7 @@ export interface CycleEntry {
   /** Days between this startDate and the previous cycle's startDate */
   cycleLengthDays: number | null;
   notes: string | null;
+  isExcludedFromPredictions?: boolean;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;

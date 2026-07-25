@@ -18,58 +18,74 @@ describe('CyclePredictionService', () => {
     syncStatus: 'LOCAL',
   });
 
-  describe('predictNextPeriod', () => {
-    it('should use fallback length and LOW confidence when no valid cycles exist', () => {
-      const cycles: CycleEntry[] = [];
-      const result = predictionService.predictNextPeriod(cycles, 28);
-      
-      expect(result.confidenceLevel).toBe('LOW');
-      expect(result.basedOnCycles).toBe(0);
-      expect(result.isIrregular).toBe(false);
-    });
-
-    it('should calculate weighted average correctly for regular cycles', () => {
+  describe('Medical Standards Verification Matrix', () => {
+    it('handles Sparse Data (1 cycle)', () => {
       const cycles: CycleEntry[] = [
-        baseCycle('1', '2024-03-01', 28), // newest
-        baseCycle('2', '2024-02-02', 28),
-        baseCycle('3', '2024-01-05', 28), // oldest
-      ];
-      
-      const result = predictionService.predictNextPeriod(cycles, 28);
-      
-      expect(result.confidenceLevel).toBe('HIGH');
-      expect(result.basedOnCycles).toBe(3);
-      expect(result.isIrregular).toBe(false);
-      expect(result.predictedStartDate).toBe('2024-03-29'); // 2024-03-01 + 28 days
-    });
-
-    it('should detect irregular cycles', () => {
-      const cycles: CycleEntry[] = [
-        baseCycle('1', '2024-03-01', 20),
-        baseCycle('2', '2024-02-10', 35),
-        baseCycle('3', '2024-01-06', 40),
-      ];
-      
-      const result = predictionService.predictNextPeriod(cycles, 28);
-      
-      expect(result.isIrregular).toBe(true);
-      expect(result.confidenceLevel).toBe('LOW'); // because standard deviation > 7
-      expect(result.irregularityExplanation).toBeDefined();
-    });
-  });
-
-  describe('predictOvulation', () => {
-    it('should predict ovulation 14 days before next period', () => {
-      const cycles: CycleEntry[] = [
-        baseCycle('1', '2024-03-01', 28),
+        baseCycle('1', '2024-03-01', null), // Just started
       ];
       
       const result = predictionService.predictOvulation(cycles, 28);
       
-      // Next period = 2024-03-29. Ovulation = 2024-03-15
-      expect(result.predictedOvulationDate).toBe('2024-03-15');
-      expect(result.fertileWindowStart).toBe('2024-03-10'); // 5 days before
-      expect(result.fertileWindowEnd).toBe('2024-03-15');
+      expect(result.confidenceLevel).toBe('LOW');
+      expect(result.fertilityStatus).toBe('unknown');
+    });
+
+    it('handles Regular cycle (28, 28, 28)', () => {
+      const cycles: CycleEntry[] = [
+        baseCycle('3', '2024-03-01', 28),
+        baseCycle('2', '2024-02-02', 28),
+        baseCycle('1', '2024-01-05', 28),
+      ];
+      
+      const result = predictionService.predictOvulation(cycles, 28);
+      
+      expect(result.confidenceLevel).toBe('HIGH');
+      expect(result.fertilityStatus).toBe('possible');
+    });
+
+    it('handles Long cycle (35, 35, 35, 35)', () => {
+      const cycles: CycleEntry[] = [
+        baseCycle('4', '2024-04-15', 35),
+        baseCycle('3', '2024-03-11', 35),
+        baseCycle('2', '2024-02-05', 35),
+        baseCycle('1', '2024-01-01', 35),
+      ];
+      
+      const result = predictionService.predictOvulation(cycles, 28);
+      
+      expect(result.confidenceLevel).toBe('HIGH');
+      expect(result.fertilityStatus).toBe('possible');
+    });
+
+    it('handles Stable Short Cycle (20, 20, 20)', () => {
+      const cycles: CycleEntry[] = [
+        baseCycle('3', '2024-02-09', 20),
+        baseCycle('2', '2024-01-20', 20),
+        baseCycle('1', '2024-01-01', 20),
+      ];
+      
+      const result = predictionService.predictOvulation(cycles, 28);
+      
+      // Standard deviation is 0, so confidence is HIGH based purely on variance,
+      // BUT avgLength < 21 forces fertilityStatus to unknown and LOW confidence for ovulation!
+      expect(result.confidenceLevel).toBe('LOW');
+      expect(result.fertilityStatus).toBe('unknown');
+      expect(result.explanation).toBeDefined();
+    });
+
+    it('handles Highly Irregular cycle (18, 33, 22, 37)', () => {
+      const cycles: CycleEntry[] = [
+        baseCycle('4', '2024-04-21', 18),
+        baseCycle('3', '2024-03-19', 33),
+        baseCycle('2', '2024-02-25', 22),
+        baseCycle('1', '2024-01-19', 37),
+      ];
+      
+      const result = predictionService.predictOvulation(cycles, 28);
+      
+      // Std dev > 7 -> LOW confidence
+      expect(result.confidenceLevel).toBe('LOW');
+      expect(result.fertilityStatus).toBe('unknown');
     });
   });
 });

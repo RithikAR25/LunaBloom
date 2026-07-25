@@ -1,7 +1,7 @@
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../ui/Text';
 import { Heading } from '../ui/Heading';
 
@@ -22,12 +22,12 @@ export function HealthTipCard({ tip, onLearnMore }: HealthTipCardProps) {
             Health Tip
           </Heading>
         </View>
-        <Text variant="body" style={{ color: colors.text.secondary, marginTop: spacing[2], lineHeight: 22 }}>
+        <Text variant="body" style={{ color: colors.text.secondary, marginTop: spacing[2], lineHeight: fontSize.bodyMd * lineHeight.normal }}>
           {tip}
         </Text>
         
         {onLearnMore && (
-          <Pressable onPress={onLearnMore} style={styles.learnMoreButton}>
+          <Pressable accessibilityRole="button" onPress={onLearnMore} style={styles.learnMoreButton}>
             <Text variant="label" style={{ color: colors.brand.primary }}>Learn More</Text>
             <Feather name="arrow-right" size={14} color={colors.brand.primary} style={{ marginLeft: spacing[1] }} />
           </Pressable>

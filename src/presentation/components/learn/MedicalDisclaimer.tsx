@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -32,7 +32,7 @@ export const MedicalDisclaimer = () => {
     },
     text: {
       color: colors.text.secondary,
-      lineHeight: 18,
+      lineHeight: fontSize.caption * lineHeight.normal,
     },
   });
 

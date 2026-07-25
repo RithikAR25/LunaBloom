@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../ui/Text';
 import { LearnSection } from '../../../domain/repositories/IContentRepository';
 import { Ionicons } from '@expo/vector-icons';
@@ -36,7 +36,7 @@ export const ContentSection = ({ section, iconName, showDetails }: ContentSectio
     },
     summary: {
       color: colors.text.secondary,
-      lineHeight: 22,
+      lineHeight: fontSize.bodyMd * lineHeight.normal,
     },
     detailsContainer: {
       marginTop: spacing[4],
@@ -46,7 +46,7 @@ export const ContentSection = ({ section, iconName, showDetails }: ContentSectio
     },
     detailsText: {
       color: colors.text.primary,
-      lineHeight: 22,
+      lineHeight: fontSize.bodyMd * lineHeight.normal,
       opacity: 0.9,
     },
   });

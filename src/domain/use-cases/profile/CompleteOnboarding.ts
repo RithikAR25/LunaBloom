@@ -1,8 +1,7 @@
 import type { IUserProfileRepository } from '../../repositories/IUserProfileRepository';
 import type { ICycleRepository } from '../../repositories/ICycleRepository';
-import { UserProfile, CycleEntry } from '../../models';
+import { UserProfile, CycleEntry , UserGoal } from '../../models';
 import { DEFAULT_PROFILE } from '../../models/UserProfile';
-import { UserGoal } from '../../models/index';
 import { generateId } from '../../../utils/dateUtils';
 
 export interface CompleteOnboardingParams {

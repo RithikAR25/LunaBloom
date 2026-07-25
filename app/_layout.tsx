@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { useColorScheme, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { useTheme } from '@/presentation/hooks/useTheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DatabaseProvider } from '@/infrastructure/database/DatabaseProvider';
@@ -8,6 +9,25 @@ import { RepositoryProvider } from '@/infrastructure/repositories/RepositoryProv
 import { useProfileStore } from '@/presentation/stores/useProfileStore';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
 import { useContentStore } from '@/presentation/stores/useContentStore';
+import { LockScreen } from '@/presentation/components/privacy/LockScreen';
+import { PrivacyService } from '@/application/services/PrivacyService';
+
+import {
+  useFonts,
+  Quicksand_400Regular,
+  Quicksand_500Medium,
+  Quicksand_600SemiBold,
+  Quicksand_700Bold,
+} from '@expo-google-fonts/quicksand';
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 /**
  * NavigationGate — reads profile store and redirects to onboarding if needed.
@@ -28,7 +48,7 @@ function NavigationGate() {
 
     if (!onboardingComplete && !inOnboarding) {
       // First launch or incomplete onboarding → go to onboarding
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       router.replace('/onboarding' as any);
     } else if (onboardingComplete && inOnboarding) {
       // Already onboarded, somehow in onboarding → go to tabs
@@ -55,6 +75,7 @@ function AppProviders({ children }: { children: React.ReactNode }) {
     void loadProfile();
     void loadCycles();
     void loadContent();
+    PrivacyService.initialize();
   }, [loadProfile, loadCycles, loadContent]);
 
   return <>{children}</>;
@@ -72,9 +93,29 @@ function AppProviders({ children }: { children: React.ReactNode }) {
  *             NavigationGate      ← handles onboarding redirect
  *               Stack             ← route definitions
  */
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+function RootLayout() {
+  const { colors } = useTheme();
+
+  const [fontsLoaded, fontError] = useFonts({
+    Quicksand_400Regular,
+    Quicksand_500Medium,
+    Quicksand_600SemiBold,
+    Quicksand_700Bold,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
 
   return (
     <GestureHandlerRootView style={styles.root}>
@@ -88,7 +129,7 @@ export default function RootLayout() {
                   headerShown: false,
                   animation: 'fade',
                   contentStyle: {
-                    backgroundColor: isDark ? '#0C0C14' : '#F8FAFC',
+                    backgroundColor: colors.background,
                   },
                 }}
               >
@@ -127,6 +168,7 @@ export default function RootLayout() {
                 {/* 404 fallback */}
                 <Stack.Screen name="+not-found" />
               </Stack>
+              <LockScreen />
             </AppProviders>
           </RepositoryProvider>
         </DatabaseProvider>
@@ -138,3 +180,5 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
 });
+
+export default RootLayout;

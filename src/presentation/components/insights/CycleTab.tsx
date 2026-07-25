@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 import type { CycleStatistics } from '../../../domain/models/Insights';
 
@@ -31,38 +32,39 @@ export function CycleTab({ stats }: Props) {
       contentContainerStyle={styles.container}
       accessible={true}
       accessibilityLabel={`Cycle Tab. Average phase breakdown: Menstrual ${menstrual} days, Follicular ${follicular} days, Ovulatory ${ovulatory} days, Luteal ${luteal} days.`}
+      accessibilityHint="Provides a breakdown of your average cycle phases"
     >
       <View style={[styles.card, { backgroundColor: colors.surface }]}>
         <Text style={[styles.cardTitle, { color: colors.text.primary }]}>Average Phase Breakdown</Text>
         <Text style={[styles.cardSubtitle, { color: colors.text.secondary }]}>Based on your {total}-day average cycle</Text>
 
         {/* Stacked Bar Chart */}
-        <View style={styles.chartContainer} accessible={true} accessibilityLabel="Horizontal bar chart showing cycle phases.">
-          <View style={[styles.barSegment, { width: `${menstrualPct}%`, backgroundColor: '#ef4444' }]} />
-          <View style={[styles.barSegment, { width: `${follicularPct}%`, backgroundColor: '#3b82f6' }]} />
-          <View style={[styles.barSegment, { width: `${ovulatoryPct}%`, backgroundColor: '#a855f7' }]} />
-          <View style={[styles.barSegment, { width: `${lutealPct}%`, backgroundColor: '#f59e0b', borderTopRightRadius: 8, borderBottomRightRadius: 8 }]} />
+        <View style={styles.chartContainer} accessible={true} accessibilityLabel="Horizontal bar chart showing cycle phases." accessibilityHint="Visual representation of the phase lengths">
+          <View style={[styles.barSegment, { width: `${menstrualPct}%`, backgroundColor: colors.phase.menstrual }]} />
+          <View style={[styles.barSegment, { width: `${follicularPct}%`, backgroundColor: colors.phase.follicular }]} />
+          <View style={[styles.barSegment, { width: `${ovulatoryPct}%`, backgroundColor: colors.phase.ovulatory }]} />
+          <View style={[styles.barSegment, { width: `${lutealPct}%`, backgroundColor: colors.phase.luteal, borderTopRightRadius: 8, borderBottomRightRadius: 8 }]} />
         </View>
 
         {/* Legend */}
         <View style={styles.legend}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: '#ef4444' }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.phase.menstrual }]} />
             <Text style={[styles.legendText, { color: colors.text.primary }]}>Menstrual</Text>
             <Text style={[styles.legendDays, { color: colors.text.secondary }]}>{menstrual}d</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: '#3b82f6' }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.phase.follicular }]} />
             <Text style={[styles.legendText, { color: colors.text.primary }]}>Follicular</Text>
             <Text style={[styles.legendDays, { color: colors.text.secondary }]}>{follicular}d</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: '#a855f7' }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.phase.ovulatory }]} />
             <Text style={[styles.legendText, { color: colors.text.primary }]}>Ovulatory</Text>
             <Text style={[styles.legendDays, { color: colors.text.secondary }]}>{ovulatory}d</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: '#f59e0b' }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.phase.luteal }]} />
             <Text style={[styles.legendText, { color: colors.text.primary }]}>Luteal</Text>
             <Text style={[styles.legendDays, { color: colors.text.secondary }]}>{luteal}d</Text>
           </View>
@@ -75,8 +77,8 @@ export function CycleTab({ stats }: Props) {
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 16 },
   card: { borderRadius: 16, padding: 16 },
-  cardTitle: { fontSize: 16, fontWeight: '600', marginBottom: 4 },
-  cardSubtitle: { fontSize: 13, marginBottom: 16 },
+  cardTitle: { fontSize: fontSize.bodyMd, fontFamily: fontFamily.semiBold, marginBottom: 4 },
+  cardSubtitle: { fontSize: fontSize.caption, marginBottom: 16 },
   chartContainer: {
     height: 24,
     flexDirection: 'row',
@@ -103,10 +105,10 @@ const styles = StyleSheet.create({
   },
   legendText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: fontSize.labelMd,
   },
   legendDays: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: fontSize.labelMd,
+    fontFamily: fontFamily.medium,
   },
 });

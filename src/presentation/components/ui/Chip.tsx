@@ -12,11 +12,10 @@
  *   green    → follicular phase chips
  *   neutral  → unselected / default
  */
-import { useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Animated, Pressable, View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius, fontSize, spacing } from '@/design-system';
-import { palette } from '@/design-system';
+import { borderRadius, fontSize, spacing, fontFamily, palette } from '@/design-system';
 
 export type ChipColorVariant =
   | 'primary'
@@ -35,23 +34,24 @@ export interface ChipProps {
   colorVariant?: ChipColorVariant;
   disabled?: boolean;
   accessibilityLabel?: string;
+  accessibilityHint?: string;
   /** If true, renders without a press handler (display only) */
   readOnly?: boolean;
 }
 
 const FILL_COLORS: Record<ChipColorVariant, string> = {
-  primary: palette.purple600,
-  secondary: palette.teal600,
-  rose: palette.rose700,
-  amber: palette.amber600,
-  green: palette.green700,
-  neutral: palette.slate600,
+  primary: palette.sanguinePrimary, // purple -> sanguinePrimary
+  secondary: palette.sanguineSecondary, // teal -> sanguineSecondary
+  rose: palette.sanguineOnPrimaryContainer,
+  amber: palette.amber600, // kept for ovulatory phase
+  green: palette.green700, // kept for follicular phase
+  neutral: palette.slate500,
 };
 
 const FILL_COLORS_DARK: Record<ChipColorVariant, string> = {
-  primary: palette.purple400,
-  secondary: palette.teal400,
-  rose: palette.rose400,
+  primary: palette.sanguineOnPrimaryContainer,
+  secondary: palette.sanguineSecondaryContainer,
+  rose: palette.sanguineOnPrimaryContainer,
   amber: palette.amber400,
   green: palette.green400,
   neutral: palette.slate500,
@@ -65,10 +65,11 @@ export function Chip({
   colorVariant = 'neutral',
   disabled = false,
   accessibilityLabel,
+  accessibilityHint,
   readOnly = false,
 }: ChipProps) {
   const { colors, isDark } = useTheme();
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [scaleAnim] = useState(() => new Animated.Value(1));
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scaleAnim, { toValue: 0.95, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
@@ -80,12 +81,13 @@ export function Chip({
 
   const fillColor = isDark ? FILL_COLORS_DARK[colorVariant] : FILL_COLORS[colorVariant];
 
-  const bgColor = selected ? fillColor : colors.surface;
+  const bgColor = selected ? fillColor : 'transparent';
   const borderColor = selected ? fillColor : colors.border;
   const textColor = selected ? palette.white : colors.text.secondary;
+  const borderWidth = selected ? 0 : 2;
 
   const chipContent = (
-    <View style={[styles.inner, { backgroundColor: bgColor, borderColor }]}>
+    <View style={[styles.inner, { backgroundColor: bgColor, borderColor, borderWidth }]}>
       {icon !== undefined && <View style={styles.icon}>{icon}</View>}
       <Text
         style={[styles.label, { color: textColor }]}
@@ -101,6 +103,7 @@ export function Chip({
       <View
         accessibilityRole="none"
         accessibilityLabel={accessibilityLabel ?? label}
+        accessibilityHint={accessibilityHint}
         accessibilityState={{ selected }}
         style={{ opacity: disabled ? 0.4 : 1 }}
       >
@@ -118,6 +121,7 @@ export function Chip({
         disabled={disabled}
         accessibilityRole="checkbox"
         accessibilityLabel={accessibilityLabel ?? label}
+        accessibilityHint={accessibilityHint}
         accessibilityState={{ selected, disabled }}
       >
         {chipContent}
@@ -130,19 +134,18 @@ const styles = StyleSheet.create({
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing[3],
-    paddingVertical: spacing[2] - 2,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
-    borderWidth: 1,
-    minHeight: 32,
-    gap: spacing[1],
+    minHeight: 36,
+    gap: spacing.base,
   },
   icon: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   label: {
-    fontSize: fontSize.label,
-    fontWeight: '500',
+    fontSize: fontSize.labelMd,
+    fontFamily: fontFamily.medium,
   },
 });

@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/presentation/hooks/useTheme';
+import { fontFamily, fontSize } from '@/design-system';
 
 /**
  * Tab Navigator Layout
@@ -10,13 +11,12 @@ import { Ionicons } from '@expo/vector-icons';
  * Actual screen content implemented in later phases.
  */
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { colors } = useTheme();
 
-  const activeColor = isDark ? '#A78BFA' : '#7C3AED';
-  const inactiveColor = isDark ? '#475569' : '#94A3B8';
-  const backgroundColor = isDark ? '#16162A' : '#FFFFFF';
-  const borderColor = isDark ? '#2A2A45' : '#E2E8F0';
+  const activeColor = colors.brand.primary;
+  const inactiveColor = colors.text.tertiary;
+  const backgroundColor = colors.surface;
+  const borderColor = colors.borderSubtle;
 
   return (
     <Tabs
@@ -33,8 +33,8 @@ export default function TabLayout() {
           height: 60,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '500',
+          fontSize: fontSize.tabLabel,
+          fontFamily: fontFamily.medium,
         },
       }}
     >

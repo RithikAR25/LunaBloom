@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, RefreshControl, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -6,16 +6,19 @@ import { useCycleStore } from '../../src/presentation/stores/useCycleStore';
 import { useDailyLogStore } from '../../src/presentation/stores/useDailyLogStore';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing } from '../../src/design-system';
+import { spacing, borderRadius, fontFamily } from '../../src/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
-import { CyclePhaseHeroCard } from '../../src/presentation/components/dashboard/CyclePhaseHeroCard';
-import { QuickActionButton } from '../../src/presentation/components/dashboard/QuickActionButton';
+import { MinimalCycleHero } from '../../src/presentation/components/dashboard/MinimalCycleHero';
+import { GridActionButton } from '../../src/presentation/components/dashboard/GridActionButton';
 import { TodayLogCard } from '../../src/presentation/components/dashboard/TodayLogCard';
 import { HealthTipCard } from '../../src/presentation/components/dashboard/HealthTipCard';
 import { CycleHistoryChart } from '../../src/presentation/components/dashboard/CycleHistoryChart';
 import { useContentStore } from '../../src/presentation/stores/useContentStore';
-import { useState, useEffect } from 'react';
+import { ValidationService } from '../../src/domain/services/ValidationService';
+import { CyclePredictionService } from '../../src/domain/services/CyclePredictionService';
+import { ConfirmModal } from '../../src/presentation/components/ui/ConfirmModal';
+import { useState, useEffect, useMemo } from 'react';
 
 export default function DashboardScreen() {
   const { colors } = useTheme();
@@ -23,6 +26,10 @@ export default function DashboardScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   
+  const [shortCycleWarningVisible, setShortCycleWarningVisible] = useState(false);
+  const [endPeriodWarningVisible, setEndPeriodWarningVisible] = useState(false);
+  const [pendingStartDate, setPendingStartDate] = useState<string | null>(null);
+
   const { profile } = useProfileStore();
   const { activeCycle, cycles, loadCycles } = useCycleStore();
   const { currentLog, loadLogForDate } = useDailyLogStore();
@@ -30,9 +37,23 @@ export default function DashboardScreen() {
 
   const todayStr = new Date().toISOString().split('T')[0] || '';
 
-  // Calculate cycleDay and currentPhase locally
-  const cycleDay = activeCycle ? Math.floor((new Date(todayStr).getTime() - new Date(activeCycle.startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1 : null;
-  const currentPhase = activeCycle ? (cycleDay && cycleDay <= (profile?.avgPeriodDuration || 5) ? 'MENSTRUAL' : cycleDay && cycleDay <= 14 ? 'FOLLICULAR' : cycleDay && cycleDay <= 17 ? 'OVULATORY' : 'LUTEAL') : null;
+  const sortedCycles = [...cycles].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+  const latestCycle = sortedCycles.length > 0 ? sortedCycles[0] : null;
+
+  const predictionService = useMemo(() => new CyclePredictionService(), []);
+  
+  const phaseInfo = useMemo(() => {
+    if (!latestCycle) return null;
+    return predictionService.getPhaseForDate(
+      todayStr,
+      cycles,
+      profile?.avgCycleLength || 28,
+      profile?.avgPeriodDuration || 5
+    );
+  }, [latestCycle, todayStr, cycles, profile, predictionService]);
+
+  const currentPhase = phaseInfo ? phaseInfo.phase : null;
+  const cycleDay = phaseInfo ? phaseInfo.cycleDay : null;
 
   useEffect(() => {
     loadLogForDate(todayStr);
@@ -47,7 +68,7 @@ export default function DashboardScreen() {
 
   const getPhaseDetails = () => {
     switch (currentPhase) {
-      case 'MENSTRUAL': return { name: 'Menstrual Phase', icon: 'drop', color: colors.phase.menstrual, tipCategory: 'MENSTRUAL' };
+      case 'MENSTRUAL': return { name: phaseInfo?.fertilityStatus === 'fertile' || phaseInfo?.fertilityStatus === 'possible' ? 'Menstrual (Possible Fertility)' : 'Menstrual Phase', icon: 'droplet', color: colors.phase.menstrual, tipCategory: 'MENSTRUAL' };
       case 'FOLLICULAR': return { name: 'Follicular Phase', icon: 'leaf', color: colors.phase.follicular, tipCategory: 'FOLLICULAR' };
       case 'OVULATORY': return { name: 'Ovulatory Phase', icon: 'sun', color: colors.phase.ovulatory, tipCategory: 'OVULATORY' };
       case 'LUTEAL': return { name: 'Luteal Phase', icon: 'moon', color: colors.phase.luteal, tipCategory: 'LUTEAL' };
@@ -66,18 +87,18 @@ export default function DashboardScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Sticky Header */}
-      <View style={[styles.header, { paddingTop: insets.top + spacing[4] }]}>
+      <View style={[styles.header, { paddingTop: insets.top + spacing.md }]}>
         <View>
-          <Text variant="caption" style={{ color: colors.text.secondary }}>
+          <Text style={{ fontFamily: fontFamily.headingBold, fontSize: 28, color: colors.brand.primary, lineHeight: 32 }}>
             Good morning,
           </Text>
-          <Heading level="h2" style={{ color: colors.text.primary }}>
+          <Text style={{ fontFamily: fontFamily.headingBold, fontSize: 24, color: colors.brand.primary, opacity: 0.8 }}>
             {profile?.preferredName || 'Beautiful'}
-          </Heading>
+          </Text>
         </View>
         <View style={styles.headerRight}>
-          <Feather name="bell" size={24} color={colors.text.primary} accessibilityLabel="Notifications" />
-          <View style={[styles.avatarPlaceholder, { backgroundColor: colors.surface }]} />
+          <Feather name="bell" size={22} color={colors.brand.primary} accessibilityLabel="Notifications" accessibilityHint="View your recent notifications" />
+          <Feather name="user" size={24} color={colors.brand.primary} accessibilityLabel="Profile" accessibilityHint="View and edit your profile settings" />
         </View>
       </View>
 
@@ -85,17 +106,17 @@ export default function DashboardScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand.primary} />}
       >
-        {!activeCycle && cycles.length === 0 ? (
+        {!latestCycle ? (
           <View style={[styles.emptyState, { backgroundColor: colors.surface }]}>
-            <Heading level="h3" style={{ color: colors.text.primary, marginBottom: spacing[2] }}>
+            <Heading level="h3" style={{ color: colors.text.primary, marginBottom: spacing.sm }}>
               Welcome to LunaBloom
             </Heading>
-            <Text variant="body" style={{ color: colors.text.secondary, textAlign: 'center', marginBottom: spacing[4] }}>
+            <Text variant="body" style={{ color: colors.text.secondary, textAlign: 'center', marginBottom: spacing.md }}>
               Log your first period to begin tracking your cycle and receiving personalized insights.
             </Text>
           </View>
         ) : (
-          <Pressable 
+          <Pressable accessibilityRole="button" 
             onPress={() => {
               if (currentPhase) {
                 router.push(`/learn/${currentPhase.toLowerCase()}` as any);
@@ -104,10 +125,8 @@ export default function DashboardScreen() {
               }
             }}
           >
-            <CyclePhaseHeroCard
+            <MinimalCycleHero
               phaseName={phaseDetails.name}
-              phaseIcon={phaseDetails.icon as any}
-              phaseColor={phaseDetails.color}
               cycleDay={cycleDay || 1}
               totalDays={profile?.avgCycleLength || 28}
               periodCountdown={currentPhase === 'LUTEAL' && cycleDay ? (profile?.avgCycleLength || 28) - cycleDay : null}
@@ -118,39 +137,63 @@ export default function DashboardScreen() {
         <View style={styles.quickActionsContainer}>
           <View style={styles.quickActionsRow}>
             {activeCycle ? (
-              <QuickActionButton
+              <GridActionButton
                 label="End Period"
                 icon="x-circle"
-                color={colors.phase.menstrual}
-                onPress={() => {}}
+                variant="secondary"
+                onPress={() => {
+                  setEndPeriodWarningVisible(true);
+                }}
               />
             ) : (
-              <QuickActionButton
+              <GridActionButton
                 label="Start Period"
                 icon="droplet"
-                color={colors.phase.menstrual}
-                onPress={() => {}}
+                variant="secondary"
+                onPress={async () => {
+                  const validationService = new ValidationService();
+                  const isShortCycle = validationService.isShortCycleWarning(todayStr, cycles);
+
+                  const performStart = async () => {
+                    try {
+                      await useCycleStore.getState().startPeriod(todayStr);
+                    } catch {
+                      Alert.alert(
+                        'Overlap Detected',
+                        'This period overlaps with an existing logged period. Please go to the Calendar tab to edit your cycle entries.',
+                        [{ text: 'OK' }]
+                      );
+                    }
+                  };
+
+                  if (isShortCycle) {
+                    setPendingStartDate(todayStr);
+                    setShortCycleWarningVisible(true);
+                  } else {
+                    await performStart();
+                  }
+                }}
               />
             )}
-            <QuickActionButton
+            <GridActionButton
               label="Log Today"
-              icon="edit-3"
-              color={colors.brand.primary}
+              icon="calendar"
+              variant="primary"
               onPress={() => router.push('/log')}
             />
           </View>
           <View style={styles.quickActionsRow}>
-            <QuickActionButton
-              label="Add Note"
-              icon="file-text"
-              color={colors.brand.secondary}
-              onPress={() => {}}
+            <GridActionButton
+              label="Edit Cycle"
+              icon="refresh-cw"
+              variant="secondary"
+              onPress={() => router.push('/calendar')}
             />
-            <QuickActionButton
+            <GridActionButton
               label="Log Intimacy"
               icon="heart"
-              color={colors.text.secondary} // Changed from colors.error
-              onPress={() => {}}
+              variant="secondary"
+              onPress={() => router.push('/log')}
             />
           </View>
         </View>
@@ -165,13 +208,7 @@ export default function DashboardScreen() {
         <View style={styles.section}>
           <HealthTipCard 
             tip={selectedTip}
-            onLearnMore={() => {
-              if (currentPhase) {
-                router.push(`/learn/${currentPhase.toLowerCase()}` as any);
-              } else {
-                router.push('/learn');
-              }
-            }}
+            onLearnMore={() => router.push('/learn')}
           />
         </View>
 
@@ -179,6 +216,46 @@ export default function DashboardScreen() {
           <CycleHistoryChart cycles={cycles} />
         </View>
       </ScrollView>
+
+      <ConfirmModal
+        visible={shortCycleWarningVisible}
+        title="Short Cycle Detected"
+        message="You logged a period very recently. Are you sure you want to start a new cycle today?"
+        confirmLabel="Yes, Start Period"
+        isDestructive={true}
+        onConfirm={async () => {
+          setShortCycleWarningVisible(false);
+          if (pendingStartDate) {
+            try {
+              await useCycleStore.getState().startPeriod(pendingStartDate);
+            } catch {
+              Alert.alert('Overlap Detected', 'This period overlaps with an existing logged period.', [{ text: 'OK' }]);
+            }
+          }
+          setPendingStartDate(null);
+        }}
+        onCancel={() => {
+          setShortCycleWarningVisible(false);
+          setPendingStartDate(null);
+        }}
+      />
+
+      <ConfirmModal
+        visible={endPeriodWarningVisible}
+        title="End Period"
+        message="Are you sure you want to end your period today?"
+        confirmLabel="End Period"
+        isDestructive={false}
+        onConfirm={async () => {
+          setEndPeriodWarningVisible(false);
+          try {
+            await useCycleStore.getState().endPeriod(todayStr);
+          } catch {
+            Alert.alert('Error', 'Could not end period.');
+          }
+        }}
+        onCancel={() => setEndPeriodWarningVisible(false)}
+      />
     </View>
   );
 }
@@ -191,14 +268,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing[4],
-    paddingBottom: spacing[4],
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
     zIndex: 10,
   },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing[4],
+    gap: spacing.md,
   },
   avatarPlaceholder: {
     width: 32,
@@ -206,22 +283,22 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   scrollContent: {
-    padding: spacing[4],
-    gap: spacing[4],
+    padding: spacing.md * 0.1,
+    gap: spacing.md * 0.5,
   },
   emptyState: {
-    padding: spacing[6],
-    borderRadius: 16,
+    padding: spacing.lg * 0.9,
+    borderRadius: borderRadius.DEFAULT,
     alignItems: 'center',
   },
   quickActionsContainer: {
-    gap: spacing[3],
+    gap: spacing.sm * 0,
   },
   quickActionsRow: {
     flexDirection: 'row',
-    gap: spacing[3],
+    gap: spacing.sm * 0,
   },
   section: {
-    marginTop: spacing[2],
+    marginTop: spacing.xs * 0.5,
   },
 });
