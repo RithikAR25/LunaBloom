@@ -30,7 +30,7 @@ export const useContentStore = create<ContentState>((set, get) => ({
   healthTips: null,
   learnContent: null,
   glossary: null,
-  isLoading: false,
+  isLoading: true,
   isLearnContentLoading: false,
   error: null,
   _repository: null,
@@ -51,12 +51,13 @@ export const useContentStore = create<ContentState>((set, get) => ({
       set({ 
         medicalConditions: conditions, 
         symptomsData: symptoms, 
-        healthTips: tips, 
-        isLoading: false 
+        healthTips: tips 
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load content';
-      set({ error: message, isLoading: false });
+      set({ error: message });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -75,12 +76,13 @@ export const useContentStore = create<ContentState>((set, get) => ({
       ]);
       set({ 
         learnContent: learn, 
-        glossary: gloss, 
-        isLearnContentLoading: false 
+        glossary: gloss 
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load learn content';
-      set({ error: message, isLearnContentLoading: false });
+      set({ error: message });
+    } finally {
+      set({ isLearnContentLoading: false });
     }
   },
 }));

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
@@ -6,6 +6,7 @@ import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
+import { ValidationService } from '../../src/domain/services/ValidationService';
 
 export default function CycleSettingsScreen() {
   const { colors } = useTheme();
@@ -14,22 +15,35 @@ export default function CycleSettingsScreen() {
   const profile = useProfileStore((state) => state.profile);
   const updateProfile = useProfileStore((state) => state.updateProfile);
   const isUpdating = useProfileStore((state) => state.isLoading);
+  const validationService = useMemo(() => new ValidationService(), []);
 
   const [cycleLength, setCycleLength] = useState(profile?.avgCycleLength.toString() || '28');
   const [periodDuration, setPeriodDuration] = useState(profile?.avgPeriodDuration.toString() || '5');
 
+  const [cycleError, setCycleError] = useState('');
+  const [periodError, setPeriodError] = useState('');
+
   const handleSave = async () => {
+    setCycleError('');
+    setPeriodError('');
+    let hasError = false;
+
+    const cycleRes = validationService.validateCycleLength(parseFloat(cycleLength));
+    if (!cycleRes.isValid) {
+      setCycleError(cycleRes.error!);
+      hasError = true;
+    }
+
+    const periodRes = validationService.validatePeriodDuration(parseFloat(periodDuration));
+    if (!periodRes.isValid) {
+      setPeriodError(periodRes.error!);
+      hasError = true;
+    }
+
+    if (hasError) return;
+
     const cycle = parseInt(cycleLength, 10);
     const period = parseInt(periodDuration, 10);
-
-    if (isNaN(cycle) || cycle < 15 || cycle > 60) {
-      Alert.alert('Invalid Input', 'Average cycle length should be between 15 and 60 days.');
-      return;
-    }
-    if (isNaN(period) || period < 1 || period > 14) {
-      Alert.alert('Invalid Input', 'Average period duration should be between 1 and 14 days.');
-      return;
-    }
 
     try {
       await updateProfile({
@@ -62,11 +76,12 @@ export default function CycleSettingsScreen() {
           <TextInput 
             accessibilityLabel="Text input field"
             accessibilityHint="Enter your average cycle length in days"
-            style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.borderSubtle }]}
+            style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: cycleError ? colors.semantic.error : colors.borderSubtle }]}
             value={cycleLength}
-            onChangeText={setCycleLength}
+            onChangeText={(text) => { setCycleLength(text); setCycleError(''); }}
             keyboardType="numeric"
           />
+          {!!cycleError && <Text variant="caption" style={{ color: colors.semantic.error, marginTop: 4, marginLeft: 4 }}>{cycleError}</Text>}
         </View>
 
         <View style={styles.section}>
@@ -76,11 +91,12 @@ export default function CycleSettingsScreen() {
           <TextInput 
             accessibilityLabel="Text input field"
             accessibilityHint="Enter your average period duration in days"
-            style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.borderSubtle }]}
+            style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: periodError ? colors.semantic.error : colors.borderSubtle }]}
             value={periodDuration}
-            onChangeText={setPeriodDuration}
+            onChangeText={(text) => { setPeriodDuration(text); setPeriodError(''); }}
             keyboardType="numeric"
           />
+          {!!periodError && <Text variant="caption" style={{ color: colors.semantic.error, marginTop: 4, marginLeft: 4 }}>{periodError}</Text>}
         </View>
 
         <View style={styles.saveButton}>

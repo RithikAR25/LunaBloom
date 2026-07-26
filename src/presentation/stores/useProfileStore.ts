@@ -38,7 +38,7 @@ type ProfileState = {
 
 export const useProfileStore = create<ProfileState>((set, get) => ({
   profile: null,
-  isLoading: false,
+  isLoading: true,
   error: null,
   _repository: null,
 
@@ -51,10 +51,12 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const profile = await _repository.get();
-      set({ profile, isLoading: false });
+      set({ profile });
     } catch (err) {
       const message = err instanceof RepositoryError ? err.message : 'Failed to load profile';
-      set({ error: message, isLoading: false });
+      set({ error: message });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -68,10 +70,12 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       await uc.execute(data);
       // Refresh from source of truth
       const profile = await _repository.get();
-      set({ profile, isLoading: false });
+      set({ profile });
     } catch (err) {
       const message = err instanceof RepositoryError ? err.message : 'Failed to update profile';
-      set({ error: message, isLoading: false });
+      set({ error: message });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -88,11 +92,13 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       const uc = new CompleteOnboarding(_repository, cycleRepo);
       await uc.execute(params);
       const profile = await _repository.get();
-      set({ profile, isLoading: false });
+      set({ profile });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to complete onboarding';
-      set({ error: message, isLoading: false });
+      set({ error: message });
       throw err;
+    } finally {
+      set({ isLoading: false });
     }
   },
 

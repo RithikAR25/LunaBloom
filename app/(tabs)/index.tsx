@@ -1,5 +1,5 @@
 import { View, StyleSheet, ScrollView, RefreshControl, Pressable, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useCycleStore } from '../../src/presentation/stores/useCycleStore';
@@ -18,7 +18,7 @@ import { useContentStore } from '../../src/presentation/stores/useContentStore';
 import { ValidationService } from '../../src/domain/services/ValidationService';
 import { CyclePredictionService } from '../../src/domain/services/CyclePredictionService';
 import { ConfirmModal } from '../../src/presentation/components/ui/ConfirmModal';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
 export default function DashboardScreen() {
   const { colors } = useTheme();
@@ -55,9 +55,11 @@ export default function DashboardScreen() {
   const currentPhase = phaseInfo ? phaseInfo.phase : null;
   const cycleDay = phaseInfo ? phaseInfo.cycleDay : null;
 
-  useEffect(() => {
-    loadLogForDate(todayStr);
-  }, [todayStr, loadLogForDate]);
+  useFocusEffect(
+    useCallback(() => {
+      loadLogForDate(todayStr);
+    }, [todayStr, loadLogForDate])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -84,21 +86,32 @@ export default function DashboardScreen() {
   const phaseTips = healthTips ? healthTips[phaseDetails.tipCategory] || [] : [];
   const selectedTip = (phaseTips.length > 0 ? phaseTips[todayDayOfMonth % phaseTips.length] : 'Stay hydrated and listen to your body.') ?? 'Stay hydrated and listen to your body.';
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning,';
+    if (hour < 18) return 'Good afternoon,';
+    return 'Good evening,';
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Sticky Header */}
       <View style={[styles.header, { paddingTop: insets.top + spacing.md }]}>
         <View>
           <Text style={{ fontFamily: fontFamily.headingBold, fontSize: 28, color: colors.brand.primary, lineHeight: 32 }}>
-            Good morning,
+            {getGreeting()}
           </Text>
           <Text style={{ fontFamily: fontFamily.headingBold, fontSize: 24, color: colors.brand.primary, opacity: 0.8 }}>
             {profile?.preferredName || 'Beautiful'}
           </Text>
         </View>
         <View style={styles.headerRight}>
-          <Feather name="bell" size={22} color={colors.brand.primary} accessibilityLabel="Notifications" accessibilityHint="View your recent notifications" />
-          <Feather name="user" size={24} color={colors.brand.primary} accessibilityLabel="Profile" accessibilityHint="View and edit your profile settings" />
+          <Pressable accessibilityRole="button" onPress={() => router.push('/settings/notifications')}>
+            <Feather name="bell" size={22} color={colors.brand.primary} accessibilityLabel="Notifications" accessibilityHint="View your recent notifications" />
+          </Pressable>
+          <Pressable accessibilityRole="button" onPress={() => router.push('/settings/profile')}>
+            <Feather name="user" size={24} color={colors.brand.primary} accessibilityLabel="Profile" accessibilityHint="View and edit your profile settings" />
+          </Pressable>
         </View>
       </View>
 

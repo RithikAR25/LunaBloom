@@ -7,6 +7,15 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "scheme": "lunabloom",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#FAF9F6",
+      "dark": {
+        "image": "./assets/splash_dark.png",
+        "backgroundColor": "#0C0C14"
+      }
+    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.lunabloom.app"

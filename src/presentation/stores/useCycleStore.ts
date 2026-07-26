@@ -32,7 +32,7 @@ type CycleState = {
 export const useCycleStore = create<CycleState>((set, get) => ({
   cycles: [],
   activeCycle: null,
-  isLoading: false,
+  isLoading: true,
   error: null,
   _repository: null,
 
@@ -46,13 +46,15 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     try {
       const cycles = await _repository.getAll();
       const activeCycle = cycles.find((c) => c.endDate === null) ?? null;
-      set({ cycles, activeCycle, isLoading: false });
+      set({ cycles, activeCycle });
       
       // Reschedule any local notifications based on new cycle data
       void NotificationService.rescheduleIfEnabled(cycles);
     } catch (err) {
       const message = err instanceof RepositoryError ? err.message : 'Failed to load cycles';
-      set({ error: message, isLoading: false });
+      set({ error: message });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -68,8 +70,10 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       await get().loadCycles();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to start period';
-      set({ error: message, isLoading: false });
+      set({ error: message });
       throw err;
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -85,8 +89,10 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       await get().loadCycles();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to end period';
-      set({ error: message, isLoading: false });
+      set({ error: message });
       throw err;
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -102,8 +108,10 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       await get().loadCycles();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to edit cycle';
-      set({ error: message, isLoading: false });
+      set({ error: message });
       throw err;
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -118,8 +126,10 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       await get().loadCycles();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to delete cycle';
-      set({ error: message, isLoading: false });
+      set({ error: message });
       throw err;
+    } finally {
+      set({ isLoading: false });
     }
   },
 

@@ -28,22 +28,7 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
       });
   }, []);
 
-  if (state === 'INITIALIZING') {
-    return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.brand.primary} />
-      </View>
-    );
-  }
 
-  if (state === 'ERROR') {
-    // Will be replaced with a proper ErrorState component in Phase 0 UI work
-    return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.semantic.error} />
-      </View>
-    );
-  }
 
   return (
     <DatabaseContext.Provider value={{ state }}>

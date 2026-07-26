@@ -10,10 +10,11 @@
  * To swap SQLite for Firebase in V2: replace the concrete classes here only.
  */
 import React from 'react';
-import { SQLiteCycleRepository } from '../repositories/SQLiteCycleRepository';
-import { SQLiteUserProfileRepository } from '../repositories/SQLiteUserProfileRepository';
-import { SQLiteDailyLogRepository } from '../repositories/SQLiteDailyLogRepository';
-import { JsonContentRepository } from '../repositories/JsonContentRepository';
+import { useDatabase } from '../database/DatabaseProvider';
+import { SQLiteCycleRepository } from './SQLiteCycleRepository';
+import { SQLiteUserProfileRepository } from './SQLiteUserProfileRepository';
+import { SQLiteDailyLogRepository } from './SQLiteDailyLogRepository';
+import { JsonContentRepository } from './JsonContentRepository';
 import { useCycleStore } from '../../presentation/stores/useCycleStore';
 import { useProfileStore } from '../../presentation/stores/useProfileStore';
 import { useDailyLogStore } from '../../presentation/stores/useDailyLogStore';
@@ -21,6 +22,13 @@ import { useContentStore } from '../../presentation/stores/useContentStore';
 import { useInsightsStore } from '../../presentation/stores/useInsightsStore';
 
 export function RepositoryProvider({ children }: { children: React.ReactNode }) {
+  const { state: dbState } = useDatabase();
+
+  // We must not inject repositories until the database is fully initialized
+  if (dbState !== 'READY') {
+    return null;
+  }
+
   // Synchronous injection — happens before first render of children
   if (!useProfileStore.getState()._repository) {
     const cycleRepo = new SQLiteCycleRepository();
@@ -34,7 +42,6 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
     useContentStore.getState().setRepository(contentRepo);
     useInsightsStore.getState().setRepositories(cycleRepo, dailyLogRepo, profileRepo);
   }
-
 
   return <>{children}</>;
 }

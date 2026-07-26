@@ -2,7 +2,10 @@ import type { CycleEntry } from '../models/Cycle';
 import { MIN_NORMAL_CYCLE_LENGTH_DAYS } from '../models/Cycle';
 import { daysBetween } from '../../utils/dateUtils';
 
-
+export interface ValidationResult {
+  isValid: boolean;
+  error?: string;
+}
 export class ValidationService {
   /**
    * Checks if a new or updated cycle entry overlaps with any existing entries.
@@ -73,5 +76,117 @@ export class ValidationService {
 
     const gap = daysBetween(mostRecentStart, targetStartDate);
     return gap < MIN_NORMAL_CYCLE_LENGTH_DAYS;
+  }
+
+  /**
+   * Validates a preferred name using Unicode-aware regex.
+   * Ensures length is between 2 and 50 characters.
+   */
+  public validateName(name: string | null | undefined): ValidationResult {
+    if (!name || name.trim().length === 0) {
+      return { isValid: false, error: 'Name cannot be empty.' };
+    }
+    const trimmed = name.trim();
+    if (trimmed.length < 2) {
+      return { isValid: false, error: 'Name must be at least 2 characters.' };
+    }
+    if (trimmed.length > 50) {
+      return { isValid: false, error: 'Name cannot exceed 50 characters.' };
+    }
+    
+    // Unicode-aware regex: allows letters from any language, spaces, hyphens, apostrophes.
+    const nameRegex = /^[\p{L}\s'-]+$/u;
+    if (!nameRegex.test(trimmed)) {
+      return { isValid: false, error: 'Name contains invalid characters.' };
+    }
+
+    return { isValid: true };
+  }
+
+  /**
+   * Enforces a product rule: Users must be between 13 and 100 years old.
+   */
+  public validateDateOfBirth(dobStr: string | null | undefined): ValidationResult {
+    if (!dobStr) {
+      return { isValid: false, error: 'Date of birth is required.' };
+    }
+    const dob = new Date(dobStr);
+    if (isNaN(dob.getTime())) {
+      return { isValid: false, error: 'Invalid date format.' };
+    }
+
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+
+    if (age < 13) {
+      return { isValid: false, error: 'You must be at least 13 years old.' };
+    }
+    if (age > 100) {
+      return { isValid: false, error: 'Please enter a valid date of birth.' };
+    }
+
+    return { isValid: true };
+  }
+
+  public validateHeight(cm: number | null | undefined): ValidationResult {
+    if (cm === null || cm === undefined || isNaN(cm)) {
+      return { isValid: false, error: 'Height is required.' };
+    }
+    if (cm < 50) return { isValid: false, error: 'Height must be at least 50 cm.' };
+    if (cm > 300) return { isValid: false, error: 'Height cannot exceed 300 cm.' };
+    return { isValid: true };
+  }
+
+  public validateWeight(kg: number | null | undefined): ValidationResult {
+    if (kg === null || kg === undefined || isNaN(kg)) {
+      return { isValid: false, error: 'Weight is required.' };
+    }
+    if (kg < 20) return { isValid: false, error: 'Weight must be at least 20 kg.' };
+    if (kg > 500) return { isValid: false, error: 'Weight cannot exceed 500 kg.' };
+    return { isValid: true };
+  }
+
+  public validateCycleLength(days: number | null | undefined): ValidationResult {
+    if (days === null || days === undefined || isNaN(days)) {
+      return { isValid: false, error: 'Cycle length is required.' };
+    }
+    if (days < 15) return { isValid: false, error: 'Cycle length must be at least 15 days.' };
+    if (days > 60) return { isValid: false, error: 'Cycle length cannot exceed 60 days.' };
+    return { isValid: true };
+  }
+
+  public validatePeriodDuration(days: number | null | undefined): ValidationResult {
+    if (days === null || days === undefined || isNaN(days)) {
+      return { isValid: false, error: 'Period duration is required.' };
+    }
+    if (days < 1) return { isValid: false, error: 'Period duration must be at least 1 day.' };
+    if (days > 14) return { isValid: false, error: 'Period duration cannot exceed 14 days.' };
+    return { isValid: true };
+  }
+
+  /**
+   * Ensures a date is not strictly in the future (tomorrow or later).
+   */
+  public validateHistoricalDate(dateStr: string | null | undefined): ValidationResult {
+    if (!dateStr) return { isValid: true }; // optional end date
+
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      return { isValid: false, error: 'Invalid date format.' };
+    }
+    
+    // Convert both to YYYY-MM-DD for fair comparison regardless of time
+    const todayStr = new Date().toISOString().split('T')[0]!;
+    const targetStr = date.toISOString().split('T')[0]!;
+
+    if (targetStr > todayStr) {
+      return { isValid: false, error: 'Date cannot be in the future.' };
+    }
+
+    return { isValid: true };
   }
 }

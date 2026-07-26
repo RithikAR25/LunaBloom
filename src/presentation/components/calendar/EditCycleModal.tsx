@@ -6,6 +6,7 @@ import { spacing, borderRadius } from '@/design-system';
 import { Text } from '../ui/Text';
 import { Button } from '../ui/Button';
 import type { CycleEntry } from '@/domain/models/Cycle';
+import { ValidationService } from '@/domain/services/ValidationService';
 
 interface EditCycleModalProps {
   visible: boolean;
@@ -24,6 +25,10 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [includeInPredictions, setIncludeInPredictions] = useState(true);
+
+  const [startDateError, setStartDateError] = useState('');
+  const [endDateError, setEndDateError] = useState('');
+  const validationService = new ValidationService();
 
   const [prevVisible, setPrevVisible] = useState(false);
   const [prevCycleId, setPrevCycleId] = useState<string | null>(null);
@@ -51,10 +56,35 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
   };
 
   const handleSave = async () => {
+    setStartDateError('');
+    setEndDateError('');
+    let hasError = false;
+
+    const startStr = formatDate(startDate);
+    const endStr = endDate ? formatDate(endDate) : null;
+
+    const startRes = validationService.validateHistoricalDate(startStr);
+    if (!startRes.isValid) {
+      setStartDateError(startRes.error!);
+      hasError = true;
+    }
+
+    if (endStr) {
+      const endRes = validationService.validateHistoricalDate(endStr);
+      if (!endRes.isValid) {
+        setEndDateError(endRes.error!);
+        hasError = true;
+      }
+      if (endStr < startStr) {
+        setEndDateError('End date cannot be before start date.');
+        hasError = true;
+      }
+    }
+
+    if (hasError) return;
+
     setIsSaving(true);
     try {
-      const startStr = formatDate(startDate);
-      const endStr = endDate ? formatDate(endDate) : null;
       await onSave(cycle.id, startStr, endStr, cycle.notes, !includeInPredictions);
       onClose();
     } catch {
@@ -117,6 +147,7 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
                   )}
                 </View>
               )}
+              {!!startDateError && <Text variant="caption" style={{ color: colors.semantic.error, marginTop: spacing[1] }}>{startDateError}</Text>}
             </View>
 
             {/* End Date */}
@@ -161,6 +192,7 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
                   )}
                 </View>
               )}
+              {!!endDateError && <Text variant="caption" style={{ color: colors.semantic.error, marginTop: spacing[1] }}>{endDateError}</Text>}
             </View>
 
             {/* Prediction Exclusion Toggle */}

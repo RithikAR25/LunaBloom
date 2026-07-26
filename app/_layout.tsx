@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -29,35 +29,7 @@ import * as SplashScreen from 'expo-splash-screen';
 
 SplashScreen.preventAutoHideAsync();
 
-/**
- * NavigationGate — reads profile store and redirects to onboarding if needed.
- * Mounted inside providers so stores are populated before gate logic runs.
- */
-function NavigationGate() {
-  const router = useRouter();
-  const segments = useSegments();
 
-  const profile = useProfileStore((s) => s.profile);
-  const profileLoading = useProfileStore((s) => s.isLoading);
-
-  useEffect(() => {
-    if (profileLoading) return; // Wait until data is loaded
-
-    const inOnboarding = segments[0] === 'onboarding';
-    const onboardingComplete = profile?.onboardingCompleted === true;
-
-    if (!onboardingComplete && !inOnboarding) {
-      // First launch or incomplete onboarding → go to onboarding
-       
-      router.replace('/onboarding' as any);
-    } else if (onboardingComplete && inOnboarding) {
-      // Already onboarded, somehow in onboarding → go to tabs
-      router.replace('/(tabs)');
-    }
-  }, [profile, profileLoading, segments, router]);
-
-  return null;
-}
 
 /**
  * AppProviders — wraps the entire app with required providers in the correct order.
@@ -90,12 +62,67 @@ function AppProviders({ children }: { children: React.ReactNode }) {
  *       DatabaseProvider          ← opens SQLite, runs migrations
  *         RepositoryProvider      ← injects concrete repos into Zustand
  *           AppProviders          ← loads initial data
- *             NavigationGate      ← handles onboarding redirect
- *               Stack             ← route definitions
+ *             Stack             ← route definitions
  */
-function RootLayout() {
+
+
+function AppContent() {
   const { colors } = useTheme();
 
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        animation: 'fade',
+        contentStyle: {
+          backgroundColor: colors.background,
+        },
+      }}
+    >
+      {/* Boot Screen — handles data loading and redirects */}
+      <Stack.Screen name="index" options={{ headerShown: false, animation: 'fade' }} />
+        {/* Main tab navigation */}
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+        {/* Onboarding — full screen, no back gesture to tabs */}
+        <Stack.Screen
+          name="onboarding"
+          options={{
+            headerShown: false,
+            animation: 'fade',
+            gestureEnabled: false,
+          }}
+        />
+
+        {/* Auth / PIN lock — full screen overlay */}
+        <Stack.Screen
+          name="(auth)"
+          options={{
+            headerShown: false,
+            animation: 'fade',
+            gestureEnabled: false,
+          }}
+        />
+
+        {/* Learn / Education — slides in from right */}
+        <Stack.Screen
+          name="learn"
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+
+      {/* 404 fallback */}
+      <Stack.Screen name="+not-found" />
+    </Stack>
+  );
+}
+
+/**
+ * Root Layout — Entry point for Expo Router.
+ */
+function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     Quicksand_400Regular,
     Quicksand_500Medium,
@@ -123,51 +150,7 @@ function RootLayout() {
         <DatabaseProvider>
           <RepositoryProvider>
             <AppProviders>
-              <NavigationGate />
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  animation: 'fade',
-                  contentStyle: {
-                    backgroundColor: colors.background,
-                  },
-                }}
-              >
-                {/* Main tab navigation */}
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
-                {/* Onboarding — full screen, no back gesture to tabs */}
-                <Stack.Screen
-                  name="onboarding"
-                  options={{
-                    headerShown: false,
-                    animation: 'fade',
-                    gestureEnabled: false,
-                  }}
-                />
-
-                {/* Auth / PIN lock — full screen overlay */}
-                <Stack.Screen
-                  name="(auth)"
-                  options={{
-                    headerShown: false,
-                    animation: 'fade',
-                    gestureEnabled: false,
-                  }}
-                />
-
-                {/* Learn / Education — slides in from right */}
-                <Stack.Screen
-                  name="learn"
-                  options={{
-                    headerShown: false,
-                    animation: 'slide_from_right',
-                  }}
-                />
-
-                {/* 404 fallback */}
-                <Stack.Screen name="+not-found" />
-              </Stack>
+              <AppContent />
               <LockScreen />
             </AppProviders>
           </RepositoryProvider>

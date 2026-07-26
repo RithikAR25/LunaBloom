@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -8,13 +8,41 @@ import { TextInput } from '../../src/presentation/components/ui/TextInput';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { spacing } from '../../src/design-system';
+import { ValidationService } from '../../src/domain/services/ValidationService';
+import { useTheme } from '../../src/presentation/hooks/useTheme';
 
 export default function NameScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
   const { preferredName, dateOfBirth, updateField } = useOnboardingStore();
   const [showPicker, setShowPicker] = useState(false);
+  const validationService = useMemo(() => new ValidationService(), []);
+
+  const [nameError, setNameError] = useState('');
+  const [dobError, setDobError] = useState('');
 
   const handleContinue = () => {
+    setNameError('');
+    setDobError('');
+    let hasError = false;
+
+    if (preferredName) {
+      const res = validationService.validateName(preferredName);
+      if (!res.isValid) {
+        setNameError(res.error!);
+        hasError = true;
+      }
+    }
+
+    if (dateOfBirth) {
+      const res = validationService.validateDateOfBirth(dateOfBirth);
+      if (!res.isValid) {
+        setDobError(res.error!);
+        hasError = true;
+      }
+    }
+
+    if (hasError) return;
     router.push('/onboarding/cycle');
   };
 
@@ -26,6 +54,7 @@ export default function NameScreen() {
     setShowPicker(Platform.OS === 'ios');
     if (selectedDate) {
       updateField('dateOfBirth', selectedDate.toISOString().split('T')[0] || null);
+      setDobError('');
     }
   };
 
@@ -37,21 +66,24 @@ export default function NameScreen() {
       subtitle="What should we call you? When were you born?"
       onContinue={handleContinue}
       onBack={handleBack}
-      onSkip={handleContinue}
+      onSkip={() => router.push('/onboarding/cycle')}
       skipLabel="Skip this step"
     >
       <View style={styles.content}>
-        <TextInput 
-          accessibilityLabel="Text input field"
-          accessibilityHint="Enter your preferred name"
-          label="Preferred Name (Optional)"
-          value={preferredName || ''}
-          onChangeText={(text) => updateField('preferredName', text)}
-          placeholder="e.g. Luna"
-        />
+        <View style={styles.inputGroup}>
+          <TextInput 
+            accessibilityLabel="Text input field"
+            accessibilityHint="Enter your preferred name"
+            label="Preferred Name (Optional)"
+            value={preferredName || ''}
+            onChangeText={(text) => { updateField('preferredName', text); setNameError(''); }}
+            placeholder="e.g. Luna"
+          />
+          {!!nameError && <Text variant="caption" style={{ color: colors.semantic.error, marginTop: spacing[1], marginLeft: spacing[1] }}>{nameError}</Text>}
+        </View>
 
         <View style={styles.dateContainer}>
-          <Text variant="body" style={styles.label}>Date of Birth (Optional)</Text>
+          <Text variant="body" weight="medium" style={styles.label}>Date of Birth (Optional)</Text>
           {Platform.OS === 'ios' ? (
             <DateTimePicker
               value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
@@ -63,7 +95,7 @@ export default function NameScreen() {
           ) : (
             <View>
               <Button
-                variant="primary"
+                variant="secondary"
                 label={dateOfBirth ? new Date(dateOfBirth).toLocaleDateString() : 'Select Date'}
                 onPress={() => setShowPicker(true)}
               />
@@ -78,6 +110,7 @@ export default function NameScreen() {
               )}
             </View>
           )}
+          {!!dobError && <Text variant="caption" style={{ color: colors.semantic.error, marginTop: spacing[1], marginLeft: spacing[1] }}>{dobError}</Text>}
         </View>
       </View>
     </OnboardingLayout>
@@ -88,8 +121,11 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  inputGroup: {
+    marginBottom: spacing[4],
+  },
   dateContainer: {
-    marginTop: spacing[4],
+    marginTop: spacing[2],
   },
   label: {
     marginBottom: spacing[2],
