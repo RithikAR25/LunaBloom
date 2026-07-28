@@ -1,81 +1,126 @@
 import type { CycleEntry } from '../models/Cycle';
 import { MIN_NORMAL_CYCLE_LENGTH_DAYS } from '../models/Cycle';
-import { daysBetween } from '../../utils/dateUtils';
+import { daysBetween, addDays } from '../../utils/dateUtils';
 
 export interface ValidationResult {
   isValid: boolean;
   error?: string;
+}
+
+export interface Warning {
+  code: string;
+  title: string;
+  message: string;
 }
 export class ValidationService {
   /**
    * Checks if a new or updated cycle entry overlaps with any existing entries.
    * Excludes the entry itself (via excludeId) when checking an update.
    */
-  public hasOverlap(
+  public validatePeriodOverlap(
     targetStartDate: string,
     targetEndDate: string | null,
     existingCycles: CycleEntry[],
     excludeId?: string
-  ): boolean {
+  ): ValidationResult {
     const cyclesToCheck = existingCycles.filter((c) => c.id !== excludeId);
 
     for (const cycle of cyclesToCheck) {
       const existingStart = cycle.startDate;
       const existingEnd = cycle.endDate; // null means ongoing
 
-      // Logic:
-      // If target is ongoing (targetEndDate === null), it overlaps if targetStartDate <= existingEnd.
-      // If existing is ongoing (existingEnd === null), it overlaps if targetEndDate >= existingStart.
-      // If both have ends, it overlaps if max(starts) <= min(ends).
+      // We expand the bounds of the existing cycle by 1 day in each direction
+      // to catch "touching" (adjacent) periods, which biologically are a single period.
+      const existingStartExpanded = addDays(existingStart, -1);
+      const existingEndExpanded = existingEnd ? addDays(existingEnd, 1) : null;
 
-      if (targetEndDate === null && existingEnd === null) {
+      if (targetEndDate === null && existingEndExpanded === null) {
         // Both ongoing -> definite overlap (can't have two ongoing periods)
-        return true;
+        return { isValid: false, error: 'These dates overlap with an ongoing period.' };
       }
 
-      if (targetEndDate === null && existingEnd !== null) {
-        if (targetStartDate <= existingEnd) {
-          return true;
+      if (targetEndDate === null && existingEndExpanded !== null) {
+        if (targetStartDate <= existingEndExpanded) {
+          return { isValid: false, error: 'These dates overlap or touch an existing period.' };
         }
       }
 
-      if (existingEnd === null && targetEndDate !== null) {
-        if (targetEndDate >= existingStart) {
-          return true;
+      if (existingEndExpanded === null && targetEndDate !== null) {
+        if (targetEndDate >= existingStartExpanded) {
+          return { isValid: false, error: 'These dates overlap or touch an existing period.' };
         }
       }
 
-      if (targetEndDate !== null && existingEnd !== null) {
-        if (targetStartDate <= existingEnd && targetEndDate >= existingStart) {
-          return true;
+      if (targetEndDate !== null && existingEndExpanded !== null) {
+        if (targetStartDate <= existingEndExpanded && targetEndDate >= existingStartExpanded) {
+          return { isValid: false, error: 'These dates overlap or touch an existing period.' };
         }
       }
     }
 
-    return false;
+    return { isValid: true };
   }
 
   /**
-   * Checks if starting a cycle on targetStartDate would result in a very short cycle gap.
-   * Returns true if a warning should be shown.
+   * Evaluates a period entry against unusual (but biologically possible) patterns.
+   * Returns a structured array of warnings if any are detected.
    */
-  public isShortCycleWarning(targetStartDate: string, existingCycles: CycleEntry[]): boolean {
-    if (existingCycles.length === 0) return false;
+  public getWarnings(
+    targetStartDate: string,
+    targetEndDate: string | null,
+    existingCycles: CycleEntry[],
+    avgCycleLength?: number,
+    excludeId?: string
+  ): Warning[] {
+    const warnings: Warning[] = [];
+    const cyclesToCheck = existingCycles.filter((c) => c.id !== excludeId);
 
-    // Find the most recent cycle start date that is BEFORE the targetStartDate
-    let mostRecentStart = '';
-    for (const cycle of existingCycles) {
-      if (cycle.startDate < targetStartDate) {
-        if (!mostRecentStart || cycle.startDate > mostRecentStart) {
-          mostRecentStart = cycle.startDate;
+    // 1. Period Duration Warnings
+    if (targetEndDate) {
+      const duration = daysBetween(targetStartDate, targetEndDate) + 1;
+      if (duration === 1) {
+        warnings.push({
+          code: 'SHORT_PERIOD',
+          title: 'Very Short Period',
+          message: 'This period lasted only one day. If this was spotting rather than a menstrual period, you may want to record it differently. Do you want to save anyway?'
+        });
+      } else if (duration > 14) {
+        warnings.push({
+          code: 'LONG_PERIOD',
+          title: 'Prolonged Period',
+          message: `This period is ${duration} days long, which is longer than most menstrual periods. Please confirm these dates are correct.`
+        });
+      }
+    }
+
+    // 2. Cycle Length Warnings
+    const previousCycles = cyclesToCheck
+      .filter((c) => c.startDate < targetStartDate)
+      .sort((a, b) => b.startDate.localeCompare(a.startDate));
+
+    if (previousCycles.length > 0) {
+      const mostRecentStart = previousCycles[0]!.startDate;
+      const gap = daysBetween(mostRecentStart, targetStartDate);
+
+      if (gap < MIN_NORMAL_CYCLE_LENGTH_DAYS) {
+        warnings.push({
+          code: 'SHORT_CYCLE',
+          title: 'Short Cycle Detected',
+          message: 'You logged a period very recently. Are you sure you want to start a new cycle?'
+        });
+      } else {
+        const threshold = avgCycleLength ? avgCycleLength + 15 : 60;
+        if (gap > threshold) {
+          warnings.push({
+            code: 'LONG_CYCLE',
+            title: 'Unusually Long Cycle',
+            message: `It has been ${gap} days since your last period began. This is much longer than usual. Please confirm this date is correct.`
+          });
         }
       }
     }
 
-    if (!mostRecentStart) return false; // Target is older than all existing cycles
-
-    const gap = daysBetween(mostRecentStart, targetStartDate);
-    return gap < MIN_NORMAL_CYCLE_LENGTH_DAYS;
+    return warnings;
   }
 
   /**

@@ -1,6 +1,7 @@
 import type { ICycleRepository } from '../../repositories/ICycleRepository';
 import { daysBetween, isBefore, todayISO } from '../../../utils/dateUtils';
 import type { ValidationService } from '../../services/ValidationService';
+import { ValidationError } from '../../errors';
 
 export class EndPeriod {
   constructor(
@@ -9,6 +10,16 @@ export class EndPeriod {
   ) {}
 
   public async execute(endDate: string = todayISO()): Promise<void> {
+    /**
+     * Business Rule:
+     * Cycle events cannot occur in the future.
+     * This invariant is enforced regardless of caller.
+     */
+    const dateRes = this.validationService.validateHistoricalDate(endDate);
+    if (!dateRes.isValid) {
+      throw new ValidationError(dateRes.error || 'Date cannot be in the future', 'endDate');
+    }
+
     const activeCycle = (await this.cycleRepository.getAll()).find(c => c.endDate === null);
     
     if (!activeCycle) {
@@ -20,8 +31,9 @@ export class EndPeriod {
     }
 
     const allCycles = await this.cycleRepository.getAll();
-    if (this.validationService.hasOverlap(activeCycle.startDate, endDate, allCycles, activeCycle.id)) {
-      throw new Error('This period overlaps with an existing logged period.');
+    const overlapRes = this.validationService.validatePeriodOverlap(activeCycle.startDate, endDate, allCycles, activeCycle.id);
+    if (!overlapRes.isValid) {
+      throw new ValidationError(overlapRes.error!, 'overlapping_periods');
     }
 
     // Days of bleeding (inclusive): if start is 1st and end is 5th -> 5 days

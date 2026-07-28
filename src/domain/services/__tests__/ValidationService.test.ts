@@ -148,62 +148,67 @@ describe('ValidationService', () => {
     });
   });
 
-  describe('hasOverlap', () => {
-    const existing: CycleEntry[] = [
-      { id: '1', startDate: '2023-01-01', endDate: '2023-01-05', isExcludedFromPredictions: false, notes: null },
-      { id: '2', startDate: '2023-02-01', endDate: '2023-02-05', isExcludedFromPredictions: false, notes: null }
-    ];
+  describe('validatePeriodOverlap', () => {
+    const existing = [
+      { id: '1', startDate: '2023-01-05', endDate: '2023-01-09', isExcludedFromPredictions: false, notes: null },
+      { id: '2', startDate: '2023-02-05', endDate: '2023-02-09', isExcludedFromPredictions: false, notes: null }
+    ] as CycleEntry[];
 
-    it('should return true if new cycle overlaps an existing one exactly', () => {
-      expect(service.hasOverlap('2023-01-01', '2023-01-05', existing)).toBe(true);
+    it('should be valid if completely separate', () => {
+      expect(service.validatePeriodOverlap('2023-01-15', '2023-01-20', existing).isValid).toBe(true);
     });
 
-    it('should return true if new cycle starts inside an existing one', () => {
-      expect(service.hasOverlap('2023-01-03', '2023-01-07', existing)).toBe(true);
+    it('should be invalid if overlapping', () => {
+      expect(service.validatePeriodOverlap('2023-01-07', '2023-01-12', existing).isValid).toBe(false);
     });
 
-    it('should return true if new cycle engulfs an existing one', () => {
-      expect(service.hasOverlap('2022-12-30', '2023-01-10', existing)).toBe(true);
-    });
-
-    it('should return false if new cycle is completely before', () => {
-      expect(service.hasOverlap('2022-12-01', '2022-12-25', existing)).toBe(false);
-    });
-
-    it('should return false if new cycle is in between existing cycles', () => {
-      expect(service.hasOverlap('2023-01-10', '2023-01-15', existing)).toBe(false);
-    });
-
-    it('should return false if updating a cycle and it overlaps with itself', () => {
-      expect(service.hasOverlap('2023-01-01', '2023-01-06', existing, '1')).toBe(false);
-    });
-
-    it('should return true if updating a cycle overlaps with a DIFFERENT cycle', () => {
-      expect(service.hasOverlap('2023-02-01', '2023-02-05', existing, '1')).toBe(true);
+    it('should be invalid if touching (adjacent)', () => {
+      // Ends on 01-04, touches 01-05
+      expect(service.validatePeriodOverlap('2023-01-01', '2023-01-04', existing).isValid).toBe(false);
+      // Starts on 01-10, touches 01-09
+      expect(service.validatePeriodOverlap('2023-01-10', '2023-01-14', existing).isValid).toBe(false);
     });
   });
 
-  describe('isShortCycleWarning', () => {
-    const existing: CycleEntry[] = [
-      { id: '1', startDate: '2023-01-01', endDate: '2023-01-05', isExcludedFromPredictions: false, notes: null }
-    ];
+  describe('getWarnings', () => {
+    const existing = [
+      { id: '1', startDate: '2023-01-01', endDate: '2023-01-05', isExcludedFromPredictions: false, notes: null, createdAt: '', updatedAt: '', deletedAt: null, durationDays: null, cycleLengthDays: null, syncStatus: 'LOCAL' }
+    ] as CycleEntry[];
 
-    it('should return true if target start date creates a gap less than MIN_NORMAL_CYCLE_LENGTH_DAYS (15)', () => {
-      // 10 days gap
-      expect(service.isShortCycleWarning('2023-01-11', existing)).toBe(true);
+    it('should return empty for normal cycle', () => {
+      const warnings = service.getWarnings('2023-01-29', '2023-02-02', existing, 28);
+      expect(warnings).toHaveLength(0);
     });
 
-    it('should return false if target start date creates a normal gap', () => {
-      // 28 days gap
-      expect(service.isShortCycleWarning('2023-01-29', existing)).toBe(false);
+    it('should return ONE warning for 1-day period', () => {
+      const warnings = service.getWarnings('2023-01-29', '2023-01-29', existing, 28);
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0]!.code).toBe('SHORT_PERIOD');
     });
 
-    it('should return false if target start date is BEFORE all existing cycles (no gap to check forward currently)', () => {
-      expect(service.isShortCycleWarning('2022-12-01', existing)).toBe(false);
+    it('should return ONE warning for >14 day period', () => {
+      const warnings = service.getWarnings('2023-01-29', '2023-02-15', existing, 28);
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0]!.code).toBe('LONG_PERIOD');
     });
 
-    it('should return false if there are no existing cycles', () => {
-      expect(service.isShortCycleWarning('2023-01-01', [])).toBe(false);
+    it('should return ONE warning for short cycle gap', () => {
+      const warnings = service.getWarnings('2023-01-10', '2023-01-15', existing, 28);
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0]!.code).toBe('SHORT_CYCLE');
+    });
+
+    it('should return ONE warning for long cycle gap (personalized)', () => {
+      const warnings = service.getWarnings('2023-03-01', '2023-03-05', existing, 28); // 59 days later > 28+15
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0]!.code).toBe('LONG_CYCLE');
+    });
+
+    it('should combine multiple warnings (long gap + 1-day period)', () => {
+      const warnings = service.getWarnings('2023-03-01', '2023-03-01', existing, 28);
+      expect(warnings).toHaveLength(2);
+      expect(warnings.some(w => w.code === 'SHORT_PERIOD')).toBe(true);
+      expect(warnings.some(w => w.code === 'LONG_CYCLE')).toBe(true);
     });
   });
 });

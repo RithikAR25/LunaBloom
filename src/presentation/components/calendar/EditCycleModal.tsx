@@ -7,6 +7,9 @@ import { Text } from '../ui/Text';
 import { Button } from '../ui/Button';
 import type { CycleEntry } from '@/domain/models/Cycle';
 import { ValidationService } from '@/domain/services/ValidationService';
+import { ConfirmModal } from '../ui/ConfirmModal';
+import { useCycleStore } from '@/presentation/stores/useCycleStore';
+import { useProfileStore } from '@/presentation/stores/useProfileStore';
 
 interface EditCycleModalProps {
   visible: boolean;
@@ -29,6 +32,14 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
   const [startDateError, setStartDateError] = useState('');
   const [endDateError, setEndDateError] = useState('');
   const validationService = new ValidationService();
+
+  interface WarningState {
+    title: string;
+    message: string;
+    confirmLabel: string;
+    onConfirm: () => void;
+  }
+  const [warningState, setWarningState] = useState<WarningState | null>(null);
 
   const [prevVisible, setPrevVisible] = useState(false);
   const [prevCycleId, setPrevCycleId] = useState<string | null>(null);
@@ -82,6 +93,34 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
     }
 
     if (hasError) return;
+
+    const { cycles } = useCycleStore.getState();
+    const { profile } = useProfileStore.getState();
+    const warnings = validationService.getWarnings(startStr, endStr, cycles, profile?.avgCycleLength, cycle.id);
+    
+    if (warnings.length > 0) {
+      const isMultiple = warnings.length > 1;
+      const firstWarning = warnings[0]!;
+      setWarningState({
+        title: isMultiple ? 'Unusual Patterns Detected' : firstWarning.title,
+        message: isMultiple 
+          ? 'These patterns can occur, but please confirm the dates are correct:\n\n' + warnings.map(w => `• ${w.message}`).join('\n')
+          : firstWarning.message,
+        confirmLabel: 'Save Anyway',
+        onConfirm: async () => {
+          setIsSaving(true);
+          try {
+            await onSave(cycle.id, startStr, endStr, cycle.notes, !includeInPredictions);
+            onClose();
+          } catch {
+            // Error handled by store/parent
+          } finally {
+            setIsSaving(false);
+          }
+        }
+      });
+      return;
+    }
 
     setIsSaving(true);
     try {
@@ -237,6 +276,20 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
           </View>
         </View>
       </View>
+      <ConfirmModal
+        visible={!!warningState}
+        title={warningState?.title || ''}
+        message={warningState?.message || ''}
+        confirmLabel={warningState?.confirmLabel || 'Save Anyway'}
+        isDestructive={true}
+        onConfirm={() => {
+          warningState?.onConfirm();
+          setWarningState(null);
+        }}
+        onCancel={() => {
+          setWarningState(null);
+        }}
+      />
     </Modal>
   );
 }

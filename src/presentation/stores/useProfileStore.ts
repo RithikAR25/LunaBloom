@@ -18,7 +18,7 @@ import type { IUserProfileRepository } from '../../domain/repositories/IUserProf
 import { RepositoryError } from '../../domain/errors';
 import { CompleteOnboarding, CompleteOnboardingParams } from '../../domain/use-cases/profile/CompleteOnboarding';
 import { UpdateProfile } from '../../domain/use-cases/profile/UpdateProfile';
-import { useCycleStore } from './useCycleStore';
+import type { ICycleRepository } from '../../domain/repositories/ICycleRepository';
 
 type ProfileState = {
   profile: UserProfile | null;
@@ -27,9 +27,11 @@ type ProfileState = {
 
   // Injected repository — set by RepositoryProvider at startup
   _repository: IUserProfileRepository | null;
+  _cycleRepository: ICycleRepository | null;
 
   // Actions
   setRepository: (repo: IUserProfileRepository) => void;
+  setCycleRepository: (repo: ICycleRepository) => void;
   loadProfile: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
   completeOnboardingFlow: (params: CompleteOnboardingParams) => Promise<void>;
@@ -41,8 +43,10 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   isLoading: true,
   error: null,
   _repository: null,
+  _cycleRepository: null,
 
   setRepository: (repo) => set({ _repository: repo }),
+  setCycleRepository: (repo) => set({ _cycleRepository: repo }),
 
   loadProfile: async () => {
     const { _repository } = get();
@@ -80,16 +84,13 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   },
 
   completeOnboardingFlow: async (params: CompleteOnboardingParams) => {
-    const { _repository } = get();
+    const { _repository, _cycleRepository } = get();
     if (!_repository) throw new Error('[useProfileStore] Repository not injected');
-    
-    // We get the cycle repo from useCycleStore to inject into the use case
-    const cycleRepo = useCycleStore.getState()._repository;
-    if (!cycleRepo) throw new Error('[useProfileStore] Cycle repository not injected');
+    if (!_cycleRepository) throw new Error('[useProfileStore] Cycle repository not injected');
 
     set({ isLoading: true, error: null });
     try {
-      const uc = new CompleteOnboarding(_repository, cycleRepo);
+      const uc = new CompleteOnboarding(_repository, _cycleRepository);
       await uc.execute(params);
       const profile = await _repository.get();
       set({ profile });

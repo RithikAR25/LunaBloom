@@ -12,6 +12,7 @@ import { EditCycleEntry } from '../../domain/use-cases/cycle/EditCycleEntry';
 import { DeleteCycleEntry } from '../../domain/use-cases/cycle/DeleteCycleEntry';
 import { ValidationService } from '../../domain/services/ValidationService';
 import { NotificationService } from '../../application/services/NotificationService';
+import { useProfileStore } from './useProfileStore';
 
 type CycleState = {
   cycles: CycleEntry[];
@@ -64,9 +65,10 @@ export const useCycleStore = create<CycleState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
+      const defaultDuration = useProfileStore.getState().profile?.avgPeriodDuration || 5;
       const validationService = new ValidationService();
       const startPeriodUC = new StartPeriod(_repository, validationService);
-      await startPeriodUC.execute(startDate);
+      await startPeriodUC.execute(startDate, defaultDuration);
       await get().loadCycles();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to start period';

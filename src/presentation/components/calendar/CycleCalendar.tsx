@@ -1,5 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { FadeIn, FadeOut, runOnJS } from 'react-native-reanimated';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid, CalendarDayData } from './CalendarGrid';
 import { CalendarLegend } from './CalendarLegend';
@@ -18,6 +21,12 @@ interface CycleCalendarProps {
 export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
+  useFocusEffect(
+    useCallback(() => {
+      setCurrentMonth(new Date());
+    }, [])
+  );
+
   const handlePrevMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
   };
@@ -25,6 +34,15 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalen
   const handleNextMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
   };
+
+  const pan = useMemo(() => Gesture.Pan()
+    .onEnd((e) => {
+      if (e.translationX > 50) {
+        runOnJS(handlePrevMonth)();
+      } else if (e.translationX < -50) {
+        runOnJS(handleNextMonth)();
+      }
+    }), [currentMonth]);
 
   const profile = useProfileStore((s) => s.profile);
 
@@ -86,12 +104,20 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalen
         onPrevMonth={handlePrevMonth}
         onNextMonth={handleNextMonth}
       />
-      <CalendarGrid
-        days={days}
-        selectedDate={selectedDate}
-        todayDate={todayISO()}
-        onSelectDate={onSelectDate}
-      />
+      <GestureDetector gesture={pan}>
+        <Animated.View 
+          key={currentMonth.toISOString()} 
+          entering={FadeIn.duration(300)} 
+          exiting={FadeOut.duration(300)}
+        >
+          <CalendarGrid
+            days={days}
+            selectedDate={selectedDate}
+            todayDate={todayISO()}
+            onSelectDate={onSelectDate}
+          />
+        </Animated.View>
+      </GestureDetector>
       <CalendarLegend />
     </View>
   );

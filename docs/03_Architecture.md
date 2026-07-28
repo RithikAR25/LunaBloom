@@ -58,7 +58,7 @@ The outermost layer handling external concerns: databases, network requests, and
 LunaBloom utilizes the **Repository Pattern** to abstract database operations. 
 Because the Application Layer cannot depend on the Infrastructure Layer directly, we use **Dependency Injection**. 
 
-When the application boots, a `RepositoryProvider` (in the Presentation layer's root) instantiates the concrete SQLite repositories from the Infrastructure layer and injects them into the Zustand stores. The stores then pass these interfaces into the Use Cases.
+When the application boots, a `RepositoryProvider` (acting as the Composition Root inside `app/providers/`) instantiates the concrete SQLite repositories from the Infrastructure layer and injects them into the Zustand stores. The stores then pass these interfaces into the Use Cases.
 
 ### Example Request Flow
 See the detailed [Request Flow Diagram](./assets/flow-diagram.md) for a sequence mapping of how a user action traverses the layers down to SQLite and back up to the UI.

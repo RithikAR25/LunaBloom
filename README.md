@@ -63,6 +63,10 @@ At its core, LunaBloom provides algorithmically driven period and ovulation pred
 
 A comprehensive, visually distinct calendar interface that allows users to rapidly scrub through past months and view future predictions. It aggregates cycle phases, daily log indicators, and upcoming fertile windows into a single, highly scannable view.
 
+### Intelligent Data Validation
+
+LunaBloom employs a rigorous domain-level validation engine. It strictly prevents corrupt or impossible entries (such as overlapping periods or future dates) while dynamically adapting to the user's specific baseline. If a user logs biologically unusual data (like 1-day spotting or prolonged bleeding), the system warns them before saving, protecting data integrity without sacrificing UX.
+
 ### Daily Logging
 
 Granular tracking capabilities allow users to log deeply specific data on any given day. This includes menstrual flow intensity, dozens of categorized symptoms, mood variations, energy levels, sleep quality, and bespoke physical indicators.

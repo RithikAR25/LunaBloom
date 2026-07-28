@@ -2,6 +2,7 @@ import type { ICycleRepository } from '../../repositories/ICycleRepository';
 import type { CycleEntry } from '../../models/Cycle';
 import { generateId, nowISO, todayISO, daysBetween, addDays } from '../../../utils/dateUtils';
 import type { ValidationService } from '../../services/ValidationService';
+import { ValidationError } from '../../errors';
 
 export class StartPeriod {
   constructor(
@@ -9,7 +10,17 @@ export class StartPeriod {
     private validationService: ValidationService
   ) {}
 
-  public async execute(startDate: string = todayISO()): Promise<CycleEntry> {
+  public async execute(startDate: string = todayISO(), defaultDurationDays: number = 5): Promise<CycleEntry> {
+    /**
+     * Business Rule:
+     * Cycle events cannot occur in the future.
+     * This invariant is enforced regardless of caller.
+     */
+    const dateRes = this.validationService.validateHistoricalDate(startDate);
+    if (!dateRes.isValid) {
+      throw new ValidationError(dateRes.error || 'Date cannot be in the future', 'startDate');
+    }
+
     const allCycles = await this.cycleRepository.getAll();
     const now = nowISO();
 
@@ -17,20 +28,22 @@ export class StartPeriod {
     const subsequentCycles = sortedCycles.filter(c => c.startDate > startDate);
     const isHistoric = subsequentCycles.length > 0;
     
+    /**
+     * Product Rule: Active Period Heuristic
+     * If the user logs a period starting today or yesterday, we assume they are currently on their period,
+     * so we create an "active" period (endDate = null).
+     * If the date is older than yesterday, we assume it's a historical log and use their average duration.
+     */
+    const isTodayOrYesterday = daysBetween(startDate, todayISO()) <= 1;
+    
     let targetEndDate: string | null = null;
     let targetDurationDays: number | null = null;
 
-    if (isHistoric) {
-      const nextCycleStart = subsequentCycles[0]!.startDate;
-      const defaultEnd = addDays(startDate, 4); 
+    if (isTodayOrYesterday) {
+      // Action A: Create an active period for today/yesterday.
+      targetEndDate = null;
+      targetDurationDays = null;
       
-      if (defaultEnd < nextCycleStart) {
-        targetEndDate = defaultEnd;
-      } else {
-        targetEndDate = addDays(nextCycleStart, -1);
-      }
-      targetDurationDays = daysBetween(startDate, targetEndDate) + 1;
-    } else {
       const activeCycle = allCycles.find(c => c.endDate === null);
       if (activeCycle) {
         if (activeCycle.startDate === startDate) {
@@ -46,10 +59,34 @@ export class StartPeriod {
           });
         }
       }
+    } else {
+      // Action B: Create a bounded historical period using the user's default duration.
+      let calculatedEndDate = addDays(startDate, defaultDurationDays - 1);
+      
+      // Safety: Never create a future end date from a historical log.
+      const today = todayISO();
+      if (calculatedEndDate > today) {
+        calculatedEndDate = today;
+      }
+      
+      targetEndDate = calculatedEndDate;
+      targetDurationDays = daysBetween(startDate, targetEndDate) + 1;
+
+      // Cap the end date if it collides with a subsequent cycle.
+      if (isHistoric) {
+        const nextCycleStart = subsequentCycles[0]!.startDate;
+        if (targetEndDate >= nextCycleStart) {
+          targetEndDate = addDays(nextCycleStart, -1);
+          targetDurationDays = daysBetween(startDate, targetEndDate) + 1;
+        }
+      }
     }
 
-    if (this.validationService.hasOverlap(startDate, targetEndDate, allCycles)) {
-      throw new Error('This period overlaps with an existing logged period.');
+    // Re-fetch cycles because we might have just updated the active cycle's endDate
+    const updatedCycles = await this.cycleRepository.getAll();
+    const overlapRes = this.validationService.validatePeriodOverlap(startDate, targetEndDate, updatedCycles);
+    if (!overlapRes.isValid) {
+      throw new ValidationError(overlapRes.error || 'These dates overlap with an existing period.', 'overlap');
     }
 
     const newCycle: CycleEntry = {

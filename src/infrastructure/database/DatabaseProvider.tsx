@@ -5,8 +5,6 @@
  * Repositories read from this context via getDatabase().
  */
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { useTheme } from '@/presentation/hooks/useTheme';
 import { initDatabase } from './database';
 
 type DatabaseState = 'INITIALIZING' | 'READY' | 'ERROR';
@@ -16,7 +14,6 @@ const DatabaseContext = createContext<{ state: DatabaseState }>({
 });
 
 export function DatabaseProvider({ children }: { children: React.ReactNode }) {
-  const { colors } = useTheme();
   const [state, setState] = useState<DatabaseState>('INITIALIZING');
 
   useEffect(() => {
@@ -40,12 +37,3 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
 export function useDatabase() {
   return useContext(DatabaseContext);
 }
-
-const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor applied dynamically via theme in each render branch
-  },
-});

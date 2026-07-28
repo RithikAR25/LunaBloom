@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { spacing } from '@/design-system';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
+import { useProfileStore } from '@/presentation/stores/useProfileStore';
 import { CycleCalendar } from '@/presentation/components/calendar/CycleCalendar';
 import { todayISO } from '@/utils/dateUtils';
 import { Button } from '@/presentation/components/ui/Button';
@@ -16,10 +17,17 @@ import { ValidationService } from '@/domain/services/ValidationService';
 export default function CalendarScreen() {
   const { colors } = useTheme();
   const { cycles, loadCycles, startPeriod, endPeriod, editCycle, deleteCycle, error, clearError } = useCycleStore();
-  const [selectedDate, setSelectedDate] = useState<string | null>(todayISO());
+  const { profile } = useProfileStore();
+  const [selectedDate, setSelectedDate] = useState<string>(todayISO());
+
+  interface WarningState {
+    title: string;
+    message: string;
+    confirmLabel: string;
+    onConfirm: () => void;
+  }
+  const [warningState, setWarningState] = useState<WarningState | null>(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [shortCycleWarningVisible, setShortCycleWarningVisible] = useState(false);
-  const [pendingStartDate, setPendingStartDate] = useState<string | null>(null);
 
   useEffect(() => {
     loadCycles();
@@ -82,8 +90,32 @@ export default function CalendarScreen() {
                       label="End Period"
                       variant="primary"
                       onPress={async () => {
+                        const endDate = selectedDate || todayISO();
+                        const activeCycle = cycles.find(c => c.endDate === null);
+                        
+                        if (activeCycle) {
+                          const validationService = new ValidationService();
+                          const warnings = validationService.getWarnings(activeCycle.startDate, endDate, cycles, profile?.avgCycleLength, activeCycle.id);
+                          
+                          if (warnings.length > 0) {
+                            const isMultiple = warnings.length > 1;
+                            const firstWarning = warnings[0]!;
+                            setWarningState({
+                              title: isMultiple ? 'Unusual Patterns Detected' : firstWarning.title,
+                              message: isMultiple 
+                                ? 'These patterns can occur, but please confirm the dates are correct:\n\n' + warnings.map(w => `• ${w.message}`).join('\n')
+                                : firstWarning.message,
+                              confirmLabel: 'Save Anyway',
+                              onConfirm: async () => {
+                                try { await endPeriod(endDate); } catch {}
+                              }
+                            });
+                            return;
+                          }
+                        }
+
                         try {
-                          await endPeriod(selectedDate || todayISO());
+                          await endPeriod(endDate);
                         } catch {}
                       }}
                     />
@@ -98,9 +130,21 @@ export default function CalendarScreen() {
                   onPress={async () => {
                     const date = selectedDate || todayISO();
                     const validationService = new ValidationService();
-                    if (validationService.isShortCycleWarning(date, cycles)) {
-                      setPendingStartDate(date);
-                      setShortCycleWarningVisible(true);
+                    const warnings = validationService.getWarnings(date, null, cycles, profile?.avgCycleLength);
+                    
+                    if (warnings.length > 0) {
+                      const isMultiple = warnings.length > 1;
+                      const firstWarning = warnings[0]!;
+                      setWarningState({
+                        title: isMultiple ? 'Unusual Patterns Detected' : firstWarning.title,
+                        message: isMultiple 
+                          ? 'These patterns can occur, but please confirm the dates are correct:\n\n' + warnings.map(w => `• ${w.message}`).join('\n')
+                          : firstWarning.message,
+                        confirmLabel: 'Save Anyway',
+                        onConfirm: async () => {
+                          try { await startPeriod(date); } catch {}
+                        }
+                      });
                     } else {
                       try {
                         await startPeriod(date);
@@ -130,23 +174,17 @@ export default function CalendarScreen() {
         />
 
         <ConfirmModal
-          visible={shortCycleWarningVisible}
-          title="Short Cycle Detected"
-          message="You logged a period very recently. Are you sure you want to start a new cycle?"
-          confirmLabel="Yes, Start Period"
+          visible={!!warningState}
+          title={warningState?.title || ''}
+          message={warningState?.message || ''}
+          confirmLabel={warningState?.confirmLabel || 'Save Anyway'}
           isDestructive={true}
-          onConfirm={async () => {
-            if (pendingStartDate) {
-              try {
-                await startPeriod(pendingStartDate);
-              } catch {}
-            }
-            setShortCycleWarningVisible(false);
-            setPendingStartDate(null);
+          onConfirm={() => {
+            warningState?.onConfirm();
+            setWarningState(null);
           }}
           onCancel={() => {
-            setShortCycleWarningVisible(false);
-            setPendingStartDate(null);
+            setWarningState(null);
           }}
         />
       </ScrollView>
