@@ -26,7 +26,7 @@ describe('CyclePredictionService', () => {
       
       const result = predictionService.predictOvulation(cycles, 28);
       
-      expect(result.confidenceLevel).toBe('LOW');
+      expect(result.confidence).toBe('LOW');
       expect(result.fertilityStatus).toBe('unknown');
     });
 
@@ -39,7 +39,7 @@ describe('CyclePredictionService', () => {
       
       const result = predictionService.predictOvulation(cycles, 28);
       
-      expect(result.confidenceLevel).toBe('HIGH');
+      expect(result.confidence).toBe('HIGH');
       expect(result.fertilityStatus).toBe('possible');
     });
 
@@ -53,7 +53,7 @@ describe('CyclePredictionService', () => {
       
       const result = predictionService.predictOvulation(cycles, 28);
       
-      expect(result.confidenceLevel).toBe('HIGH');
+      expect(result.confidence).toBe('HIGH');
       expect(result.fertilityStatus).toBe('possible');
     });
 
@@ -68,7 +68,7 @@ describe('CyclePredictionService', () => {
       
       // Standard deviation is 0, so confidence is HIGH based purely on variance,
       // BUT avgLength < 21 forces fertilityStatus to unknown and LOW confidence for ovulation!
-      expect(result.confidenceLevel).toBe('LOW');
+      expect(result.confidence).toBe('LOW');
       expect(result.fertilityStatus).toBe('unknown');
       expect(result.explanation).toBeDefined();
     });
@@ -84,8 +84,46 @@ describe('CyclePredictionService', () => {
       const result = predictionService.predictOvulation(cycles, 28);
       
       // Std dev > 7 -> LOW confidence
-      expect(result.confidenceLevel).toBe('LOW');
+      expect(result.confidence).toBe('LOW');
       expect(result.fertilityStatus).toBe('unknown');
+    });
+
+    it('handles The Stress Outlier (28, 29, 28, 45, 27, 28)', () => {
+      const cycles: CycleEntry[] = [
+        baseCycle('6', '2024-06-01', 28),
+        baseCycle('5', '2024-05-04', 27),
+        baseCycle('4', '2024-04-07', 45), // outlier
+        baseCycle('3', '2024-02-22', 28),
+        baseCycle('2', '2024-01-25', 29),
+        baseCycle('1', '2023-12-28', 28),
+      ];
+      
+      const periodResult = predictionService.predictNextPeriod(cycles, 28);
+      
+      // The outlier should be downweighted. 
+      // The median is 28, so predicted cycle length should remain close to 28 (not ~30.8 as a simple mean would give).
+      expect(periodResult.predictedCycleLength).toBe(28);
+      
+      // Check that it's flagged as an unusual cycle in the explanation
+      const hasUnusualExplanation = periodResult.explanation.some(exp => exp.includes('unusual cycle'));
+      expect(hasUnusualExplanation).toBe(true);
+    });
+
+    it('respects biological separation in getPhaseForDate (actual vs predicted)', () => {
+      const cycles: CycleEntry[] = [
+        {
+          ...baseCycle('1', '2024-08-01', 28),
+          endDate: '2024-08-05' // 5 days of menstruation
+        }
+      ];
+
+      // Test day 2 of the cycle (should be MENSTRUAL based on actual logged dates)
+      const resultMenstrual = predictionService.getPhaseForDate('2024-08-02', cycles);
+      expect(resultMenstrual.phase).toBe('MENSTRUAL');
+
+      // Test day 10 of the cycle (FOLLICULAR, outside logged dates)
+      const resultFollicular = predictionService.getPhaseForDate('2024-08-10', cycles);
+      expect(resultFollicular.phase).toBe('FOLLICULAR');
     });
   });
 });

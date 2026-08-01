@@ -74,3 +74,18 @@ export function isAfter(dateA: string, dateB: string): boolean {
 export function isBetween(testDate: string, startDate: string, endDate: string): boolean {
   return testDate >= startDate && testDate <= endDate;
 }
+
+/**
+ * Formats an ISO date string (YYYY-MM-DD) into a short, readable format (e.g., "Oct 15").
+ */
+export function formatDateShort(isoDate: string): string {
+  if (!isoDate) return '';
+  const parts = isoDate.split('-');
+  if (parts.length < 3) return isoDate;
+  
+  const month = parseInt(parts[1], 10);
+  const day = parseInt(parts[2].split('T')[0], 10);
+  
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${months[month - 1]} ${day}`;
+}
