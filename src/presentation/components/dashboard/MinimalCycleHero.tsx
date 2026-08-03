@@ -20,9 +20,11 @@ export function MinimalCycleHero({
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.phaseTitle, { color: colors.brand.primary }]}>
-        {phaseName.toUpperCase()}
-      </Text>
+      {phaseName ? (
+        <Text style={[styles.phaseTitle, { color: colors.brand.primary }]}>
+          {phaseName.toUpperCase()}
+        </Text>
+      ) : null}
       
       <Text style={[styles.dayText, { color: colors.brand.primary }]}>
         Day {cycleDay}

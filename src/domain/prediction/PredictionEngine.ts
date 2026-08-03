@@ -4,10 +4,13 @@ import { PhaseResolver, PhaseInfo } from './services/PhaseResolver';
 import { TimelineIndexer } from './services/TimelineIndexer';
 import { CycleEntry } from '../models/Cycle';
 import { TimelineEvent } from './models/TimelineEvent';
+import { DashboardMetricsBuilder } from './services/DashboardMetricsBuilder';
+import { PredictionSummary } from './models/PredictionSummary';
 
 export interface TimelineData {
   events: TimelineEvent[];
   index: Map<string, TimelineEvent[]>;
+  dashboardInfo: PredictionSummary | null;
 }
 
 export class PredictionEngine {
@@ -15,33 +18,36 @@ export class PredictionEngine {
   private builder: TimelineBuilder;
   private indexer: TimelineIndexer;
   private resolver: PhaseResolver;
+  private dashboardBuilder: DashboardMetricsBuilder;
 
   constructor() {
     this.predictionService = new CyclePredictionService();
     this.builder = new TimelineBuilder();
     this.indexer = new TimelineIndexer();
     this.resolver = new PhaseResolver();
+    this.dashboardBuilder = new DashboardMetricsBuilder();
   }
 
   /**
    * Generates a fully indexed timeline of events based on logged cycles and predictions.
    * This facade method encapsulates the entire prediction and timeline generation pipeline.
    */
-  public generateTimeline(cycles: CycleEntry[], avgCycleLength: number, avgPeriodDuration: number): TimelineData {
-    if (cycles.length === 0) return { events: [], index: new Map() };
+  public generateTimeline(cycles: CycleEntry[], avgCycleLength: number, avgPeriodDuration: number, referenceDate: string = new Date().toISOString().split('T')[0] as string): TimelineData {
+    if (cycles.length === 0) return { events: [], index: new Map(), dashboardInfo: null };
     
     const sorted = [...cycles].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
     const latest = sorted[0];
 
-    if (!latest) return { events: [], index: new Map() };
+    if (!latest) return { events: [], index: new Map(), dashboardInfo: null };
 
     const predictionResult = this.predictionService.predictNextPeriod(sorted, avgCycleLength);
     const projections = this.predictionService.generateFutureCycles(latest, predictionResult, avgPeriodDuration);
     
     const events = this.builder.generateTimeline(sorted, projections);
     const index = this.indexer.buildDateIndex(events);
+    const dashboardInfo = this.dashboardBuilder.build(events, referenceDate, predictionResult);
 
-    return { events, index };
+    return { events, index, dashboardInfo };
   }
 
   /**

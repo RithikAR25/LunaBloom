@@ -151,32 +151,24 @@ export class CyclePredictionService {
     const baseConfidence = predictionResult.confidenceLevel;
     const predictedCycleLength = predictionResult.predictedCycleLength;
 
-    for (let i = 0; i < PredictionConfig.MAX_PREDICTED_CYCLES; i++) {
-      let cycleConfidence = baseConfidence;
-      if (i === 1 && baseConfidence === PredictionConfidence.HIGH) cycleConfidence = PredictionConfidence.MEDIUM;
-      if (i >= 2) cycleConfidence = PredictionConfidence.LOW;
+    const endOfPeriod = addDays(currentStart, predictedPeriodDuration - 1);
+    
+    const ovulationDay = predictedCycleLength - 14; 
+    const predictedOvulationDate = addDays(currentStart, ovulationDay - 1);
+    const fertileWindowStart = addDays(predictedOvulationDate, -3); 
+    const fertileWindowEnd = addDays(predictedOvulationDate, 1);
 
-      const endOfPeriod = addDays(currentStart, predictedPeriodDuration - 1);
-      
-      const ovulationDay = predictedCycleLength - 14; 
-      const predictedOvulationDate = addDays(currentStart, ovulationDay - 1);
-      const fertileWindowStart = addDays(predictedOvulationDate, -3); 
-      const fertileWindowEnd = addDays(predictedOvulationDate, 1);
-
-      projectedCycles.push({
-        predictedStartDate: currentStart,
-        predictedEndDate: endOfPeriod,
-        predictedCycleLength,
-        predictedPeriodDuration,
-        predictedOvulationDate,
-        fertileWindowStart,
-        fertileWindowEnd,
-        confidence: cycleConfidence,
-        projectionNumber: i
-      });
-      
-      currentStart = addDays(currentStart, predictedCycleLength);
-    }
+    projectedCycles.push({
+      predictedStartDate: currentStart,
+      predictedEndDate: endOfPeriod,
+      predictedCycleLength,
+      predictedPeriodDuration,
+      predictedOvulationDate,
+      fertileWindowStart,
+      fertileWindowEnd,
+      confidence: baseConfidence,
+      projectionNumber: 0
+    });
     
     // The first item in projectedCycles actually starts on the same day as lastLoggedCycle!
     // Wait, in my previous implementation:

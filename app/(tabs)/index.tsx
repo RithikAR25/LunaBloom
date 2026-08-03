@@ -43,10 +43,10 @@ export default function DashboardScreen() {
     const avgCycleLength = profile?.avgCycleLength || 28;
     const avgPeriodDuration = profile?.avgPeriodDuration || 5;
 
-    const timelineData = engine.generateTimeline(cycles, avgCycleLength, avgPeriodDuration);
+    const timelineData = engine.generateTimeline(cycles, avgCycleLength, avgPeriodDuration, todayStr);
     
     return { timelineData, engine };
-  }, [cycles, profile]);
+  }, [cycles, profile, todayStr]);
 
   const latestCycle = useMemo(() => {
     if (cycles.length === 0) return null;
@@ -80,7 +80,7 @@ export default function DashboardScreen() {
       case 'FOLLICULAR': return { name: 'Follicular Phase', icon: 'leaf', color: colors.phase.follicular, tipCategory: 'FOLLICULAR' };
       case 'OVULATORY': return { name: 'Ovulatory Phase', icon: 'sun', color: colors.phase.ovulatory, tipCategory: 'OVULATORY' };
       case 'LUTEAL': return { name: 'Luteal Phase', icon: 'moon', color: colors.phase.luteal, tipCategory: 'LUTEAL' };
-      default: return { name: 'Unknown Phase', icon: 'help-circle', color: colors.text.secondary, tipCategory: 'GENERAL' };
+      default: return { name: '', icon: 'calendar', color: colors.text.secondary, tipCategory: 'GENERAL' };
     }
   };
 
@@ -147,8 +147,14 @@ export default function DashboardScreen() {
             <MinimalCycleHero
               phaseName={phaseDetails.name}
               cycleDay={cycleDay || 1}
-              totalDays={profile?.avgCycleLength || 28}
-              periodCountdown={currentPhase === 'LUTEAL' && cycleDay ? (profile?.avgCycleLength || 28) - cycleDay : null}
+              totalDays={timelineData.dashboardInfo?.predictedCycleLength ?? profile?.avgCycleLength ?? 28}
+              periodCountdown={
+                timelineData.dashboardInfo?.daysUntilNextPeriod !== undefined && 
+                timelineData.dashboardInfo.daysUntilNextPeriod !== null && 
+                timelineData.dashboardInfo.daysUntilNextPeriod >= 0 
+                  ? timelineData.dashboardInfo.daysUntilNextPeriod 
+                  : null
+              }
             />
           </Pressable>
         )}

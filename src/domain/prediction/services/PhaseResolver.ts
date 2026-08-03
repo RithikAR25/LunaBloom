@@ -1,11 +1,11 @@
 import { TimelineEvent, TimelineEventType } from '../models/TimelineEvent';
 import { daysBetween } from '../../../utils/dateUtils';
 
-export type CyclePhase = 'MENSTRUAL' | 'FOLLICULAR' | 'OVULATORY' | 'LUTEAL' | 'UNKNOWN';
+export type CyclePhase = 'MENSTRUAL' | 'FOLLICULAR' | 'OVULATORY' | 'LUTEAL';
 export type FertilityStatus = 'fertile' | 'possible' | 'not_fertile' | 'unknown';
 
 export interface PhaseInfo {
-  phase: CyclePhase;
+  phase: CyclePhase | null;
   fertilityStatus: FertilityStatus;
   cycleDay: number | null;
   isPredictedMenstrual?: boolean;
@@ -39,15 +39,15 @@ export class PhaseResolver {
                  if (daysBetween(nextOvulation.date, dateStr) <= 16) {
                      return { phase: 'LUTEAL', fertilityStatus: 'not_fertile', cycleDay };
                  } else {
-                     return { phase: 'UNKNOWN', fertilityStatus: 'unknown', cycleDay };
+                     return { phase: null, fertilityStatus: 'unknown', cycleDay };
                  }
              }
          }
       }
-      return { phase: 'UNKNOWN', fertilityStatus: 'unknown', cycleDay };
+      return { phase: null, fertilityStatus: 'unknown', cycleDay };
     }
 
-    let phase: CyclePhase = 'UNKNOWN';
+    let phase: CyclePhase | null = null;
     let fertilityStatus: FertilityStatus = 'not_fertile';
     let isPredictedMenstrual = false;
 
