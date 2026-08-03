@@ -83,8 +83,8 @@ export function formatDateShort(isoDate: string): string {
   const parts = isoDate.split('-');
   if (parts.length < 3) return isoDate;
   
-  const month = parseInt(parts[1], 10);
-  const day = parseInt(parts[2].split('T')[0], 10);
+  const month = parseInt(parts[1]!, 10);
+  const day = parseInt(parts[2]!.split('T')[0]!, 10);
   
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return `${months[month - 1]} ${day}`;

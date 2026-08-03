@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { CyclePredictionService } from '../../domain/services/CyclePredictionService';
+import { CyclePredictionService } from '../../domain/prediction';
 import type { CycleEntry } from '../../domain/models/Cycle';
 import { addDays, isAfter, todayISO } from '../../utils/dateUtils';
 

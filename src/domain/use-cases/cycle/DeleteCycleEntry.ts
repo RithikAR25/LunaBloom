@@ -25,10 +25,10 @@ export class DeleteCycleEntry {
       const current = allCycles[i];
       let cycleLengthDays: number | null = null;
       
-      if (i > 0) {
-        const previous = allCycles[i - 1];
-        if (current && previous) {
-          cycleLengthDays = daysBetween(previous.startDate, current.startDate);
+      if (i < allCycles.length - 1) {
+        const next = allCycles[i + 1];
+        if (current && next) {
+          cycleLengthDays = daysBetween(current.startDate, next.startDate);
         }
       }
 

@@ -16,7 +16,7 @@ import { HealthTipCard } from '../../src/presentation/components/dashboard/Healt
 import { CycleHistoryChart } from '../../src/presentation/components/dashboard/CycleHistoryChart';
 import { useContentStore } from '../../src/presentation/stores/useContentStore';
 import { ValidationService } from '../../src/domain/services/ValidationService';
-import { CyclePredictionService } from '../../src/domain/services/CyclePredictionService';
+import { PredictionEngine } from '../../src/domain/prediction';
 import { ConfirmModal } from '../../src/presentation/components/ui/ConfirmModal';
 import { useState, useMemo, useCallback } from 'react';
 
@@ -37,20 +37,26 @@ export default function DashboardScreen() {
 
   const todayStr = new Date().toISOString().split('T')[0] || '';
 
-  const sortedCycles = [...cycles].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
-  const latestCycle = sortedCycles.length > 0 ? sortedCycles[0] : null;
+  const { timelineData, engine } = useMemo(() => {
+    const engine = new PredictionEngine();
+    
+    const avgCycleLength = profile?.avgCycleLength || 28;
+    const avgPeriodDuration = profile?.avgPeriodDuration || 5;
 
-  const predictionService = useMemo(() => new CyclePredictionService(), []);
-  
+    const timelineData = engine.generateTimeline(cycles, avgCycleLength, avgPeriodDuration);
+    
+    return { timelineData, engine };
+  }, [cycles, profile]);
+
+  const latestCycle = useMemo(() => {
+    if (cycles.length === 0) return null;
+    return [...cycles].sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())[0];
+  }, [cycles]);
+
   const phaseInfo = useMemo(() => {
-    if (!latestCycle) return null;
-    return predictionService.getPhaseForDate(
-      todayStr,
-      cycles,
-      profile?.avgCycleLength || 28,
-      profile?.avgPeriodDuration || 5
-    );
-  }, [latestCycle, todayStr, cycles, profile, predictionService]);
+    if (cycles.length === 0) return null;
+    return engine.getPhaseForDate(todayStr, timelineData);
+  }, [timelineData, todayStr, cycles, engine]);
 
   const currentPhase = phaseInfo ? phaseInfo.phase : null;
   const cycleDay = phaseInfo ? phaseInfo.cycleDay : null;
@@ -165,7 +171,8 @@ export default function DashboardScreen() {
                 variant="secondary"
                 onPress={async () => {
                   const validationService = new ValidationService();
-                  const isShortCycle = validationService.isShortCycleWarning(todayStr, cycles);
+                  const warnings = validationService.getWarnings(todayStr, null, cycles);
+                  const isShortCycle = warnings.some(w => w.code === 'SHORT_CYCLE');
 
                   const performStart = async () => {
                     try {

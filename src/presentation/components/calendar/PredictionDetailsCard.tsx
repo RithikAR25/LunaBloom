@@ -1,10 +1,9 @@
-
 import { View, StyleSheet } from 'react-native';
 import { Text } from '../ui/Text';
 import { useTheme } from '../../hooks/useTheme';
 import { spacing, borderRadius, fontFamily } from '../../../design-system';
 import { Feather } from '@expo/vector-icons';
-import type { PredictionResult } from '../../../domain/services/CyclePredictionService';
+import { PredictionResult } from '../../../domain/prediction';
 import { formatDateShort } from '../../../utils/dateUtils';
 
 interface PredictionDetailsCardProps {
@@ -14,7 +13,7 @@ interface PredictionDetailsCardProps {
 export function PredictionDetailsCard({ prediction }: PredictionDetailsCardProps) {
   const { colors } = useTheme();
 
-  if (!prediction || prediction.confidence === 'LOW' && prediction.explanation.length === 1 && prediction.explanation[0] === 'More cycle history will improve predictions.') {
+  if (!prediction || (prediction.confidenceLevel === 'LOW' && prediction.explanation.length === 1 && prediction.explanation[0] === 'More cycle history will improve predictions.')) {
     // Return empty if there's no meaningful prediction yet.
     return null;
   }
@@ -22,10 +21,10 @@ export function PredictionDetailsCard({ prediction }: PredictionDetailsCardProps
   const renderConfidenceBadge = () => {
     let color = colors.semantic.warning;
     let label = 'Low Confidence';
-    if (prediction.confidence === 'HIGH') {
+    if (prediction.confidenceLevel === 'HIGH') {
       color = colors.semantic.success;
       label = 'High Confidence';
-    } else if (prediction.confidence === 'MEDIUM') {
+    } else if (prediction.confidenceLevel === 'MEDIUM') {
       color = colors.brand.secondary;
       label = 'Medium Confidence';
     }
@@ -48,9 +47,23 @@ export function PredictionDetailsCard({ prediction }: PredictionDetailsCardProps
         <View style={styles.row}>
           <Feather name="calendar" size={18} color={colors.text.secondary} />
           <Text style={[styles.dateText, { color: colors.text.primary }]}>
-            Next Period: {formatDateShort(prediction.predictedStartWindow.earliest)} - {formatDateShort(prediction.predictedStartWindow.latest)}
+            Next Period: {formatDateShort(prediction.confidenceRange.earliest)} - {formatDateShort(prediction.confidenceRange.latest)}
           </Text>
         </View>
+
+        {prediction.irregularityExplanation && (
+          <View style={styles.detailRow}>
+            <Feather name="alert-circle" size={16} color={colors.semantic.warning} style={styles.detailIcon} />
+            <View style={styles.detailTextContainer}>
+              <Text style={[styles.detailText, { color: colors.semantic.warning }]}>
+                Cycle irregularity detected
+              </Text>
+              <Text style={[styles.detailSubtext, { color: colors.text.secondary }]}>
+                {prediction.irregularityExplanation}
+              </Text>
+            </View>
+          </View>
+        )}
 
         <View style={styles.explanationContainer}>
           <Text style={[styles.explanationTitle, { color: colors.text.secondary }]}>Why this prediction?</Text>
@@ -125,6 +138,30 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   explanationText: {
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    backgroundColor: 'rgba(255, 153, 102, 0.1)', // Subtle warning bg
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    marginBottom: spacing.xs,
+  },
+  detailIcon: {
+    marginTop: 2,
+  },
+  detailTextContainer: {
+    flex: 1,
+    gap: 4,
+  },
+  detailText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  detailSubtext: {
     fontSize: 13,
     lineHeight: 18,
   },

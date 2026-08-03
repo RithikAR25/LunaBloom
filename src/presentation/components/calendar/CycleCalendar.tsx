@@ -10,7 +10,7 @@ import { DayState } from './DayCell';
 import type { CycleEntry } from '../../../domain/models/Cycle';
 import { todayISO } from '../../../utils/dateUtils';
 import { useProfileStore } from '../../../presentation/stores/useProfileStore';
-import { CyclePredictionService } from '../../../domain/services/CyclePredictionService';
+import { PredictionEngine } from '../../../domain/prediction';
 
 interface CycleCalendarProps {
   cycles: CycleEntry[];
@@ -65,14 +65,18 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalen
 
     const avgCycleLength = profile?.avgCycleLength || 28;
     const avgPeriodDuration = profile?.avgPeriodDuration || 5;
-    const predictionService = new CyclePredictionService();
+    
+    // 1. Build the timeline once (O(1) lookups later)
+    const engine = new PredictionEngine();
+    
+    const timelineData = engine.generateTimeline(cycles, avgCycleLength, avgPeriodDuration);
 
-    // Actual days
+    // 2. Generate actual days in O(1) time
     for (let i = 1; i <= totalDays; i++) {
       const d = new Date(Date.UTC(year, month, i));
       const dateStr = d.toISOString().split('T')[0]!;
       
-      const phaseInfo = predictionService.getPhaseForDate(dateStr, cycles, avgCycleLength, avgPeriodDuration);
+      const phaseInfo = engine.getPhaseForDate(dateStr, timelineData);
       
       let state: DayState = 'none';
       if (phaseInfo.isPredictedMenstrual) {

@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemeProvider, DefaultTheme, DarkTheme } from '@react-navigation/native';
+
 import { DatabaseProvider } from '@/infrastructure/database/DatabaseProvider';
 import { RepositoryProvider } from '@/providers/RepositoryProvider';
 import { useProfileStore } from '@/presentation/stores/useProfileStore';

@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { borderRadius } from '@/design-system';
-import type { FertilityStatus } from '@/domain/services/CyclePredictionService';
+import { FertilityStatus } from '../../../domain/prediction';
 
-export type DayState = 'none' | 'menstrual' | 'follicular' | 'ovulatory' | 'luteal' | 'predicted_menstrual';
+export type DayState = 'none' | 'menstrual' | 'follicular' | 'ovulatory' | 'luteal' | 'predicted_menstrual' | 'unknown';
 
 interface DayCellProps {
   dateStr: string; // ISO date string or empty if padding
@@ -76,7 +76,7 @@ export function DayCell({ dateStr, dayNumber, state, fertilityStatus = 'not_fert
         >
           {dayNumber}
         </Text>
-        {(fertilityStatus === 'fertile' || fertilityStatus === 'possible') && (state === 'menstrual' || state === 'predicted_menstrual') && (
+        {(fertilityStatus === 'fertile' || fertilityStatus === 'possible') && (
           <View style={[styles.fertilityDot, { backgroundColor: colors.phase.ovulatory }]} />
         )}
       </Pressable>

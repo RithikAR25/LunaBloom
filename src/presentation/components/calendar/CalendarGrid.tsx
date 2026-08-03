@@ -3,7 +3,7 @@ import type { DayState } from './DayCell';
 import { DayCell } from './DayCell';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { spacing, fontSize, fontFamily } from '@/design-system';
-import type { FertilityStatus } from '@/domain/services/CyclePredictionService';
+import { FertilityStatus } from '../../../domain/prediction';
 
 export interface CalendarDayData {
   dateStr: string;
