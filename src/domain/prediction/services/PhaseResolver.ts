@@ -1,6 +1,6 @@
 import { TimelineEvent, TimelineEventType } from '../models/TimelineEvent';
 import { PhaseInterval, CyclePhase } from '../models/PhaseInterval';
-import { daysBetween, addDays } from '../../../utils/dateUtils';
+import { daysBetween } from '../../../utils/dateUtils';
 
 export type FertilityStatus = 'fertile' | 'possible' | 'not_fertile' | 'unknown';
 

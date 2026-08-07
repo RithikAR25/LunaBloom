@@ -2,19 +2,31 @@ import { View, StyleSheet } from 'react-native';
 import { Text } from '../ui/Text';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { spacing, borderRadius, fontFamily, letterSpacing } from '@/design-system';
+import { PredictionConfidence } from '@/domain/prediction/models/TimelineEvent';
 
 export interface MinimalCycleHeroProps {
   phaseName: string;
   cycleDay: number;
-  totalDays: number;
   periodCountdown: number | null;
+  confidence?: PredictionConfidence | null;
+  isMenstruating?: boolean;
 }
+
+const formatConfidence = (confidence: PredictionConfidence): string => {
+  switch (confidence) {
+    case PredictionConfidence.HIGH: return 'Prediction: High';
+    case PredictionConfidence.MEDIUM: return 'Prediction: Medium';
+    case PredictionConfidence.LOW: return 'Prediction: Low';
+    default: return '';
+  }
+};
 
 export function MinimalCycleHero({
   phaseName,
   cycleDay,
-  totalDays,
   periodCountdown,
+  confidence,
+  isMenstruating,
 }: MinimalCycleHeroProps) {
   const { colors } = useTheme();
 
@@ -31,23 +43,27 @@ export function MinimalCycleHero({
       </Text>
 
       <View style={styles.pillsContainer}>
-        <View style={[styles.pill, { backgroundColor: colors.surfaceElevated }]}>
-          <Text style={[styles.pillText, { color: colors.text.primary }]}>
-            Period in {periodCountdown !== null ? `${periodCountdown}d` : '--'}
-          </Text>
-        </View>
+        {!isMenstruating && periodCountdown !== null && (
+          <View style={[styles.pill, { backgroundColor: colors.surfaceElevated }]}>
+            <Text style={[styles.pillText, { color: colors.text.primary }]}>
+              Period in {periodCountdown}d
+            </Text>
+          </View>
+        )}
 
         <View style={[styles.pill, { backgroundColor: colors.surfaceElevated }]}>
           <Text style={[styles.pillText, { color: colors.text.primary }]}>
             Cycle Day {cycleDay}
           </Text>
         </View>
-      </View>
-      
-      <View style={[styles.pill, { backgroundColor: colors.surfaceElevated, marginTop: spacing.sm, alignSelf: 'center' }]}>
-        <Text style={[styles.pillText, { color: colors.text.primary }]}>
-          Cycle Length {totalDays}d
-        </Text>
+
+        {confidence != null && (
+          <View style={[styles.pill, { backgroundColor: colors.surfaceElevated }]}>
+            <Text style={[styles.pillText, { color: colors.text.primary }]}>
+              {formatConfidence(confidence)}
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -73,6 +89,7 @@ const styles = StyleSheet.create({
   },
   pillsContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
     gap: spacing.md * 0.9,
     marginTop: spacing.md * 0.9,

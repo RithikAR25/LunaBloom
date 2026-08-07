@@ -46,18 +46,7 @@ export class StartPeriod {
       
       const activeCycle = allCycles.find(c => c.endDate === null);
       if (activeCycle) {
-        if (activeCycle.startDate === startDate) {
-          throw new Error('A cycle is already active and started on this date.');
-        }
-        
-        if (activeCycle.startDate < startDate) {
-          const newEndDate = addDays(startDate, -1);
-          const durationDays = daysBetween(activeCycle.startDate, newEndDate) + 1;
-          await this.cycleRepository.update(activeCycle.id, {
-            endDate: newEndDate,
-            durationDays: durationDays,
-          });
-        }
+        throw new Error("You're already tracking a period.\nEnd it before starting a new one.");
       }
     } else {
       // Action B: Create a bounded historical period using the user's default duration.

@@ -23,7 +23,7 @@ export class EndPeriod {
     const activeCycle = (await this.cycleRepository.getAll()).find(c => c.endDate === null);
     
     if (!activeCycle) {
-      throw new Error('No active period to end.');
+      throw new Error("There's no active period to end.");
     }
 
     if (isBefore(endDate, activeCycle.startDate)) {

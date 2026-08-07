@@ -27,11 +27,10 @@ export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   
   const [shortCycleWarningVisible, setShortCycleWarningVisible] = useState(false);
-  const [endPeriodWarningVisible, setEndPeriodWarningVisible] = useState(false);
   const [pendingStartDate, setPendingStartDate] = useState<string | null>(null);
 
   const { profile } = useProfileStore();
-  const { activeCycle, cycles, loadCycles } = useCycleStore();
+  const { cycles, loadCycles } = useCycleStore();
   const { currentLog, loadLogForDate } = useDailyLogStore();
   const { healthTips } = useContentStore();
 
@@ -78,7 +77,6 @@ export default function DashboardScreen() {
     switch (currentPhase) {
       case 'MENSTRUAL': return { name: phaseInfo?.fertilityStatus === 'fertile' || phaseInfo?.fertilityStatus === 'possible' ? 'Menstrual (Possible Fertility)' : 'Menstrual Phase', icon: 'droplet', color: colors.phase.menstrual, tipCategory: 'MENSTRUAL' };
       case 'FOLLICULAR': return { name: 'Follicular Phase', icon: 'leaf', color: colors.phase.follicular, tipCategory: 'FOLLICULAR' };
-      case 'FERTILE':
       case 'OVULATION': return { name: 'Ovulatory Phase', icon: 'sun', color: colors.phase.ovulatory, tipCategory: 'OVULATORY' };
       case 'LUTEAL': return { name: 'Luteal Phase', icon: 'moon', color: colors.phase.luteal, tipCategory: 'LUTEAL' };
       default: return { name: '', icon: 'calendar', color: colors.text.secondary, tipCategory: 'GENERAL' };
@@ -148,7 +146,6 @@ export default function DashboardScreen() {
             <MinimalCycleHero
               phaseName={phaseDetails.name}
               cycleDay={cycleDay || 1}
-              totalDays={timelineData.dashboardInfo?.predictedCycleLength ?? profile?.avgCycleLength ?? 28}
               periodCountdown={
                 timelineData.dashboardInfo?.daysUntilNextPeriod !== undefined && 
                 timelineData.dashboardInfo.daysUntilNextPeriod !== null && 
@@ -156,57 +153,60 @@ export default function DashboardScreen() {
                   ? timelineData.dashboardInfo.daysUntilNextPeriod 
                   : null
               }
+              confidence={timelineData.dashboardInfo?.confidence ?? null}
+              isMenstruating={currentPhase === 'MENSTRUAL'}
             />
           </Pressable>
         )}
 
         <View style={styles.quickActionsContainer}>
           <View style={styles.quickActionsRow}>
-            {activeCycle ? (
-              <GridActionButton
-                label="End Period"
-                icon="x-circle"
-                variant="secondary"
-                onPress={() => {
-                  setEndPeriodWarningVisible(true);
-                }}
-              />
-            ) : (
-              <GridActionButton
-                label="Start Period"
-                icon="droplet"
-                variant="secondary"
-                onPress={async () => {
-                  const validationService = new ValidationService();
-                  const warnings = validationService.getWarnings(todayStr, null, cycles);
-                  const isShortCycle = warnings.some(w => w.code === 'SHORT_CYCLE');
-
-                  const performStart = async () => {
-                    try {
-                      await useCycleStore.getState().startPeriod(todayStr);
-                    } catch {
-                      Alert.alert(
-                        'Overlap Detected',
-                        'This period overlaps with an existing logged period. Please go to the Calendar tab to edit your cycle entries.',
-                        [{ text: 'OK' }]
-                      );
-                    }
-                  };
-
-                  if (isShortCycle) {
-                    setPendingStartDate(todayStr);
-                    setShortCycleWarningVisible(true);
-                  } else {
-                    await performStart();
-                  }
-                }}
-              />
-            )}
             <GridActionButton
-              label="Log Today"
-              icon="calendar"
+              label="Start Period"
+              icon="droplet"
+              variant="secondary"
+              onPress={async () => {
+                const validationService = new ValidationService();
+                const warnings = validationService.getWarnings(todayStr, null, cycles);
+                const isShortCycle = warnings.some(w => w.code === 'SHORT_CYCLE');
+
+                const performStart = async () => {
+                  try {
+                    await useCycleStore.getState().startPeriod(todayStr);
+                  } catch (err: any) {
+                    const isAlreadyActive = err.message.includes('already tracking');
+                    Alert.alert(
+                      isAlreadyActive ? 'Active Period' : 'Notice',
+                      err.message,
+                      [{ text: 'OK' }]
+                    );
+                  }
+                };
+
+                if (isShortCycle) {
+                  setPendingStartDate(todayStr);
+                  setShortCycleWarningVisible(true);
+                } else {
+                  await performStart();
+                }
+              }}
+            />
+            <GridActionButton
+              label="End Period"
+              icon="x-circle"
               variant="primary"
-              onPress={() => router.push('/log')}
+              onPress={async () => {
+                try {
+                  await useCycleStore.getState().endPeriod(todayStr);
+                } catch (err: any) {
+                  const isNotActive = err.message.includes('no active period');
+                  Alert.alert(
+                    isNotActive ? 'No Active Period' : 'Notice',
+                    err.message,
+                    [{ text: 'OK' }]
+                  );
+                }
+              }}
             />
           </View>
           <View style={styles.quickActionsRow}>
@@ -255,8 +255,13 @@ export default function DashboardScreen() {
           if (pendingStartDate) {
             try {
               await useCycleStore.getState().startPeriod(pendingStartDate);
-            } catch {
-              Alert.alert('Overlap Detected', 'This period overlaps with an existing logged period.', [{ text: 'OK' }]);
+            } catch (err: any) {
+              const isAlreadyActive = err.message.includes('already tracking');
+              Alert.alert(
+                isAlreadyActive ? 'Active Period' : 'Notice',
+                err.message,
+                [{ text: 'OK' }]
+              );
             }
           }
           setPendingStartDate(null);
@@ -265,23 +270,6 @@ export default function DashboardScreen() {
           setShortCycleWarningVisible(false);
           setPendingStartDate(null);
         }}
-      />
-
-      <ConfirmModal
-        visible={endPeriodWarningVisible}
-        title="End Period"
-        message="Are you sure you want to end your period today?"
-        confirmLabel="End Period"
-        isDestructive={false}
-        onConfirm={async () => {
-          setEndPeriodWarningVisible(false);
-          try {
-            await useCycleStore.getState().endPeriod(todayStr);
-          } catch {
-            Alert.alert('Error', 'Could not end period.');
-          }
-        }}
-        onCancel={() => setEndPeriodWarningVisible(false)}
       />
     </View>
   );
