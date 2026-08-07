@@ -71,8 +71,6 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       await startPeriodUC.execute(startDate, defaultDuration);
       await get().loadCycles();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to start period';
-      set({ error: message });
       throw err;
     } finally {
       set({ isLoading: false });
@@ -90,8 +88,6 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       await endPeriodUC.execute(endDate);
       await get().loadCycles();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to end period';
-      set({ error: message });
       throw err;
     } finally {
       set({ isLoading: false });
@@ -109,8 +105,6 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       await editCycleUC.execute(id, startDate, endDate, notes, isExcludedFromPredictions);
       await get().loadCycles();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to edit cycle';
-      set({ error: message });
       throw err;
     } finally {
       set({ isLoading: false });
@@ -127,8 +121,6 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       await deleteCycleUC.execute(id);
       await get().loadCycles();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete cycle';
-      set({ error: message });
       throw err;
     } finally {
       set({ isLoading: false });

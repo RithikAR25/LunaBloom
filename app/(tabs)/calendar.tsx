@@ -16,7 +16,7 @@ import { ValidationService } from '@/domain/services/ValidationService';
 /** Calendar Screen — Phase 1 */
 export default function CalendarScreen() {
   const { colors } = useTheme();
-  const { cycles, loadCycles, startPeriod, endPeriod, editCycle, deleteCycle, error, clearError } = useCycleStore();
+  const { cycles, loadCycles, startPeriod, endPeriod, editCycle, deleteCycle } = useCycleStore();
   const { profile } = useProfileStore();
   const [selectedDate, setSelectedDate] = useState<string>(todayISO());
 
@@ -33,11 +33,7 @@ export default function CalendarScreen() {
     loadCycles();
   }, [loadCycles]);
 
-  useEffect(() => {
-    if (error) {
-      Alert.alert('Error', error, [{ text: 'OK', onPress: clearError }]);
-    }
-  }, [error, clearError]);
+
 
   const handleSelectDate = (dateStr: string) => {
     setSelectedDate(dateStr);
@@ -107,7 +103,7 @@ export default function CalendarScreen() {
                                 : firstWarning.message,
                               confirmLabel: 'Save Anyway',
                               onConfirm: async () => {
-                                try { await endPeriod(endDate); } catch {}
+                                try { await endPeriod(endDate); } catch (err: any) { Alert.alert('Error', err.message); }
                               }
                             });
                             return;
@@ -116,7 +112,9 @@ export default function CalendarScreen() {
 
                         try {
                           await endPeriod(endDate);
-                        } catch {}
+                        } catch (err: any) {
+                          Alert.alert('Error', err.message);
+                        }
                       }}
                     />
                   </View>
@@ -142,13 +140,15 @@ export default function CalendarScreen() {
                           : firstWarning.message,
                         confirmLabel: 'Save Anyway',
                         onConfirm: async () => {
-                          try { await startPeriod(date); } catch {}
+                          try { await startPeriod(date); } catch (err: any) { Alert.alert('Error', err.message); }
                         }
                       });
                     } else {
                       try {
                         await startPeriod(date);
-                      } catch {}
+                      } catch (err: any) {
+                        Alert.alert('Error', err.message);
+                      }
                     }
                   }}
                 />
@@ -164,12 +164,16 @@ export default function CalendarScreen() {
           onSave={async (id, start, end, notes, isExcluded) => {
             try {
               await editCycle(id, start, end, notes ?? null, isExcluded);
-            } catch {}
+            } catch (err: any) {
+              Alert.alert('Error', err.message);
+            }
           }}
           onDelete={async (id) => {
             try {
               await deleteCycle(id);
-            } catch {}
+            } catch (err: any) {
+              Alert.alert('Error', err.message);
+            }
           }}
         />
 
