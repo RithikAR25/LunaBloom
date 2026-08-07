@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: spacing.md * 0.9,
     marginTop: spacing.md * 0.9,
+    paddingHorizontal: spacing.lg,
   },
   pill: {
     paddingVertical: spacing.sm,
