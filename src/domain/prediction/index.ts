@@ -1,5 +1,6 @@
 export * from './config/PredictionConfig';
-export * from './models/ProjectedCycle';
+export * from './models/CyclePrediction';
+export * from './models/PhaseInterval';
 export * from './models/TimelineEvent';
 export * from './models/PredictionSummary';
 export * from './services/CyclePredictionService';

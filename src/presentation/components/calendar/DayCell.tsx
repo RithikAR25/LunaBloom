@@ -6,16 +6,17 @@ import { FertilityStatus } from '../../../domain/prediction';
 export type DayState = 'none' | 'menstrual' | 'follicular' | 'ovulatory' | 'luteal' | 'predicted_menstrual' | 'unknown';
 
 interface DayCellProps {
-  dateStr: string; // ISO date string or empty if padding
+  dateStr: string; 
   dayNumber: number | null;
   state: DayState;
   fertilityStatus?: FertilityStatus | undefined;
+  source?: 'LOGGED' | 'RECONSTRUCTED' | 'PREDICTED' | undefined;
   isToday: boolean;
   isSelected: boolean;
   onPress?: (dateStr: string) => void;
 }
 
-export function DayCell({ dateStr, dayNumber, state, fertilityStatus = 'not_fertile', isToday, isSelected, onPress }: DayCellProps) {
+export function DayCell({ dateStr, dayNumber, state, fertilityStatus = 'not_fertile', source, isToday, isSelected, onPress }: DayCellProps) {
   const { colors } = useTheme();
 
   if (!dayNumber) {
@@ -23,12 +24,16 @@ export function DayCell({ dateStr, dayNumber, state, fertilityStatus = 'not_fert
   }
 
   const getBackgroundColor = () => {
+    const isPredicted = source === 'PREDICTED';
+    const opacity = isPredicted ? '1A' : '33'; // Lighter for predicted, standard for facts
+    
     switch (state) {
-      case 'menstrual': return colors.phase.menstrual + '20';
-      case 'predicted_menstrual': return colors.phase.predicted + '10';
-      case 'follicular': return colors.phase.follicular + '20';
-      case 'ovulatory': return colors.phase.ovulatory + '20';
-      case 'luteal': return colors.phase.luteal + '20';
+      case 'menstrual':
+      case 'predicted_menstrual': 
+        return colors.phase.menstrual + opacity;
+      case 'follicular': return colors.phase.follicular + opacity;
+      case 'ovulatory': return colors.phase.ovulatory + opacity;
+      case 'luteal': return colors.phase.luteal + opacity;
       default: return 'transparent';
     }
   };
@@ -46,7 +51,7 @@ export function DayCell({ dateStr, dayNumber, state, fertilityStatus = 'not_fert
   const getBorderColor = () => {
     if (isSelected) return colors.brand.primary;
     if (isToday) return colors.brand.primary;
-    if (state === 'predicted_menstrual') return colors.phase.predicted; // dashed border
+    if (source === 'PREDICTED' && state !== 'none') return colors.phase.predicted; // dashed border for any predicted phase
     return 'transparent';
   };
 
@@ -58,9 +63,9 @@ export function DayCell({ dateStr, dayNumber, state, fertilityStatus = 'not_fert
           {
             backgroundColor: getBackgroundColor(),
             borderColor: getBorderColor(),
-            borderWidth: isSelected ? 2 : (isToday || state === 'predicted_menstrual' ? 1 : 0),
-            borderStyle: state === 'predicted_menstrual' && !isSelected && !isToday ? 'dashed' : 'solid',
-            borderRadius: borderRadius.full, // perfect circles for calendar dots
+            borderWidth: isSelected ? 2 : (isToday || (source === 'PREDICTED' && state !== 'none') ? 1 : 0),
+            borderStyle: (source === 'PREDICTED' && state !== 'none' && !isSelected && !isToday) ? 'dashed' : 'solid',
+            borderRadius: borderRadius.full,
           },
         ]}
         onPress={() => onPress && onPress(dateStr)}

@@ -64,32 +64,29 @@ export class NotificationService {
     if (!hasPermission || cycles.length === 0) return;
 
     const predictionService = new CyclePredictionService();
-    const nextPeriod = predictionService.predictNextPeriod(cycles);
-    const ovulation = predictionService.predictOvulation(cycles);
+    const prediction = predictionService.predict(cycles);
+
+    if (!prediction) return;
 
     const today = todayISO();
 
     // 1. Period Reminder (2 days before)
-    if (nextPeriod) {
-      const reminderDate = addDays(nextPeriod.predictedStartDate, -2);
-      if (isAfter(reminderDate, today)) {
-        await this.scheduleNotification(
-          'Period Approaching',
-          'Your period is expected to start in about 2 days.',
-          new Date(`${reminderDate}T09:00:00`)
-        );
-      }
+    const reminderDate = addDays(prediction.nextPeriodStart, -2);
+    if (isAfter(reminderDate, today)) {
+      await this.scheduleNotification(
+        'Period Approaching',
+        'Your period is expected to start in about 2 days.',
+        new Date(`${reminderDate}T09:00:00`)
+      );
     }
 
     // 2. Ovulation/Fertile Window Reminder (at start of fertile window)
-    if (ovulation) {
-      if (ovulation.fertileWindowStart && isAfter(ovulation.fertileWindowStart, today)) {
-        await this.scheduleNotification(
-          'Fertile Window',
-          'Your fertile window is starting soon.',
-          new Date(`${ovulation.fertileWindowStart}T09:00:00`)
-        );
-      }
+    if (prediction.fertileWindowStart && isAfter(prediction.fertileWindowStart, today)) {
+      await this.scheduleNotification(
+        'Fertile Window',
+        'Your fertile window is starting soon.',
+        new Date(`${prediction.fertileWindowStart}T09:00:00`)
+      );
     }
   }
 

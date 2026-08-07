@@ -78,7 +78,8 @@ export default function DashboardScreen() {
     switch (currentPhase) {
       case 'MENSTRUAL': return { name: phaseInfo?.fertilityStatus === 'fertile' || phaseInfo?.fertilityStatus === 'possible' ? 'Menstrual (Possible Fertility)' : 'Menstrual Phase', icon: 'droplet', color: colors.phase.menstrual, tipCategory: 'MENSTRUAL' };
       case 'FOLLICULAR': return { name: 'Follicular Phase', icon: 'leaf', color: colors.phase.follicular, tipCategory: 'FOLLICULAR' };
-      case 'OVULATORY': return { name: 'Ovulatory Phase', icon: 'sun', color: colors.phase.ovulatory, tipCategory: 'OVULATORY' };
+      case 'FERTILE':
+      case 'OVULATION': return { name: 'Ovulatory Phase', icon: 'sun', color: colors.phase.ovulatory, tipCategory: 'OVULATORY' };
       case 'LUTEAL': return { name: 'Luteal Phase', icon: 'moon', color: colors.phase.luteal, tipCategory: 'LUTEAL' };
       default: return { name: '', icon: 'calendar', color: colors.text.secondary, tipCategory: 'GENERAL' };
     }

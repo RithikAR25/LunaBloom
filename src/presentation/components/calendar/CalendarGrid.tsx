@@ -10,6 +10,7 @@ export interface CalendarDayData {
   dayNumber: number;
   state: DayState;
   fertilityStatus?: FertilityStatus;
+  source?: 'LOGGED' | 'RECONSTRUCTED' | 'PREDICTED' | undefined;
 }
 
 interface CalendarGridProps {
@@ -46,6 +47,7 @@ export function CalendarGrid({ days, selectedDate, todayDate, onSelectDate }: Ca
               dayNumber={day.dayNumber}
               state={day.state}
               fertilityStatus={day.fertilityStatus}
+              source={day.source}
               isToday={day.dateStr === todayDate}
               isSelected={day.dateStr === selectedDate}
               onPress={onSelectDate}

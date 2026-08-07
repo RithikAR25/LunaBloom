@@ -85,7 +85,7 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalen
         switch (phaseInfo.phase) {
           case 'MENSTRUAL': state = 'menstrual'; break;
           case 'FOLLICULAR': state = 'follicular'; break;
-          case 'OVULATORY': state = 'ovulatory'; break;
+          case 'OVULATION': state = 'ovulatory'; break;
           case 'LUTEAL': state = 'luteal'; break;
         }
       }
@@ -95,6 +95,7 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalen
         dayNumber: i,
         state,
         fertilityStatus: phaseInfo.fertilityStatus,
+        source: phaseInfo.source,
       });
     }
 

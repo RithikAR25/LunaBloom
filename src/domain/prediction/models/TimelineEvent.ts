@@ -4,7 +4,7 @@ export enum TimelineEventType {
   OVULATION = 'OVULATION',
 }
 
-export type TimelineEventSource = 'LOGGED' | 'PREDICTED';
+export type TimelineEventSource = 'LOGGED' | 'RECONSTRUCTED' | 'PREDICTED';
 
 export enum PredictionConfidence {
   LOW = 'LOW',

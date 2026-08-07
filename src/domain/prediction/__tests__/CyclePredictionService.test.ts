@@ -14,7 +14,7 @@ describe('Prediction Module', () => {
 
   beforeEach(() => {
     predictionService = new CyclePredictionService();
-    builder = new TimelineBuilder();
+    builder = new TimelineBuilder(predictionService);
     indexer = new TimelineIndexer();
     resolver = new PhaseResolver();
   });
@@ -34,10 +34,15 @@ describe('Prediction Module', () => {
   });
 
   describe('CyclePredictionService', () => {
+    it('returns null if no valid cycles', () => {
+      const result = predictionService.predict([], 28);
+      expect(result).toBeNull();
+    });
+
     it('returns LOW confidence for < 2 valid cycles', () => {
       const cycles = [createCycle('2023-01-01', 28)];
-      const result = predictionService.predictNextPeriod(cycles, 28);
-      expect(result.confidenceLevel).toBe(PredictionConfidence.LOW);
+      const result = predictionService.predict(cycles, 28);
+      expect(result!.confidence).toBe(PredictionConfidence.LOW);
     });
 
     it('returns HIGH confidence for >= 3 consistent cycles', () => {
@@ -47,8 +52,8 @@ describe('Prediction Module', () => {
         createCycle('2023-02-26', 28),
         createCycle('2023-03-26', 28),
       ];
-      const result = predictionService.predictNextPeriod(cycles, 28);
-      expect(result.confidenceLevel).toBe(PredictionConfidence.HIGH);
+      const result = predictionService.predict(cycles, 28);
+      expect(result!.confidence).toBe(PredictionConfidence.HIGH);
     });
 
     it('returns MEDIUM confidence for slightly varying cycles', () => {
@@ -58,9 +63,8 @@ describe('Prediction Module', () => {
         createCycle('2023-03-05', 28, 5),
         createCycle('2023-04-02', 38, 5),
       ];
-      const result = predictionService.predictNextPeriod(cycles, 28);
-      expect(result.confidenceLevel).toBe(PredictionConfidence.MEDIUM);
-      expect(result.isIrregular).toBe(false);
+      const result = predictionService.predict(cycles, 28);
+      expect(result!.confidence).toBe(PredictionConfidence.MEDIUM);
     });
   });
 
@@ -73,17 +77,15 @@ describe('Prediction Module', () => {
         createCycle('2026-04-06', 30, 5)
       ];
 
-      const prediction = predictionService.predictNextPeriod(cycles, 28);
-      const projected = predictionService.generateFutureCycles(cycles[0]!, prediction, 5);
+      const prediction = predictionService.predict(cycles, 28);
 
-      expect(projected.length).toBe(1);
+      expect(prediction).not.toBeNull();
 
       // Prediction 1
-      expect(projected[0]!.predictedStartDate).toBe('2026-07-05'); // +30 days from June 5
-      expect(projected[0]!.predictedEndDate).toBe('2026-07-09'); // 5 day period
-      expect(projected[0]!.predictedCycleLength).toBe(30);
-      expect(projected[0]!.confidence).toBe(PredictionConfidence.HIGH);
-      expect(projected[0]!.projectionNumber).toBe(0);
+      expect(prediction!.nextPeriodStart).toBe('2026-07-05'); // +30 days from June 5
+      expect(prediction!.nextPeriodEnd).toBe('2026-07-09'); // 5 day period
+      expect(prediction!.predictedCycleLength).toBe(30);
+      expect(prediction!.confidence).toBe(PredictionConfidence.HIGH);
     });
   });
 
@@ -94,23 +96,37 @@ describe('Prediction Module', () => {
         createCycle(baseStart, 30),
       ]; // May 6 logged
 
-      const prediction = predictionService.predictNextPeriod(cycles, 28);
-      const projected = predictionService.generateFutureCycles(cycles[0]!, prediction, 5);
-      const events = builder.generateTimeline(cycles, projected);
+      const prediction = predictionService.predict(cycles, 28);
+      const { events, intervals } = builder.build(cycles, prediction);
       const index = indexer.buildDateIndex(events);
 
       // Predicted is June 5. October 20 is far beyond the single prediction
       const futureDate = '2026-10-20';
-      const activeEvents = index.get(futureDate) || [];
-      const phase = resolver.getPhaseForDate(futureDate, activeEvents, events);
+      const phase = resolver.getPhaseForDate(futureDate, intervals, index);
       
       expect(phase.phase).toBeNull();
       expect(phase.fertilityStatus).toBe('unknown');
     });
 
     it('returns null phase if there are no logged cycles at all', () => {
-      const phase = resolver.getPhaseForDate('2026-01-01', [], []);
+      const phase = resolver.getPhaseForDate('2026-01-01', [], new Map());
       expect(phase.phase).toBeNull();
+      expect(phase.fertilityStatus).toBe('unknown');
+    });
+
+    it('Regression Test 1: The Luteal Fix (Aug 4 for single July 16 log)', () => {
+      const cycles = [
+        createCycle('2026-07-16', null)
+      ];
+
+      const prediction = predictionService.predict(cycles, 28, 5);
+      const { events, intervals } = builder.build(cycles, prediction);
+      const index = indexer.buildDateIndex(events);
+
+      const phase = resolver.getPhaseForDate('2026-08-04', intervals, index);
+      
+      expect(phase.phase).toBe('LUTEAL');
+      expect(phase.cycleDay).toBe(20);
       expect(phase.fertilityStatus).toBe('unknown');
     });
   });
