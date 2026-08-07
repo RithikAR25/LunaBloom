@@ -3,6 +3,7 @@ import { addDays } from '../../../utils/dateUtils';
 import { PredictionConfidence } from '../models/TimelineEvent';
 import { CyclePrediction } from '../models/CyclePrediction';
 import { CycleBiology } from '../models/CycleBiology';
+import { median, medianAbsoluteDeviation, continuousDecayWeight } from '../utils/statisticsUtils';
 
 export interface PredictionResult {
   predictedStartDate: string;
@@ -78,25 +79,37 @@ export class CyclePredictionService {
     if (n === 0) {
       explanation.push('More cycle history will improve predictions.');
     } else {
+      const lengths = completedCycles.map(c => c.cycleLengthDays ?? fallbackAvgCycleLength);
+
+      // Step 1 — Median and MAD for robust variability measurement
+      const medianLength = median(lengths);
+      const mad = medianAbsoluteDeviation(lengths, medianLength);
+
+      // Step 2 — LWMA with Cauchy soft-outlier weighting
+      // Each cycle gets a recency weight (LWMA) multiplied by a Cauchy outlier weight (MAD-based).
+      // Anomalous cycles (stress, illness, travel) are downweighted rather than hard-excluded,
+      // preserving all information while preventing one outlier from dominating the prediction.
       let weightedSum = 0;
+      let totalWeight = 0;
       for (let index = 0; index < n; index++) {
-        const i = n - index;
-        const weight = (2 * i) / (n * (n + 1));
-        weightedSum += weight * (completedCycles[index]?.cycleLengthDays ?? fallbackAvgCycleLength);
+        const i = n - index; // most recent cycle → i = n (highest recency weight)
+        const recencyWeight = (2 * i) / (n * (n + 1));
+        const length = completedCycles[index]?.cycleLengthDays ?? fallbackAvgCycleLength;
+        const outlierWeight = continuousDecayWeight(Math.abs(length - medianLength), mad);
+        const combined = recencyWeight * outlierWeight;
+        weightedSum += combined * length;
+        totalWeight += combined;
       }
 
-      predictedCycleLength = Math.round(weightedSum);
-      
-      const lengths = completedCycles.map(c => c.cycleLengthDays ?? fallbackAvgCycleLength);
-      const mean = lengths.reduce((a, b) => a + b, 0) / lengths.length;
-      const variance = lengths.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / lengths.length;
-      const stdDev = Math.sqrt(variance);
+      predictedCycleLength = Math.round(totalWeight > 0 ? weightedSum / totalWeight : medianLength);
 
-      const isIrregular = stdDev > 7;
+      // Step 3 — Confidence from MAD (more robust than StdDev for skewed menstrual-cycle data)
+      // MAD thresholds approximate the original StdDev thresholds under normal-ish distributions.
+      const isIrregular = mad > 5;
 
-      if (n >= 3 && stdDev <= 3) {
+      if (n >= 3 && mad <= 2) {
         confidenceLevel = PredictionConfidence.HIGH;
-      } else if (n >= 2 && stdDev <= 7) {
+      } else if (n >= 2 && mad <= 5) {
         confidenceLevel = PredictionConfidence.MEDIUM;
       }
 
