@@ -79,7 +79,7 @@ export const palette = {
   darkSurface: '#16162A',
   darkSurfaceElevated: '#1E1E35',
   darkBorder: '#2A2A45',
-  darkBorderSubtle: '#1A1A30',
+  darkBorderSubtle: '#64748B',
 
   // Semantic
   green500: '#22C55E',
