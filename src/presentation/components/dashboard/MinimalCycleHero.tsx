@@ -7,6 +7,7 @@ import { PredictionConfidence } from '@/domain/prediction/models/TimelineEvent';
 export interface MinimalCycleHeroProps {
   phaseName: string;
   cycleDay: number;
+  cycleLength: number;
   periodCountdown: number | null;
   confidence?: PredictionConfidence | null;
   isMenstruating?: boolean;
@@ -24,6 +25,7 @@ const formatConfidence = (confidence: PredictionConfidence): string => {
 export function MinimalCycleHero({
   phaseName,
   cycleDay,
+  cycleLength,
   periodCountdown,
   confidence,
   isMenstruating,
@@ -53,7 +55,7 @@ export function MinimalCycleHero({
 
         <View style={[styles.pill, { backgroundColor: colors.surfaceElevated }]}>
           <Text style={[styles.pillText, { color: colors.text.primary }]}>
-            Cycle Day {cycleDay}
+            Cycle Length {cycleLength}d
           </Text>
         </View>
 

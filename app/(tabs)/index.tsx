@@ -58,6 +58,8 @@ export default function DashboardScreen() {
   }, [timelineData, todayStr, cycles, engine]);
 
   const currentPhase = phaseInfo ? phaseInfo.phase : null;
+  const avgCycleLength = profile?.avgCycleLength || 28;
+  const displayCycleLength = timelineData.dashboardInfo?.predictedCycleLength ?? avgCycleLength;
   const cycleDay = phaseInfo ? phaseInfo.cycleDay : null;
 
   useFocusEffect(
@@ -146,6 +148,7 @@ export default function DashboardScreen() {
             <MinimalCycleHero
               phaseName={phaseDetails.name}
               cycleDay={cycleDay || 1}
+              cycleLength={displayCycleLength}
               periodCountdown={
                 timelineData.dashboardInfo?.daysUntilNextPeriod !== undefined && 
                 timelineData.dashboardInfo.daysUntilNextPeriod !== null && 
