@@ -108,6 +108,7 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate }: CycleCalen
         currentMonth={currentMonth}
         onPrevMonth={handlePrevMonth}
         onNextMonth={handleNextMonth}
+        onDateChange={setCurrentMonth}
       />
       <GestureDetector gesture={pan}>
         <Animated.View 
