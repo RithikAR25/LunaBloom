@@ -25,7 +25,7 @@ export function DayCell({ dateStr, dayNumber, state, fertilityStatus = 'not_fert
 
   const getBackgroundColor = () => {
     const isPredicted = source === 'PREDICTED';
-    const opacity = isPredicted ? '1A' : '33'; // Lighter for predicted, standard for facts
+    const opacity = isPredicted ? '25' : '33';
     
     switch (state) {
       case 'menstrual':
