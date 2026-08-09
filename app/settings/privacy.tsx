@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, Alert, TextInput, Switch } from 'react-native';
+import { View, StyleSheet, ScrollView, TextInput, Switch } from 'react-native';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { spacing, borderRadius, fontSize, letterSpacing } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
+import { ConfirmModal } from '../../src/presentation/components/ui/ConfirmModal';
+import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
 import { PrivacyService } from '../../src/application/services/PrivacyService';
 
 export default function PrivacySettingsScreen() {
@@ -12,6 +14,14 @@ export default function PrivacySettingsScreen() {
   const [pin, setPin] = useState('');
   const [canUseBiometrics, setCanUseBiometrics] = useState(false);
   const [biometricsEnabled, setBiometricsEnabled] = useState(false);
+
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [alertState, setAlertState] = useState<{ visible: boolean; type: 'error' | 'success' | 'info'; title: string; message: string; }>({
+    visible: false,
+    type: 'success',
+    title: '',
+    message: ''
+  });
 
   const loadPrivacyState = useCallback(async () => {
     const pinSet = await PrivacyService.hasPinSet();
@@ -43,24 +53,25 @@ export default function PrivacySettingsScreen() {
   }, []);
 
   const handleSetPin = async () => {
-    if (pin.length !== 4) {
-      Alert.alert('Invalid PIN', 'PIN must be exactly 4 digits.');
-      return;
-    }
     await PrivacyService.setPin(pin);
     setPin('');
     await loadPrivacyState();
-    Alert.alert('Success', 'App PIN has been set.');
+    setAlertState({
+      visible: true,
+      type: 'success',
+      title: 'Success',
+      message: 'App PIN has been set.'
+    });
   };
 
   const handleRemovePin = async () => {
-    Alert.alert('Remove PIN', 'Are you sure you want to disable app lock?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Remove', style: 'destructive', onPress: async () => {
-          await PrivacyService.removePin();
-          await loadPrivacyState();
-      }}
-    ]);
+    setConfirmVisible(true);
+  };
+
+  const confirmRemovePin = async () => {
+    setConfirmVisible(false);
+    await PrivacyService.removePin();
+    await loadPrivacyState();
   };
 
   const toggleBiometrics = async (val: boolean) => {
@@ -120,6 +131,24 @@ export default function PrivacySettingsScreen() {
           </View>
         </View>
       )}
+
+      <ConfirmModal
+        visible={confirmVisible}
+        title="Remove PIN"
+        message="Are you sure you want to disable app lock?"
+        isDestructive={true}
+        confirmLabel="Remove"
+        onCancel={() => setConfirmVisible(false)}
+        onConfirm={confirmRemovePin}
+      />
+
+      <AlertModal
+        visible={alertState.visible}
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        onDismiss={() => setAlertState(prev => ({ ...prev, visible: false }))}
+      />
 
     </ScrollView>
   );

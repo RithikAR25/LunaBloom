@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { spacing } from '@/design-system';
@@ -9,6 +9,7 @@ import { CycleCalendar } from '@/presentation/components/calendar/CycleCalendar'
 import { todayISO } from '@/utils/dateUtils';
 import { Button } from '@/presentation/components/ui/Button';
 import { ConfirmModal } from '@/presentation/components/ui/ConfirmModal';
+import { AlertModal } from '@/presentation/components/ui/AlertModal';
 import { EditCycleModal } from '@/presentation/components/calendar/EditCycleModal';
 import type { CycleEntry } from '@/domain/models/Cycle';
 import { ValidationService } from '@/domain/services/ValidationService';
@@ -19,6 +20,12 @@ export default function CalendarScreen() {
   const { cycles, loadCycles, startPeriod, endPeriod, editCycle, deleteCycle } = useCycleStore();
   const { profile } = useProfileStore();
   const [selectedDate, setSelectedDate] = useState<string>(todayISO());
+
+  const [alertState, setAlertState] = useState<{ visible: boolean; title: string; message: string; }>({
+    visible: false,
+    title: '',
+    message: ''
+  });
 
   interface WarningState {
     title: string;
@@ -103,7 +110,7 @@ export default function CalendarScreen() {
                                 : firstWarning.message,
                               confirmLabel: 'Save Anyway',
                               onConfirm: async () => {
-                                try { await endPeriod(endDate); } catch (err: any) { Alert.alert('Error', err.message); }
+                                try { await endPeriod(endDate); } catch (err: any) { setAlertState({ visible: true, title: 'Error', message: err.message }); }
                               }
                             });
                             return;
@@ -113,7 +120,7 @@ export default function CalendarScreen() {
                         try {
                           await endPeriod(endDate);
                         } catch (err: any) {
-                          Alert.alert('Error', err.message);
+                          setAlertState({ visible: true, title: 'Error', message: err.message });
                         }
                       }}
                     />
@@ -140,14 +147,14 @@ export default function CalendarScreen() {
                           : firstWarning.message,
                         confirmLabel: 'Save Anyway',
                         onConfirm: async () => {
-                          try { await startPeriod(date); } catch (err: any) { Alert.alert('Error', err.message); }
+                          try { await startPeriod(date); } catch (err: any) { setAlertState({ visible: true, title: 'Error', message: err.message }); }
                         }
                       });
                     } else {
                       try {
                         await startPeriod(date);
                       } catch (err: any) {
-                        Alert.alert('Error', err.message);
+                        setAlertState({ visible: true, title: 'Error', message: err.message });
                       }
                     }
                   }}
@@ -165,14 +172,14 @@ export default function CalendarScreen() {
             try {
               await editCycle(id, start, end, notes ?? null, isExcluded);
             } catch (err: any) {
-              Alert.alert('Error', err.message);
+              setAlertState({ visible: true, title: 'Error', message: err.message });
             }
           }}
           onDelete={async (id) => {
             try {
               await deleteCycle(id);
             } catch (err: any) {
-              Alert.alert('Error', err.message);
+              setAlertState({ visible: true, title: 'Error', message: err.message });
             }
           }}
         />
@@ -184,12 +191,20 @@ export default function CalendarScreen() {
           confirmLabel={warningState?.confirmLabel || 'Save Anyway'}
           isDestructive={true}
           onConfirm={() => {
-            warningState?.onConfirm();
+            const confirmFn = warningState?.onConfirm;
             setWarningState(null);
+            if (confirmFn) confirmFn();
           }}
           onCancel={() => {
             setWarningState(null);
           }}
+        />
+        <AlertModal
+          visible={alertState.visible}
+          type="error"
+          title={alertState.title}
+          message={alertState.message}
+          onDismiss={() => setAlertState(prev => ({ ...prev, visible: false }))}
         />
       </ScrollView>
     </SafeAreaView>

@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, RefreshControl, Pressable, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, Pressable } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -18,6 +18,7 @@ import { useContentStore } from '../../src/presentation/stores/useContentStore';
 import { ValidationService } from '../../src/domain/services/ValidationService';
 import { PredictionEngine } from '../../src/domain/prediction';
 import { ConfirmModal } from '../../src/presentation/components/ui/ConfirmModal';
+import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
 import { useState, useMemo, useCallback } from 'react';
 
 export default function DashboardScreen() {
@@ -28,6 +29,12 @@ export default function DashboardScreen() {
   
   const [shortCycleWarningVisible, setShortCycleWarningVisible] = useState(false);
   const [pendingStartDate, setPendingStartDate] = useState<string | null>(null);
+
+  const [alertState, setAlertState] = useState<{ visible: boolean; title: string; message: string; }>({
+    visible: false,
+    title: '',
+    message: ''
+  });
 
   const { profile } = useProfileStore();
   const { cycles, loadCycles } = useCycleStore();
@@ -178,11 +185,11 @@ export default function DashboardScreen() {
                     await useCycleStore.getState().startPeriod(todayStr);
                   } catch (err: any) {
                     const isAlreadyActive = err.message.includes('already tracking');
-                    Alert.alert(
-                      isAlreadyActive ? 'Active Period' : 'Notice',
-                      err.message,
-                      [{ text: 'OK' }]
-                    );
+                    setAlertState({
+                      visible: true,
+                      title: isAlreadyActive ? 'Active Period' : 'Notice',
+                      message: err.message
+                    });
                   }
                 };
 
@@ -203,11 +210,11 @@ export default function DashboardScreen() {
                   await useCycleStore.getState().endPeriod(todayStr);
                 } catch (err: any) {
                   const isNotActive = err.message.includes('no active period');
-                  Alert.alert(
-                    isNotActive ? 'No Active Period' : 'Notice',
-                    err.message,
-                    [{ text: 'OK' }]
-                  );
+                  setAlertState({
+                    visible: true,
+                    title: isNotActive ? 'No Active Period' : 'Notice',
+                    message: err.message
+                  });
                 }
               }}
             />
@@ -260,11 +267,11 @@ export default function DashboardScreen() {
               await useCycleStore.getState().startPeriod(pendingStartDate);
             } catch (err: any) {
               const isAlreadyActive = err.message.includes('already tracking');
-              Alert.alert(
-                isAlreadyActive ? 'Active Period' : 'Notice',
-                err.message,
-                [{ text: 'OK' }]
-              );
+              setAlertState({
+                visible: true,
+                title: isAlreadyActive ? 'Active Period' : 'Notice',
+                message: err.message
+              });
             }
           }
           setPendingStartDate(null);
@@ -273,6 +280,13 @@ export default function DashboardScreen() {
           setShortCycleWarningVisible(false);
           setPendingStartDate(null);
         }}
+      />
+      <AlertModal
+        visible={alertState.visible}
+        type="error"
+        title={alertState.title}
+        message={alertState.message}
+        onDismiss={() => setAlertState(prev => ({ ...prev, visible: false }))}
       />
     </View>
   );

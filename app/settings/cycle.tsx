@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
-import { View, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
+import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
 import { ValidationService } from '../../src/domain/services/ValidationService';
 
@@ -22,6 +23,12 @@ export default function CycleSettingsScreen() {
 
   const [cycleError, setCycleError] = useState('');
   const [periodError, setPeriodError] = useState('');
+
+  const [alertState, setAlertState] = useState<{ visible: boolean; title: string; message: string; }>({
+    visible: false,
+    title: '',
+    message: ''
+  });
 
   const handleSave = async () => {
     setCycleError('');
@@ -52,7 +59,7 @@ export default function CycleSettingsScreen() {
       });
       router.back();
     } catch {
-      Alert.alert('Error', 'Failed to save cycle info. Please try again.');
+      setAlertState({ visible: true, title: 'Error', message: 'Failed to save cycle info. Please try again.' });
     }
   };
 
@@ -106,6 +113,14 @@ export default function CycleSettingsScreen() {
             disabled={isUpdating}
           />
         </View>
+
+        <AlertModal
+          visible={alertState.visible}
+          type="error"
+          title={alertState.title}
+          message={alertState.message}
+          onDismiss={() => setAlertState(prev => ({ ...prev, visible: false }))}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );

@@ -53,7 +53,7 @@ export default function SettingsScreen() {
           />
         </SettingsSection>
 
-        <SettingsSection title="App (Phase 7)">
+        <SettingsSection title="App">
           <SettingsRow icon="notifications-outline" label="Notifications" onPress={() => router.push('/settings/notifications' as any)} />
           <SettingsRow icon="lock-closed-outline" label="Privacy & PIN" onPress={() => router.push('/settings/privacy' as any)} />
           <SettingsRow icon="download-outline" label="Data Export & Import" onPress={() => router.push('/settings/data' as any)} isLast />
@@ -67,7 +67,7 @@ export default function SettingsScreen() {
         
         <View style={styles.footer}>
           <Text variant="caption" style={{ color: colors.text.tertiary }}>
-            LunaBloom v1.0.0 (Phase 6)
+            LunaBloom v1.1.3 
           </Text>
         </View>
       </ScrollView>

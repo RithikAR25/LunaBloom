@@ -1,15 +1,23 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Switch, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, Switch } from 'react-native';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { spacing, borderRadius, fontFamily } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { NotificationService } from '../../src/application/services/NotificationService';
 import { useCycleStore } from '../../src/presentation/stores/useCycleStore';
+import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
 
 export default function NotificationsSettingsScreen() {
   const { colors } = useTheme();
   const [enabled, setEnabled] = useState(false);
   const cycles = useCycleStore((state) => state.cycles);
+
+  const [alertState, setAlertState] = useState<{ visible: boolean; type: 'error' | 'success' | 'info'; title: string; message: string; }>({
+    visible: false,
+    type: 'info',
+    title: '',
+    message: ''
+  });
 
   useEffect(() => {
     // Currently, there's no native "are scheduled?" check in expo-notifications that is fully synchronous 
@@ -21,17 +29,17 @@ export default function NotificationsSettingsScreen() {
     if (val) {
       const hasPermission = await NotificationService.requestPermissions();
       if (!hasPermission) {
-        Alert.alert('Permission Denied', 'Please enable notifications in your device settings.');
+        setAlertState({ visible: true, type: 'info', title: 'Permission Denied', message: 'Please enable notifications in your device settings.' });
         setEnabled(false);
         return;
       }
       setEnabled(true);
       await NotificationService.scheduleReminders(cycles);
-      Alert.alert('Success', 'Local reminders have been scheduled.');
+      setAlertState({ visible: true, type: 'success', title: 'Success', message: 'Local reminders have been scheduled.' });
     } else {
       setEnabled(false);
       await NotificationService.cancelAllNotifications();
-      Alert.alert('Disabled', 'All local reminders have been cancelled.');
+      setAlertState({ visible: true, type: 'info', title: 'Disabled', message: 'All local reminders have been cancelled.' });
     }
   };
 
@@ -65,6 +73,13 @@ export default function NotificationsSettingsScreen() {
         </Text>
       </View>
 
+      <AlertModal
+        visible={alertState.visible}
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        onDismiss={() => setAlertState(prev => ({ ...prev, visible: false }))}
+      />
     </ScrollView>
   );
 }

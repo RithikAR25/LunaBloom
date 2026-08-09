@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { spacing, borderRadius } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
+import { ConfirmModal } from '../../src/presentation/components/ui/ConfirmModal';
+import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
 import { DataManagementService } from '../../src/application/services/DataManagementService';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
 import { useCycleStore } from '../../src/presentation/stores/useCycleStore';
@@ -13,6 +15,14 @@ export default function DataSettingsScreen() {
   const { colors } = useTheme();
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [alertState, setAlertState] = useState<{ visible: boolean; type: 'error' | 'success' | 'info'; title: string; message: string; }>({
+    visible: false,
+    type: 'error',
+    title: '',
+    message: ''
+  });
 
   // We need the concrete repositories to pass into the DataManagementService
   const profileRepo = useProfileStore.getState()._repository;
@@ -29,7 +39,12 @@ export default function DataSettingsScreen() {
       const dataService = new DataManagementService(profileRepo, cycleRepo, logRepo);
       await dataService.exportData();
     } catch {
-      Alert.alert('Export Failed', 'An error occurred while exporting your data.');
+      setAlertState({
+        visible: true,
+        type: 'error',
+        title: 'Export Failed',
+        message: 'An error occurred while exporting your data.'
+      });
     } finally {
       setIsExporting(false);
     }
@@ -37,37 +52,38 @@ export default function DataSettingsScreen() {
 
   const handleImport = async () => {
     if (!profileRepo || !cycleRepo) return;
+    setConfirmVisible(true);
+  };
 
-    Alert.alert(
-      'Warning',
-      'Importing a backup will overwrite your current data. This action cannot be undone. Do you want to proceed?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Import', 
-          style: 'destructive',
-          onPress: async () => {
-            setIsImporting(true);
-            try {
-              const logRepo = new SQLiteDailyLogRepository();
-              const dataService = new DataManagementService(profileRepo, cycleRepo, logRepo);
-              
-              const success = await dataService.importData();
-              if (success) {
-                // Reload stores
-                await useProfileStore.getState().loadProfile();
-                await useCycleStore.getState().loadCycles();
-                Alert.alert('Success', 'Data imported successfully.');
-              }
-            } catch (e: any) {
-              Alert.alert('Import Failed', e.message || 'An error occurred while importing your data.');
-            } finally {
-              setIsImporting(false);
-            }
-          }
-        }
-      ]
-    );
+  const confirmImport = async () => {
+    setConfirmVisible(false);
+    setIsImporting(true);
+    try {
+      const logRepo = new SQLiteDailyLogRepository();
+      const dataService = new DataManagementService(profileRepo!, cycleRepo!, logRepo);
+      
+      const success = await dataService.importData();
+      if (success) {
+        // Reload stores
+        await useProfileStore.getState().loadProfile();
+        await useCycleStore.getState().loadCycles();
+        setAlertState({
+          visible: true,
+          type: 'success',
+          title: 'Success',
+          message: 'Data imported successfully.'
+        });
+      }
+    } catch (e: any) {
+      setAlertState({
+        visible: true,
+        type: 'error',
+        title: 'Import Failed',
+        message: e.message || 'An error occurred while importing your data.'
+      });
+    } finally {
+      setIsImporting(false);
+    }
   };
 
   return (
@@ -107,6 +123,24 @@ export default function DataSettingsScreen() {
           />
         </View>
       </View>
+
+      <ConfirmModal
+        visible={confirmVisible}
+        title="Warning"
+        message="Importing a backup will overwrite your current data. This action cannot be undone. Do you want to proceed?"
+        isDestructive={true}
+        confirmLabel="Import"
+        onCancel={() => setConfirmVisible(false)}
+        onConfirm={confirmImport}
+      />
+
+      <AlertModal
+        visible={alertState.visible}
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        onDismiss={() => setAlertState(prev => ({ ...prev, visible: false }))}
+      />
 
     </ScrollView>
   );

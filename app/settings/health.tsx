@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { spacing, borderRadius } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
+import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
 import { Ionicons } from '@expo/vector-icons';
 import { UserGoal, BirthControlType, MedicalCondition } from '../../src/domain/models/index';
@@ -43,6 +44,12 @@ export default function HealthSettingsScreen() {
   const [bcType, setBcType] = useState<BirthControlType>(profile?.birthControlType || 'NONE');
   const [conditions, setConditions] = useState<MedicalCondition[]>(profile?.conditions || []);
 
+  const [alertState, setAlertState] = useState<{ visible: boolean; title: string; message: string; }>({
+    visible: false,
+    title: '',
+    message: ''
+  });
+
   const toggleCondition = (cond: MedicalCondition) => {
     if (conditions.includes(cond)) {
       setConditions(conditions.filter(c => c !== cond));
@@ -60,7 +67,7 @@ export default function HealthSettingsScreen() {
       });
       router.back();
     } catch {
-      Alert.alert('Error', 'Failed to save health info. Please try again.');
+      setAlertState({ visible: true, title: 'Error', message: 'Failed to save health info. Please try again.' });
     }
   };
 
@@ -140,6 +147,14 @@ export default function HealthSettingsScreen() {
           disabled={isUpdating}
         />
       </View>
+
+      <AlertModal
+        visible={alertState.visible}
+        type="error"
+        title={alertState.title}
+        message={alertState.message}
+        onDismiss={() => setAlertState(prev => ({ ...prev, visible: false }))}
+      />
     </ScrollView>
   );
 }
