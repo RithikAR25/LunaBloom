@@ -1,6 +1,10 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useCycleStore } from '@/presentation/stores/useCycleStore';
+import { formatDateShort, addDays } from '@/utils/dateUtils';
+import { Ionicons } from '@expo/vector-icons';
 import type { CycleStatistics } from '../../../domain/models/Insights';
 
 interface Props {
@@ -9,6 +13,9 @@ interface Props {
 
 export function CycleTab({ stats }: Props) {
   const { colors } = useTheme();
+  const { cycles } = useCycleStore();
+  
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
   if (stats.averageCycleLength === null || stats.averagePeriodDuration === null) {
     return null;
@@ -26,6 +33,13 @@ export function CycleTab({ stats }: Props) {
   const follicularPct = (follicular / total) * 100;
   const ovulatoryPct = (ovulatory / total) * 100;
   const lutealPct = (luteal / total) * 100;
+
+  // Functional sort for cycle history
+  const sortedCycles = [...cycles].sort((a, b) => {
+    return sortOrder === 'desc' 
+      ? b.startDate.localeCompare(a.startDate)
+      : a.startDate.localeCompare(b.startDate);
+  });
 
   return (
     <ScrollView 
@@ -70,6 +84,86 @@ export function CycleTab({ stats }: Props) {
           </View>
         </View>
       </View>
+
+      {/* Cycle History */}
+      {sortedCycles.length > 0 && (
+        <View style={styles.historySection}>
+          <View style={styles.historyHeader}>
+            <Text style={[styles.historyTitle, { color: colors.brand.primary }]}>Cycle History</Text>
+            
+            <Pressable 
+              style={[styles.sortButton, { borderColor: colors.brand.primary }]}
+              onPress={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+            >
+              <Text style={[styles.sortButtonText, { color: colors.brand.primary }]}>
+                {sortOrder === 'desc' ? 'Latest first' : 'Oldest first'}
+              </Text>
+              <Ionicons name="chevron-down" size={16} color={colors.brand.primary} />
+            </Pressable>
+          </View>
+          
+          <View style={styles.historyList}>
+            {sortedCycles.map((cycle) => {
+              const isActive = cycle.endDate === null;
+              const periodEndDate = cycle.durationDays 
+                ? addDays(cycle.startDate, cycle.durationDays - 1) 
+                : cycle.startDate;
+              
+              return (
+                <Pressable 
+                  key={cycle.id} 
+                  style={[
+                    styles.cycleCard, 
+                    { backgroundColor: isActive ? colors.brand.secondary : colors.surfaceElevated }
+                  ]}
+                >
+                  <View style={styles.cycleCardLeft}>
+                    <View style={styles.cycleCardDateRow}>
+                      <Text style={[
+                        styles.cycleCardDate, 
+                        { color: isActive ? colors.brand.primary : colors.text.primary }
+                      ]}>
+                        {formatDateShort(cycle.startDate)} \u2013 {formatDateShort(periodEndDate)}
+                      </Text>
+                      {isActive && (
+                        <View style={[styles.activeBadge, { backgroundColor: 'rgba(215, 61, 89, 0.15)' }]}>
+                           <Text style={[styles.activeBadgeText, { color: colors.brand.primary }]}>CURRENT CYCLE</Text>
+                        </View>
+                      )}
+                    </View>
+                    
+                    <View style={styles.historyMetrics}>
+                      <View style={styles.historyMetric}>
+                        <Text style={[styles.historyMetricLabel, { color: colors.text.secondary }]}>PERIOD</Text>
+                        <Text style={[styles.historyMetricValue, { color: colors.brand.primary }]}>
+                          {cycle.durationDays != null ? `${cycle.durationDays}d` : '\u2014'}
+                        </Text>
+                      </View>
+                      <View style={styles.historyMetric}>
+                        <Text style={[styles.historyMetricLabel, { color: colors.text.secondary }]}>CYCLE LENGTH</Text>
+                        <Text style={[
+                          styles.historyMetricValue, 
+                          { color: isActive ? colors.brand.primary : colors.text.primary }
+                        ]}>
+                          {isActive ? 'In progress' : (cycle.cycleLengthDays != null ? `${cycle.cycleLengthDays}d` : '\u2014')}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.cycleCardRight}>
+                    <Ionicons 
+                      name="chevron-forward" 
+                      size={20} 
+                      color={isActive ? colors.brand.primary : colors.text.secondary} 
+                    />
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -110,5 +204,86 @@ const styles = StyleSheet.create({
   legendDays: {
     fontSize: fontSize.labelMd,
     fontFamily: fontFamily.medium,
+  },
+  historySection: {
+    marginTop: 8,
+  },
+  historyHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingHorizontal: 4,
+  },
+  historyTitle: {
+    fontSize: 20, // slightly larger than bodyMd for headline impact
+    fontFamily: fontFamily.bold,
+  },
+  sortButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 100,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    gap: 4,
+    backgroundColor: 'transparent',
+  },
+  sortButtonText: {
+    fontSize: fontSize.labelMd,
+    fontFamily: fontFamily.medium,
+  },
+  historyList: {
+    gap: 12,
+  },
+  cycleCard: {
+    flexDirection: 'row',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+  },
+  cycleCardLeft: {
+    flex: 1,
+  },
+  cycleCardDateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  cycleCardDate: {
+    fontSize: fontSize.bodyLg,
+    fontFamily: fontFamily.semiBold,
+  },
+  activeBadge: {
+    marginLeft: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  activeBadgeText: {
+    fontSize: 10,
+    fontFamily: fontFamily.bold,
+    letterSpacing: 0.5,
+  },
+  historyMetrics: {
+    flexDirection: 'row',
+  },
+  historyMetric: {
+    flex: 1,
+  },
+  historyMetricLabel: {
+    fontSize: 11,
+    fontFamily: fontFamily.medium,
+    marginBottom: 4,
+    letterSpacing: 0.5,
+  },
+  historyMetricValue: {
+    fontSize: fontSize.bodyLg,
+    fontFamily: fontFamily.bold,
+  },
+  cycleCardRight: {
+    marginLeft: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

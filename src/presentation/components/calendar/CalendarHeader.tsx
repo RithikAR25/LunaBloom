@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { spacing, fontSize, fontFamily } from '@/design-system';
-import { RollerSelector } from '../ui/RollerSelector';
+import { MonthYearPicker } from './MonthYearPicker';
 
 interface CalendarHeaderProps {
   currentMonth: Date;
@@ -16,37 +16,11 @@ export function CalendarHeader({ currentMonth, onPrevMonth, onNextMonth, onDateC
 
   const monthName = currentMonth.toLocaleString('default', { month: 'long' });
   const year = currentMonth.getFullYear();
-  const currentMonthIndex = currentMonth.getMonth();
+  const [showPicker, setShowPicker] = useState(false);
 
-  const [showMonthRoller, setShowMonthRoller] = useState(false);
-  const [showYearRoller, setShowYearRoller] = useState(false);
-
-  const months = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => {
-      const d = new Date(2000, i, 1);
-      return d.toLocaleString('default', { month: 'long' });
-    });
-  }, []);
-
-  const years = useMemo(() => {
-    const y = currentMonth.getFullYear();
-    const arr = [];
-    for (let i = y - 5; i <= y + 5; i++) {
-      arr.push(i);
-    }
-    return arr;
-  }, [currentMonth]);
-
-  const yearSelectedIndex = years.indexOf(year);
-
-  const handleMonthConfirm = (month: string, index: number) => {
-    setShowMonthRoller(false);
-    onDateChange(new Date(year, index, 1));
-  };
-
-  const handleYearConfirm = (newYear: number) => {
-    setShowYearRoller(false);
-    onDateChange(new Date(newYear, currentMonthIndex, 1));
+  const handleDateConfirm = (newDate: Date) => {
+    setShowPicker(false);
+    onDateChange(newDate);
   };
 
   return (
@@ -55,34 +29,21 @@ export function CalendarHeader({ currentMonth, onPrevMonth, onNextMonth, onDateC
         <Text style={{ color: colors.brand.primary, fontSize: fontSize.bodyLg }}>{'<'}</Text>
       </Pressable>
       
-      <View style={styles.titleContainer}>
-        <Pressable onPress={() => setShowMonthRoller(true)}>
-          <Text style={[styles.title, { color: colors.text.primary }]}>{monthName}</Text>
-        </Pressable>
-        <Text style={[styles.title, { color: colors.text.primary }]}> </Text>
-        <Pressable onPress={() => setShowYearRoller(true)}>
-          <Text style={[styles.title, { color: colors.text.primary }]}>{year}</Text>
-        </Pressable>
-      </View>
+      <Pressable onPress={() => setShowPicker(true)} style={styles.titleContainer}>
+        <Text style={[styles.title, { color: colors.text.primary }]}>
+          {monthName} {year}
+        </Text>
+      </Pressable>
       
       <Pressable accessibilityRole="button" onPress={onNextMonth} style={styles.button}>
         <Text style={{ color: colors.brand.primary, fontSize: fontSize.bodyLg }}>{'>'}</Text>
       </Pressable>
 
-      <RollerSelector<string>
-        visible={showMonthRoller}
-        items={months}
-        selectedIndex={currentMonthIndex}
-        onConfirm={handleMonthConfirm}
-        onCancel={() => setShowMonthRoller(false)}
-      />
-
-      <RollerSelector<number>
-        visible={showYearRoller}
-        items={years}
-        selectedIndex={Math.max(0, yearSelectedIndex)}
-        onConfirm={handleYearConfirm}
-        onCancel={() => setShowYearRoller(false)}
+      <MonthYearPicker
+        visible={showPicker}
+        currentMonth={currentMonth}
+        onConfirm={handleDateConfirm}
+        onCancel={() => setShowPicker(false)}
       />
     </View>
   );
