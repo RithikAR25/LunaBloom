@@ -10,7 +10,7 @@ export class StartPeriod {
     private validationService: ValidationService
   ) {}
 
-  public async execute(startDate: string = todayISO(), defaultDurationDays: number = 5): Promise<CycleEntry> {
+  public async execute(startDate: string = todayISO(), defaultDurationDays: number = 5, isExcludedFromPredictions: boolean = false): Promise<CycleEntry> {
     /**
      * Business Rule:
      * Cycle events cannot occur in the future.
@@ -89,6 +89,7 @@ export class StartPeriod {
       updatedAt: now,
       deletedAt: null,
       syncStatus: 'LOCAL',
+      isExcludedFromPredictions,
     };
 
     await this.cycleRepository.save(newCycle);

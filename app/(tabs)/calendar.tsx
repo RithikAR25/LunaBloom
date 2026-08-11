@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Switch, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { spacing } from '@/design-system';
@@ -32,9 +32,11 @@ export default function CalendarScreen() {
     message: string;
     confirmLabel: string;
     onConfirm: () => void;
+    showExclusionToggle?: boolean;
   }
   const [warningState, setWarningState] = useState<WarningState | null>(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [includeInPredictions, setIncludeInPredictions] = useState(true);
 
   useEffect(() => {
     loadCycles();
@@ -110,8 +112,9 @@ export default function CalendarScreen() {
                                 : firstWarning.message,
                               confirmLabel: 'Save Anyway',
                               onConfirm: async () => {
-                                try { await endPeriod(endDate); } catch (err: any) { setAlertState({ visible: true, title: 'Error', message: err.message }); }
-                              }
+                                try { await endPeriod(endDate, !includeInPredictions); } catch (err: any) { setAlertState({ visible: true, title: 'Error', message: err.message }); }
+                              },
+                              showExclusionToggle: true
                             });
                             return;
                           }
@@ -147,8 +150,9 @@ export default function CalendarScreen() {
                           : firstWarning.message,
                         confirmLabel: 'Save Anyway',
                         onConfirm: async () => {
-                          try { await startPeriod(date); } catch (err: any) { setAlertState({ visible: true, title: 'Error', message: err.message }); }
-                        }
+                          try { await startPeriod(date, !includeInPredictions); } catch (err: any) { setAlertState({ visible: true, title: 'Error', message: err.message }); }
+                        },
+                        showExclusionToggle: true
                       });
                     } else {
                       try {
@@ -194,11 +198,30 @@ export default function CalendarScreen() {
             const confirmFn = warningState?.onConfirm;
             setWarningState(null);
             if (confirmFn) confirmFn();
+            setIncludeInPredictions(true); // reset
           }}
           onCancel={() => {
             setWarningState(null);
+            setIncludeInPredictions(true); // reset
           }}
-        />
+        >
+          {warningState?.showExclusionToggle && (
+            <View style={[styles.toggleContainer, { borderColor: colors.surface }]}>
+              <View style={styles.toggleTextContainer}>
+                <Text style={{ color: colors.text.primary, fontWeight: '600' }}>Include in Predictions</Text>
+                <Text style={{ color: colors.text.secondary, fontSize: 13, marginTop: 4, lineHeight: 18 }}>
+                  Turn this off if this cycle is unusual so it doesn&apos;t skew your future predictions.
+                </Text>
+              </View>
+              <Switch
+                value={includeInPredictions}
+                onValueChange={setIncludeInPredictions}
+                trackColor={{ false: colors.surface, true: colors.brand.primary }}
+                thumbColor={Platform.OS === 'android' ? colors.background : undefined}
+              />
+            </View>
+          )}
+        </ConfirmModal>
         <AlertModal
           visible={alertState.visible}
           type="error"
@@ -219,4 +242,15 @@ const styles = StyleSheet.create({
   sub: { fontSize: 15 },
   actions: { alignItems: 'center', marginTop: 16 },
   selectedLabel: { fontSize: 16, fontWeight: '500' },
+  toggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    borderTopWidth: 1,
+  },
+  toggleTextContainer: {
+    flex: 1,
+    paddingRight: spacing.md,
+  },
 });

@@ -7,6 +7,7 @@ import { TimelineEvent } from './models/TimelineEvent';
 import { DashboardMetricsBuilder } from './services/DashboardMetricsBuilder';
 import { PredictionSummary } from './models/PredictionSummary';
 import { PhaseInterval } from './models/PhaseInterval';
+import { todayISO } from '../../utils/dateUtils';
 
 export interface TimelineData {
   events: TimelineEvent[];
@@ -34,12 +35,12 @@ export class PredictionEngine {
    * Generates a fully indexed timeline of events and intervals based on logged cycles and predictions.
    * This facade method encapsulates the entire prediction and timeline generation pipeline.
    */
-  public generateTimeline(cycles: CycleEntry[], avgCycleLength: number, avgPeriodDuration: number, referenceDate: string = new Date().toISOString().split('T')[0] as string): TimelineData {
+  public generateTimeline(cycles: CycleEntry[], avgCycleLength: number, avgPeriodDuration: number, referenceDate: string = todayISO()): TimelineData {
     if (cycles.length === 0) return { events: [], intervals: [], index: new Map(), dashboardInfo: null };
 
     const prediction = this.predictionService.predict(cycles, avgCycleLength, avgPeriodDuration);
     
-    const { events, intervals } = this.builder.build(cycles, prediction);
+    const { events, intervals } = this.builder.build(cycles, prediction, referenceDate, avgPeriodDuration);
     const index = this.indexer.buildDateIndex(events);
     const dashboardInfo = this.dashboardBuilder.build(referenceDate, prediction);
 

@@ -1,4 +1,5 @@
 import type { ICycleRepository } from '../../repositories/ICycleRepository';
+import type { CycleEntry } from '../../models/Cycle';
 import { daysBetween, isBefore, todayISO } from '../../../utils/dateUtils';
 import type { ValidationService } from '../../services/ValidationService';
 import { ValidationError } from '../../errors';
@@ -9,7 +10,7 @@ export class EndPeriod {
     private validationService: ValidationService
   ) {}
 
-  public async execute(endDate: string = todayISO()): Promise<void> {
+  public async execute(endDate: string = todayISO(), isExcludedFromPredictions?: boolean): Promise<void> {
     /**
      * Business Rule:
      * Cycle events cannot occur in the future.
@@ -39,9 +40,15 @@ export class EndPeriod {
     // Days of bleeding (inclusive): if start is 1st and end is 5th -> 5 days
     const durationDays = daysBetween(activeCycle.startDate, endDate) + 1;
 
-    await this.cycleRepository.update(activeCycle.id, {
+    const updatePayload: Partial<CycleEntry> = {
       endDate,
       durationDays,
-    });
+    };
+
+    if (isExcludedFromPredictions !== undefined) {
+      updatePayload.isExcludedFromPredictions = isExcludedFromPredictions;
+    }
+
+    await this.cycleRepository.update(activeCycle.id, updatePayload);
   }
 }

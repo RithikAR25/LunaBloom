@@ -10,13 +10,30 @@ export class TimelineBuilder {
   
   constructor(private predictionService: CyclePredictionService) {}
 
-  public build(cycles: CycleEntry[], prediction: CyclePrediction | null): { events: TimelineEvent[], intervals: PhaseInterval[] } {
+  public build(cycles: CycleEntry[], prediction: CyclePrediction | null, referenceDate: string, defaultPeriodDuration: number = 5): { events: TimelineEvent[], intervals: PhaseInterval[] } {
     const events: TimelineEvent[] = [];
     const intervals: PhaseInterval[] = [];
     
+    const sortedCycles = [...cycles].sort((a, b) => (a.startDate > b.startDate ? -1 : 1));
+    const latestCycle = sortedCycles[0];
+
+    let isActiveCycle = false;
+    let elapsedDays = 0;
+    if (latestCycle && !latestCycle.endDate) {
+      isActiveCycle = true;
+      elapsedDays = daysBetween(latestCycle.startDate, referenceDate) + 1;
+    }
+
     // 1. Map logged cycles to events and MENSTRUAL intervals, and reconstruct history
     cycles.forEach((c, index) => {
-      const duration = c.endDate ? daysBetween(c.startDate, c.endDate) + 1 : 5; // Default 5 if ongoing
+      let duration: number;
+      if (c.endDate) {
+        duration = daysBetween(c.startDate, c.endDate) + 1;
+      } else if (c === latestCycle) {
+        duration = Math.max(1, Math.min(elapsedDays, defaultPeriodDuration));
+      } else {
+        duration = 5; // Fallback for corrupted historical cycles missing endDate
+      }
       const endDate = c.endDate || addDays(c.startDate, duration - 1);
       
       // LOGGED PERIOD
@@ -45,30 +62,34 @@ export class TimelineBuilder {
 
     // 2. Map Prediction to events and subsequent intervals
     if (prediction && cycles.length > 0) {
-      const lastLoggedCycle = cycles.sort((a, b) => (a.startDate > b.startDate ? -1 : 1))[0]!;
-      const duration = lastLoggedCycle.endDate ? daysBetween(lastLoggedCycle.startDate, lastLoggedCycle.endDate) + 1 : 5;
+      const canDrawFuturePredictions = !isActiveCycle || elapsedDays >= defaultPeriodDuration;
       
-      const biology = this.predictionService.predictHistoricalCycle(lastLoggedCycle.startDate, prediction.predictedCycleLength, duration);
-      this.mapBiologyToTimeline(biology, events, intervals, 'PREDICTED', prediction.confidence);
+      if (canDrawFuturePredictions) {
+        const lastLoggedCycle = latestCycle!;
+        const duration = lastLoggedCycle.endDate ? daysBetween(lastLoggedCycle.startDate, lastLoggedCycle.endDate) + 1 : Math.max(1, Math.min(elapsedDays, defaultPeriodDuration));
+        
+        const biology = this.predictionService.predictHistoricalCycle(lastLoggedCycle.startDate, prediction.predictedCycleLength, duration);
+        this.mapBiologyToTimeline(biology, events, intervals, 'PREDICTED', prediction.confidence);
 
-      // And add the PREDICTED next period
-      events.push({
-        id: `predicted-period`,
-        type: TimelineEventType.PERIOD,
-        date: prediction.nextPeriodStart,
-        duration: prediction.predictedPeriodDuration,
-        source: 'PREDICTED',
-        priority: 60, // Lowest period priority
-        confidence: prediction.confidence
-      });
+        // And add the PREDICTED next period
+        events.push({
+          id: `predicted-period`,
+          type: TimelineEventType.PERIOD,
+          date: prediction.nextPeriodStart,
+          duration: prediction.predictedPeriodDuration,
+          source: 'PREDICTED',
+          priority: 60, // Lowest period priority
+          confidence: prediction.confidence
+        });
 
-      intervals.push({
-        phase: 'MENSTRUAL',
-        startDate: prediction.nextPeriodStart,
-        endDate: prediction.nextPeriodEnd,
-        source: 'PREDICTED',
-        confidence: prediction.confidence
-      });
+        intervals.push({
+          phase: 'MENSTRUAL',
+          startDate: prediction.nextPeriodStart,
+          endDate: prediction.nextPeriodEnd,
+          source: 'PREDICTED',
+          confidence: prediction.confidence
+        });
+      }
     }
 
     return {

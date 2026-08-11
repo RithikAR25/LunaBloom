@@ -23,8 +23,8 @@ type CycleState = {
 
   setRepository: (repo: ICycleRepository) => void;
   loadCycles: () => Promise<void>;
-  startPeriod: (startDate: string) => Promise<void>;
-  endPeriod: (endDate: string) => Promise<void>;
+  startPeriod: (startDate: string, isExcludedFromPredictions?: boolean) => Promise<void>;
+  endPeriod: (endDate: string, isExcludedFromPredictions?: boolean) => Promise<void>;
   editCycle: (id: string, startDate: string, endDate: string | null, notes: string | null, isExcludedFromPredictions?: boolean) => Promise<void>;
   deleteCycle: (id: string) => Promise<void>;
   clearError: () => void;
@@ -59,7 +59,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     }
   },
 
-  startPeriod: async (startDate: string) => {
+  startPeriod: async (startDate: string, isExcludedFromPredictions?: boolean) => {
     const { _repository } = get();
     if (!_repository) throw new Error('[useCycleStore] Repository not injected');
 
@@ -68,7 +68,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       const defaultDuration = useProfileStore.getState().profile?.avgPeriodDuration || 5;
       const validationService = new ValidationService();
       const startPeriodUC = new StartPeriod(_repository, validationService);
-      await startPeriodUC.execute(startDate, defaultDuration);
+      await startPeriodUC.execute(startDate, defaultDuration, isExcludedFromPredictions);
       await get().loadCycles();
     } catch (err) {
       throw err;
@@ -77,7 +77,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     }
   },
 
-  endPeriod: async (endDate: string) => {
+  endPeriod: async (endDate: string, isExcludedFromPredictions?: boolean) => {
     const { _repository } = get();
     if (!_repository) throw new Error('[useCycleStore] Repository not injected');
 
@@ -85,7 +85,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     try {
       const validationService = new ValidationService();
       const endPeriodUC = new EndPeriod(_repository, validationService);
-      await endPeriodUC.execute(endDate);
+      await endPeriodUC.execute(endDate, isExcludedFromPredictions);
       await get().loadCycles();
     } catch (err) {
       throw err;

@@ -15,6 +15,7 @@ interface ConfirmModalProps {
   isDestructive?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
+  children?: React.ReactNode;
 }
 
 export function ConfirmModal({
@@ -26,6 +27,7 @@ export function ConfirmModal({
   isDestructive = false,
   onConfirm,
   onCancel,
+  children,
 }: ConfirmModalProps) {
   const { colors } = useTheme();
 
@@ -57,6 +59,12 @@ export function ConfirmModal({
           <Text variant="body" style={[styles.message, { color: colors.text.secondary }]}>
             {message}
           </Text>
+
+          {children && (
+            <View style={{ marginBottom: spacing[6] }}>
+              {children}
+            </View>
+          )}
 
           <View style={styles.footer}>
             <View style={{ flex: 1 }}>

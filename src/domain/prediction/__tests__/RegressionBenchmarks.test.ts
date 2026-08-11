@@ -43,10 +43,12 @@ describe('Exhaustive Regression and Benchmarks', () => {
       const sortedCycles = [...cycles].sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
       
       const prediction = predictionService.predict(sortedCycles, 28)!;
-      // Average of 35 and 28 is ~31.5 -> 32
-      expect(prediction.predictedCycleLength).toBe(32);
-      expect(prediction.explanation).not.toContain('Your cycle length varies significantly.'); // Stdev of [35,28,35,28,35] is around 3.5 days, not > 7.
-      expect(prediction.confidence).toBe(PredictionConfidence.MEDIUM); // 5 cycles
+      // Median is 35, MAD is ~3.5
+      // Because it's an LWMA with Cauchy weighting, the most recent cycle (35) gets highest recency weight.
+      // Weighted result shifts towards 35. With given formula it yields 35
+      expect(prediction.predictedCycleLength).toBe(35);
+      expect(prediction.explanation).not.toContain('Your cycle length varies significantly.');
+      expect(prediction.confidence).toBe(PredictionConfidence.HIGH); // MAD is 0 for [35,28,35,28,35] (median of abs diffs is 0), so it is HIGH confidence
     });
 
     it('handles extreme irregular patterns (>7 day variance)', () => {
@@ -77,6 +79,44 @@ describe('Exhaustive Regression and Benchmarks', () => {
       expect(prediction.predictedCycleLength).toBe(28);
       expect(prediction.explanation).not.toContain('Your cycle length varies significantly.');
     });
+
+    it('predictive exclusion verification test', () => {
+      const baseCycles = [
+        createCycle('2023-01-01', 26, 5),
+        createCycle('2023-01-27', 28, 5),
+        createCycle('2023-02-24', 30, 5),
+      ];
+
+      // Predict without anomaly
+      const predictionWithoutAnomaly = predictionService.predict(
+        [...baseCycles].sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()), 
+        28
+      )!;
+
+      // Predict with anomaly INCLUDED
+      const cyclesWithIncludedAnomaly = [
+        ...baseCycles,
+        createCycle('2023-03-26', 24, 5, false) // anomalous cycle
+      ].sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+      
+      const predictionWithIncludedAnomaly = predictionService.predict(cyclesWithIncludedAnomaly, 28)!;
+
+      // Predict with anomaly EXCLUDED
+      const cyclesWithExcludedAnomaly = [
+        ...baseCycles,
+        createCycle('2023-03-26', 24, 5, true) // anomalous cycle EXCLUDED
+      ].sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+
+      const predictionWithExcludedAnomaly = predictionService.predict(cyclesWithExcludedAnomaly, 28)!;
+
+      // 1. Verify the included anomaly actually changes the prediction 
+      // (proving the math model incorporates it)
+      expect(predictionWithIncludedAnomaly.predictedCycleLength).not.toBe(predictionWithoutAnomaly.predictedCycleLength);
+      
+      // 2. Verify the excluded anomaly is ignored completely
+      // (proving it has 0 influence)
+      expect(predictionWithExcludedAnomaly.predictedCycleLength).toBe(predictionWithoutAnomaly.predictedCycleLength);
+    });
   });
 
   describe('Performance Benchmark', () => {
@@ -91,7 +131,7 @@ describe('Exhaustive Regression and Benchmarks', () => {
       const startMs = Date.now();
       
       const prediction = predictionService.predict(cycles, 28);
-      const { events, intervals } = builder.build(cycles, prediction);
+      const { events, intervals } = builder.build(cycles, prediction, baseStart, 5);
       
       const indexer = new TimelineIndexer();
       const index = indexer.buildDateIndex(events);

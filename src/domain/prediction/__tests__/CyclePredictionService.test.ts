@@ -97,7 +97,7 @@ describe('Prediction Module', () => {
       ]; // May 6 logged
 
       const prediction = predictionService.predict(cycles, 28);
-      const { events, intervals } = builder.build(cycles, prediction);
+      const { events, intervals } = builder.build(cycles, prediction, '2026-10-20', 5);
       const index = indexer.buildDateIndex(events);
 
       // Predicted is June 5. October 20 is far beyond the single prediction
@@ -120,7 +120,7 @@ describe('Prediction Module', () => {
       ];
 
       const prediction = predictionService.predict(cycles, 28, 5);
-      const { events, intervals } = builder.build(cycles, prediction);
+      const { events, intervals } = builder.build(cycles, prediction, '2026-08-04', 5);
       const index = indexer.buildDateIndex(events);
 
       const phase = resolver.getPhaseForDate('2026-08-04', intervals, index);

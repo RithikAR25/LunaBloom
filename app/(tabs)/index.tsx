@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, RefreshControl, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, Pressable, Switch, Platform } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -29,6 +29,7 @@ export default function DashboardScreen() {
   
   const [shortCycleWarningVisible, setShortCycleWarningVisible] = useState(false);
   const [pendingStartDate, setPendingStartDate] = useState<string | null>(null);
+  const [includeInPredictions, setIncludeInPredictions] = useState(true);
 
   const [alertState, setAlertState] = useState<{ visible: boolean; title: string; message: string; }>({
     visible: false,
@@ -258,13 +259,14 @@ export default function DashboardScreen() {
         visible={shortCycleWarningVisible}
         title="Short Cycle Detected"
         message="You logged a period very recently. Are you sure you want to start a new cycle today?"
-        confirmLabel="Yes, Start Period"
+        confirmLabel="Start Anyway"
         isDestructive={true}
         onConfirm={async () => {
           setShortCycleWarningVisible(false);
+          const isExcludedFromPredictions = !includeInPredictions;
           if (pendingStartDate) {
             try {
-              await useCycleStore.getState().startPeriod(pendingStartDate);
+              await useCycleStore.getState().startPeriod(pendingStartDate, isExcludedFromPredictions);
             } catch (err: any) {
               const isAlreadyActive = err.message.includes('already tracking');
               setAlertState({
@@ -275,12 +277,29 @@ export default function DashboardScreen() {
             }
           }
           setPendingStartDate(null);
+          setIncludeInPredictions(true); // reset
         }}
         onCancel={() => {
           setShortCycleWarningVisible(false);
           setPendingStartDate(null);
+          setIncludeInPredictions(true); // reset
         }}
-      />
+      >
+        <View style={[styles.toggleContainer, { borderColor: colors.surface }]}>
+          <View style={styles.toggleTextContainer}>
+            <Text style={{ color: colors.text.primary, fontWeight: '600' }}>Include in Predictions</Text>
+            <Text style={{ color: colors.text.secondary, fontSize: 13, marginTop: 4, lineHeight: 18 }}>
+              Turn this off if this cycle is unusual so it doesn&apos;t skew your future predictions.
+            </Text>
+          </View>
+          <Switch
+            value={includeInPredictions}
+            onValueChange={setIncludeInPredictions}
+            trackColor={{ false: colors.surface, true: colors.brand.primary }}
+            thumbColor={Platform.OS === 'android' ? colors.background : undefined}
+          />
+        </View>
+      </ConfirmModal>
       <AlertModal
         visible={alertState.visible}
         type="error"
@@ -332,5 +351,16 @@ const styles = StyleSheet.create({
   },
   section: {
     marginTop: spacing.xs * 0.5,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    borderTopWidth: 1,
+  },
+  toggleTextContainer: {
+    flex: 1,
+    paddingRight: spacing.md,
   },
 });

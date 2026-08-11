@@ -1,6 +1,6 @@
 import type { FlowIntensity, SyncStatus } from './index';
 
-export const MIN_NORMAL_CYCLE_LENGTH_DAYS = 15;
+export const MIN_NORMAL_CYCLE_LENGTH_DAYS = 20;
 
 /** Represents a single menstrual period entry. */
 export interface CycleEntry {
