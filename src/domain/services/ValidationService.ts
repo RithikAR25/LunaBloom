@@ -224,11 +224,11 @@ export class ValidationService {
       return { isValid: false, error: 'Invalid date format.' };
     }
     
-    // Convert both to YYYY-MM-DD for fair comparison regardless of time
-    const todayStr = new Date().toISOString().split('T')[0]!;
-    const targetStr = date.toISOString().split('T')[0]!;
+    // We import todayISO at the top level
+    const { todayISO } = require('../../utils/dateUtils');
+    const todayStr = todayISO();
 
-    if (targetStr > todayStr) {
+    if (dateStr > todayStr) {
       return { isValid: false, error: 'Date cannot be in the future.' };
     }
 

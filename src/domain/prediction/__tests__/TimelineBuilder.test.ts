@@ -62,24 +62,132 @@ describe('TimelineBuilder - Active Cycle & Prediction Gating', () => {
 
   describe('Boundary Rules (Active vs Completed)', () => {
     it.each([
-      ['Active', 1, 1, false],
-      ['Active', 2, 2, false],
-      ['Active', 3, 3, false],
-      ['Active', 4, 4, false],
+      ['Active', 1, 1, true],
+      ['Active', 2, 2, true],
+      ['Active', 3, 3, true],
+      ['Active', 4, 4, true],
       ['Active', 5, 5, true],
-      ['Active', 7, 5, true],
+      ['Active', 6, 6, true],
+      ['Active', 7, 7, true],
       ['Completed', 3, 3, true],
       ['Completed', 5, 5, true],
       ['Completed', 7, 7, true],
-    ] as const)('%s Cycle Day %i -> %i menstrual days, predictions: %s', (state, day, expectedDays, expectedPredictions) => {
+    ] as const)('%s Cycle Day %i -> %i logged menstrual days, predictions: %s', (state, day, expectedDays, expectedPredictions) => {
       const result = runMatrixTest(state, day);
       
       expect(result.menstrualDays).toBe(expectedDays);
       expect(result.hasPredictions).toBe(expectedPredictions);
 
-      // Verify exact dates
+      // Verify exact dates for the LOGGED interval
       expect(result.startDate).toBe(baseDate);
       expect(result.endDate).toBe(addDays(baseDate, expectedDays - 1));
+    });
+  });
+
+  describe('Prediction Transition Boundaries', () => {
+    it('integration regression test: exact sequence for Aug 11-16 (Day 3, elapsed < predicted)', () => {
+      // Scenario:
+      // startDate     = 2026-08-11
+      // referenceDate = 2026-08-13
+      // endDate       = null
+      // predictedPeriodDuration = 5
+      
+      const referenceDate = '2026-08-13';
+      const cycles = [createCycle('2026-08-11', null, null)];
+      
+      // Override defaultPeriodDuration to ensure it is 5
+      const prediction = predictionService.predict(cycles, avgCycleLength, 5)!;
+      const { intervals } = builder.build(cycles, prediction, referenceDate, 5);
+
+      const getPhaseForDate = (dateStr: string) => {
+        return intervals.find(i => dateStr >= i.startDate && dateStr <= i.endDate);
+      };
+
+      // Aug 11-13 LOGGED Menstrual
+      for (let day = 11; day <= 13; day++) {
+        const p = getPhaseForDate(`2026-08-${day}`);
+        expect(p).toBeDefined();
+        expect(p!.phase).toBe('MENSTRUAL');
+        expect(p!.source).toBe('LOGGED');
+      }
+
+      // Aug 14-15 PREDICTED Menstrual
+      for (let day = 14; day <= 15; day++) {
+        const p = getPhaseForDate(`2026-08-${day}`);
+        expect(p).toBeDefined();
+        expect(p!.phase).toBe('MENSTRUAL');
+        expect(p!.source).toBe('PREDICTED');
+      }
+
+      // Aug 16 PREDICTED Follicular
+      const p16 = getPhaseForDate('2026-08-16');
+      expect(p16).toBeDefined();
+      expect(p16!.phase).toBe('FOLLICULAR');
+      expect(p16!.source).toBe('PREDICTED');
+    });
+
+    it('generates NO PREDICTED menstrual days on Day 5 and starts follicular correctly (elapsed == predicted)', () => {
+      const referenceDate = addDays(baseDate, 4); // Day 5
+      const cycles = [createCycle(baseDate, null, null)];
+      const prediction = predictionService.predict(cycles, avgCycleLength, defaultPeriodDuration)!;
+      const { events, intervals } = builder.build(cycles, prediction, referenceDate, defaultPeriodDuration);
+
+      const loggedIntervals = intervals.filter(i => i.phase === 'MENSTRUAL' && i.source === 'LOGGED');
+      // Look for predicted menstrual for the CURRENT cycle (not the next one)
+      const predictedMenstrualIntervals = intervals.filter(i => i.phase === 'MENSTRUAL' && i.source === 'PREDICTED' && i.startDate < addDays(baseDate, 10));
+      const follicularInterval = intervals.find(i => i.phase === 'FOLLICULAR');
+
+      expect(loggedIntervals.length).toBe(1);
+      expect(loggedIntervals[0].endDate).toBe(addDays(baseDate, 4)); // Days 1-5
+      
+      expect(predictedMenstrualIntervals.length).toBe(0); // None for the current cycle
+      
+      expect(follicularInterval).toBeDefined();
+      expect(follicularInterval!.startDate).toBe(addDays(baseDate, 5)); // Day 6
+    });
+
+    it('generates NO PREDICTED menstrual days on Day 6 and shrinks follicular (elapsed > predicted)', () => {
+      const referenceDate = addDays(baseDate, 5); // Day 6
+      const cycles = [createCycle(baseDate, null, null)];
+      const prediction = predictionService.predict(cycles, avgCycleLength, defaultPeriodDuration)!;
+      const { events, intervals } = builder.build(cycles, prediction, referenceDate, defaultPeriodDuration);
+
+      const loggedIntervals = intervals.filter(i => i.phase === 'MENSTRUAL' && i.source === 'LOGGED');
+      const predictedMenstrualIntervals = intervals.filter(i => i.phase === 'MENSTRUAL' && i.source === 'PREDICTED' && i.startDate < addDays(baseDate, 10));
+      const follicularInterval = intervals.find(i => i.phase === 'FOLLICULAR');
+
+      expect(loggedIntervals.length).toBe(1);
+      expect(loggedIntervals[0].endDate).toBe(addDays(baseDate, 5)); // Days 1-6
+      
+      expect(predictedMenstrualIntervals.length).toBe(0);
+      
+      expect(follicularInterval).toBeDefined();
+      expect(follicularInterval!.startDate).toBe(addDays(baseDate, 6)); // Day 7
+      
+      // Verify ovulation has not shifted (should be Day 14 for a 28-day cycle)
+      const ovulationInterval = intervals.find(i => i.phase === 'OVULATION');
+      expect(ovulationInterval!.startDate).toBe(addDays(baseDate, 13)); // Day 14
+    });
+    it('simulates Aug 12th with 3-day elapsed and 5-day default', () => {
+      const referenceDate = '2026-08-14';
+      const cycles = [createCycle('2026-08-12', null, null)];
+      
+      const prediction = predictionService.predict(cycles, avgCycleLength, 5)!;
+      const { intervals } = builder.build(cycles, prediction, referenceDate, 5);
+
+      const getPhaseForDate = (dateStr: string) => {
+        // Must match PhaseResolver logic exactly
+        return intervals.find(i => dateStr >= i.startDate && dateStr <= i.endDate);
+      };
+
+      for (let day = 12; day <= 20; day++) {
+        const p = getPhaseForDate(`2026-08-${day}`);
+        console.log(`2026-08-${day}: phase=${p?.phase} source=${p?.source} (${p?.startDate} -> ${p?.endDate})`);
+      }
+      
+      // Let's expect Aug 15 to be MENSTRUAL
+      const p15 = getPhaseForDate('2026-08-15');
+      expect(p15?.phase).toBe('MENSTRUAL');
     });
   });
 
@@ -107,12 +215,12 @@ describe('TimelineBuilder - Active Cycle & Prediction Gating', () => {
       const reconstructedFollicular = intervals.find(i => i.source === 'RECONSTRUCTED' && i.phase === 'FOLLICULAR');
       expect(reconstructedFollicular).toBeDefined();
       
-      // Future PREDICTED data should NOT exist (because it's active Day 3)
+      // Future PREDICTED data SHOULD now exist, because prediction gating is removed
       const predictedEvents = events.filter(e => e.source === 'PREDICTED');
       const predictedIntervals = intervals.filter(i => i.source === 'PREDICTED');
       
-      expect(predictedEvents.length).toBe(0);
-      expect(predictedIntervals.length).toBe(0);
+      expect(predictedEvents.length).toBeGreaterThan(0);
+      expect(predictedIntervals.length).toBeGreaterThan(0);
     });
   });
 });

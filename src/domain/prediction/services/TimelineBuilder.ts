@@ -30,9 +30,9 @@ export class TimelineBuilder {
       if (c.endDate) {
         duration = daysBetween(c.startDate, c.endDate) + 1;
       } else if (c === latestCycle) {
-        duration = Math.max(1, Math.min(elapsedDays, defaultPeriodDuration));
+        duration = Math.max(1, elapsedDays);
       } else {
-        duration = 5; // Fallback for corrupted historical cycles missing endDate
+        duration = defaultPeriodDuration; // Fallback for corrupted historical cycles missing endDate
       }
       const endDate = c.endDate || addDays(c.startDate, duration - 1);
       
@@ -62,17 +62,44 @@ export class TimelineBuilder {
 
     // 2. Map Prediction to events and subsequent intervals
     if (prediction && cycles.length > 0) {
-      const canDrawFuturePredictions = !isActiveCycle || elapsedDays >= defaultPeriodDuration;
+      const lastLoggedCycle = latestCycle!;
+      const loggedDuration = lastLoggedCycle.endDate 
+        ? daysBetween(lastLoggedCycle.startDate, lastLoggedCycle.endDate) + 1 
+        : Math.max(1, elapsedDays);
       
-      if (canDrawFuturePredictions) {
-        const lastLoggedCycle = latestCycle!;
-        const duration = lastLoggedCycle.endDate ? daysBetween(lastLoggedCycle.startDate, lastLoggedCycle.endDate) + 1 : Math.max(1, Math.min(elapsedDays, defaultPeriodDuration));
+      const assumedPeriodDuration = isActiveCycle
+        ? Math.max(loggedDuration, prediction.predictedPeriodDuration)
+        : loggedDuration;
         
-        const biology = this.predictionService.predictHistoricalCycle(lastLoggedCycle.startDate, prediction.predictedCycleLength, duration);
-        this.mapBiologyToTimeline(biology, events, intervals, 'PREDICTED', prediction.confidence);
+      const biology = this.predictionService.predictHistoricalCycle(lastLoggedCycle.startDate, prediction.predictedCycleLength, assumedPeriodDuration);
+      this.mapBiologyToTimeline(biology, events, intervals, 'PREDICTED', prediction.confidence);
 
-        // And add the PREDICTED next period
+      if (isActiveCycle && elapsedDays < prediction.predictedPeriodDuration) {
+        const predictedCurrentPeriodStart = addDays(lastLoggedCycle.startDate, elapsedDays);
+        const predictedCurrentPeriodDuration = prediction.predictedPeriodDuration - elapsedDays;
+        const predictedCurrentPeriodEnd = addDays(predictedCurrentPeriodStart, predictedCurrentPeriodDuration - 1);
+
         events.push({
+          id: `predicted-current-period`,
+          type: TimelineEventType.PERIOD,
+          date: predictedCurrentPeriodStart,
+          duration: predictedCurrentPeriodDuration,
+          source: 'PREDICTED',
+          priority: 60,
+          confidence: prediction.confidence
+        });
+
+        intervals.push({
+          phase: 'MENSTRUAL',
+          startDate: predictedCurrentPeriodStart,
+          endDate: predictedCurrentPeriodEnd,
+          source: 'PREDICTED',
+          confidence: prediction.confidence
+        });
+      }
+
+      // And add the PREDICTED next period
+      events.push({
           id: `predicted-period`,
           type: TimelineEventType.PERIOD,
           date: prediction.nextPeriodStart,
@@ -89,7 +116,6 @@ export class TimelineBuilder {
           source: 'PREDICTED',
           confidence: prediction.confidence
         });
-      }
     }
 
     return {

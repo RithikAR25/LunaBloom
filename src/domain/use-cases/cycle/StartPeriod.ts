@@ -28,46 +28,45 @@ export class StartPeriod {
     const subsequentCycles = sortedCycles.filter(c => c.startDate > startDate);
     const isHistoric = subsequentCycles.length > 0;
     
-    /**
-     * Product Rule: Active Period Heuristic
-     * If the user logs a period starting today or yesterday, we assume they are currently on their period,
-     * so we create an "active" period (endDate = null).
-     * If the date is older than yesterday, we assume it's a historical log and use their average duration.
-     */
-    const isTodayOrYesterday = daysBetween(startDate, todayISO()) <= 1;
-    
     let targetEndDate: string | null = null;
     let targetDurationDays: number | null = null;
 
-    if (isTodayOrYesterday) {
-      // Action A: Create an active period for today/yesterday.
-      targetEndDate = null;
-      targetDurationDays = null;
+    let calculatedEndDate = addDays(startDate, defaultDurationDays - 1);
+    const today = todayISO();
+
+    if (isHistoric) {
+      // Action B: Create a bounded historical period capped by the next cycle.
+      const nextCycleStart = subsequentCycles[0]!.startDate;
       
-      const activeCycle = allCycles.find(c => c.endDate === null);
-      if (activeCycle) {
-        throw new Error("You're already tracking a period.\nEnd it before starting a new one.");
+      // We must leave at least 1 day gap to prevent the "touching" overlap error
+      // from ValidationService (which expands bounds by 1 day).
+      if (calculatedEndDate >= addDays(nextCycleStart, -1)) {
+        calculatedEndDate = addDays(nextCycleStart, -2);
       }
-    } else {
-      // Action B: Create a bounded historical period using the user's default duration.
-      let calculatedEndDate = addDays(startDate, defaultDurationDays - 1);
       
       // Safety: Never create a future end date from a historical log.
-      const today = todayISO();
       if (calculatedEndDate > today) {
         calculatedEndDate = today;
       }
       
       targetEndDate = calculatedEndDate;
       targetDurationDays = daysBetween(startDate, targetEndDate) + 1;
-
-      // Cap the end date if it collides with a subsequent cycle.
-      if (isHistoric) {
-        const nextCycleStart = subsequentCycles[0]!.startDate;
-        if (targetEndDate >= nextCycleStart) {
-          targetEndDate = addDays(nextCycleStart, -1);
-          targetDurationDays = daysBetween(startDate, targetEndDate) + 1;
+    } else {
+      // Action A: Create an active period OR a naturally concluded historical period.
+      if (calculatedEndDate >= today) {
+        // The period's natural window still includes today (or the future).
+        // It is an ACTIVE period.
+        const activeCycle = allCycles.find(c => c.endDate === null);
+        if (activeCycle) {
+          throw new Error("You're already tracking a period.\nEnd it before starting a new one.");
         }
+        
+        targetEndDate = null;
+        targetDurationDays = null;
+      } else {
+        // The period naturally concluded before today.
+        targetEndDate = calculatedEndDate;
+        targetDurationDays = daysBetween(startDate, targetEndDate) + 1;
       }
     }
 

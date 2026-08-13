@@ -119,15 +119,17 @@ describe('Prediction Module', () => {
         createCycle('2026-07-16', null)
       ];
 
+      // With the new architecture, an active period (endDate = null) is NEVER capped by predictions.
+      // Since the user hasn't ended the period, Day 20 (Aug 4) remains LOGGED MENSTRUAL.
       const prediction = predictionService.predict(cycles, 28, 5);
       const { events, intervals } = builder.build(cycles, prediction, '2026-08-04', 5);
       const index = indexer.buildDateIndex(events);
 
       const phase = resolver.getPhaseForDate('2026-08-04', intervals, index);
       
-      expect(phase.phase).toBe('LUTEAL');
+      expect(phase.phase).toBe('MENSTRUAL');
       expect(phase.cycleDay).toBe(20);
-      expect(phase.fertilityStatus).toBe('unknown');
+      expect(phase.fertilityStatus).toBe('not_fertile');
     });
   });
 });

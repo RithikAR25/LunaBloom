@@ -22,9 +22,14 @@ export function nowISO(): string {
 
 /**
  * Returns today's date as an ISO 8601 date string (YYYY-MM-DD).
+ * Uses local calendar getters to ensure it represents the user's actual local day.
  */
 export function todayISO(): string {
-  return new Date().toISOString().split('T')[0] ?? '';
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -32,18 +37,27 @@ export function todayISO(): string {
  * Returns a positive number if dateB is after dateA.
  */
 export function daysBetween(dateA: string, dateB: string): number {
+  const [yearA, monthA, dayA] = dateA.split('-').map(Number);
+  const [yearB, monthB, dayB] = dateB.split('-').map(Number);
+  
+  if (!yearA || !monthA || !dayA || !yearB || !monthB || !dayB) return 0;
+  
+  const a = Date.UTC(yearA, monthA - 1, dayA);
+  const b = Date.UTC(yearB, monthB - 1, dayB);
+  
   const msPerDay = 1000 * 60 * 60 * 24;
-  const a = new Date(dateA).getTime();
-  const b = new Date(dateB).getTime();
   return Math.round((b - a) / msPerDay);
 }
 
 /**
  * Adds N days to an ISO date string, returns result as ISO date string.
+ * Uses pure UTC calendar math to avoid local timezone off-by-one errors.
  */
 export function addDays(isoDate: string, days: number): string {
-  const date = new Date(isoDate);
-  date.setDate(date.getDate() + days);
+  const [year, month, day] = isoDate.split('-').map(Number);
+  if (!year || !month || !day) return isoDate;
+  
+  const date = new Date(Date.UTC(year, month - 1, day + days));
   return date.toISOString().split('T')[0] ?? '';
 }
 
