@@ -13,6 +13,7 @@ import { AlertModal } from '@/presentation/components/ui/AlertModal';
 import { EditCycleModal } from '@/presentation/components/calendar/EditCycleModal';
 import type { CycleEntry } from '@/domain/models/Cycle';
 import { ValidationService } from '@/domain/services/ValidationService';
+import type { ViewMode } from '@/presentation/components/calendar/ViewModeSlider';
 
 /** Calendar Screen — Phase 1 */
 export default function CalendarScreen() {
@@ -35,6 +36,7 @@ export default function CalendarScreen() {
     showExclusionToggle?: boolean;
   }
   const [warningState, setWarningState] = useState<WarningState | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [includeInPredictions, setIncludeInPredictions] = useState(true);
 
@@ -61,23 +63,20 @@ export default function CalendarScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={[styles.header, { padding: spacing[4] }]}>
-          <Text style={[styles.title, { color: colors.text.primary }]}>Calendar</Text>
-          <Text style={[styles.sub, { color: colors.text.secondary }]}>Your cycle history</Text>
-        </View>
-
         <CycleCalendar
           cycles={cycles}
           selectedDate={selectedDate}
           onSelectDate={handleSelectDate}
+          onViewModeChange={setViewMode}
         />
 
-        <View style={[styles.actions, { padding: spacing[6] }]}>
-          {selectedDate && (
-            <Text style={[styles.selectedLabel, { color: colors.text.primary, marginBottom: spacing[4] }]}>
-              Selected: {selectedDate}
-            </Text>
-          )}
+        {viewMode === 'month' && (
+          <View style={[styles.actions, { padding: spacing[6] }]}>
+            {selectedDate && (
+              <Text style={[styles.selectedLabel, { color: colors.text.primary, marginBottom: spacing[4] }]}>
+                Selected: {selectedDate}
+              </Text>
+            )}
           
           <View style={{ flexDirection: 'row', gap: spacing[4], justifyContent: 'center', width: '100%' }}>
             {selectedCycle ? (
@@ -167,6 +166,7 @@ export default function CalendarScreen() {
             )}
           </View>
         </View>
+        )}
 
         <EditCycleModal
           visible={isEditModalVisible}
@@ -237,9 +237,6 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flexGrow: 1 },
-  header: { alignItems: 'center', gap: 4 },
-  title: { fontSize: 24, fontWeight: '700' },
-  sub: { fontSize: 15 },
   actions: { alignItems: 'center', marginTop: 16 },
   selectedLabel: { fontSize: 16, fontWeight: '500' },
   toggleContainer: {
