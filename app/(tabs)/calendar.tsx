@@ -85,7 +85,8 @@ export default function CalendarScreen() {
         />
 
         {viewMode === 'month' && (
-          <View style={[styles.actions, { paddingHorizontal: spacing[6] }]}>
+          <>
+            <View style={[styles.actions, { paddingHorizontal: spacing[6] }]}>
             {selectedDate && (
               <View style={styles.selectedDateContainer}>
                 <Text style={[styles.selectedLabel, { color: colors.text.primary }]}>
@@ -192,7 +193,16 @@ export default function CalendarScreen() {
                 />
             )}
           </View>
-        </View>
+          </View>
+          
+          {phaseInfo?.pregnancyChance && phaseInfo.pregnancyChance !== 'UNKNOWN' && (
+            <View style={[styles.pregnancyChanceContainer, { paddingHorizontal: spacing[6] }]}>
+              <Text style={[styles.pregnancyChanceText, { color: colors.text.secondary }]}>
+                • {phaseInfo.pregnancyChance} chance of getting pregnant
+              </Text>
+            </View>
+          )}
+          </>
         )}
 
         <EditCycleModal
@@ -282,6 +292,13 @@ const styles = StyleSheet.create({
   cycleDayLabel: {
     fontSize: 13,
     marginTop: spacing.xxs,
+  },
+  pregnancyChanceContainer: {
+    paddingBottom: spacing.md,
+    justifyContent: 'center',
+  },
+  pregnancyChanceText: {
+    fontSize: 14,
   },
   toggleContainer: {
     flexDirection: 'row',

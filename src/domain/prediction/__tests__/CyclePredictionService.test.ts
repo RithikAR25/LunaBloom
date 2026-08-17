@@ -130,6 +130,46 @@ describe('Prediction Module', () => {
       expect(phase.phase).toBe('MENSTRUAL');
       expect(phase.cycleDay).toBe(20);
       expect(phase.fertilityStatus).toBe('not_fertile');
+      expect(phase.pregnancyChance).toBe('LOW');
+    });
+
+    describe('Pregnancy Chance Mapping (Product Rule)', () => {
+      it('maps fertile to HIGH chance', () => {
+        // Mock intervals and events to simulate ovulation day
+        const events = new Map();
+        events.set('2026-08-05', [{ type: 'OVULATION', date: '2026-08-05' } as any]);
+        const intervals = [{ phase: 'FERTILE_WINDOW', startDate: '2026-08-01', endDate: '2026-08-06', source: 'PREDICTED' } as any];
+        const phase = resolver.getPhaseForDate('2026-08-05', intervals, events);
+        
+        expect(phase.fertilityStatus).toBe('fertile');
+        expect(phase.pregnancyChance).toBe('HIGH');
+      });
+
+      it('maps possible to MEDIUM chance', () => {
+        const events = new Map();
+        events.set('2026-08-02', [{ type: 'FERTILE_WINDOW', date: '2026-08-02' } as any]);
+        const intervals = [{ phase: 'FERTILE_WINDOW', startDate: '2026-08-01', endDate: '2026-08-06', source: 'PREDICTED' } as any];
+        const phase = resolver.getPhaseForDate('2026-08-02', intervals, events);
+        
+        expect(phase.fertilityStatus).toBe('possible');
+        expect(phase.pregnancyChance).toBe('MEDIUM');
+      });
+
+      it('maps not_fertile to LOW chance', () => {
+        const events = new Map();
+        const intervals = [{ phase: 'MENSTRUAL', startDate: '2026-08-01', endDate: '2026-08-05', source: 'LOGGED' } as any];
+        const phase = resolver.getPhaseForDate('2026-08-03', intervals, events);
+        
+        expect(phase.fertilityStatus).toBe('not_fertile');
+        expect(phase.pregnancyChance).toBe('LOW');
+      });
+
+      it('maps unknown to UNKNOWN chance', () => {
+        const phase = resolver.getPhaseForDate('2026-08-03', [], new Map());
+        
+        expect(phase.fertilityStatus).toBe('unknown');
+        expect(phase.pregnancyChance).toBe('UNKNOWN');
+      });
     });
   });
 });

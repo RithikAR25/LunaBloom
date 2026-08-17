@@ -3,10 +3,19 @@ import { PhaseInterval, CyclePhase } from '../models/PhaseInterval';
 import { daysBetween } from '../../../utils/dateUtils';
 
 export type FertilityStatus = 'fertile' | 'possible' | 'not_fertile' | 'unknown';
+export type PregnancyChance = 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN';
+
+export const pregnancyChanceByFertilityStatus: Record<FertilityStatus, PregnancyChance> = {
+  fertile: 'HIGH',
+  possible: 'MEDIUM',
+  not_fertile: 'LOW',
+  unknown: 'UNKNOWN',
+};
 
 export interface PhaseInfo {
   phase: CyclePhase | null;
   fertilityStatus: FertilityStatus;
+  pregnancyChance: PregnancyChance;
   cycleDay: number | null;
   source?: 'LOGGED' | 'RECONSTRUCTED' | 'PREDICTED';
   /**
@@ -37,7 +46,7 @@ export class PhaseResolver {
     const isOvulationEvent = eventsToday.some(e => e.type === TimelineEventType.OVULATION);
 
     if (!currentInterval) {
-        return { phase: null, fertilityStatus: 'unknown', cycleDay };
+        return { phase: null, fertilityStatus: 'unknown', pregnancyChance: pregnancyChanceByFertilityStatus['unknown'], cycleDay };
     }
 
     let fertilityStatus: FertilityStatus = 'not_fertile';
@@ -52,6 +61,7 @@ export class PhaseResolver {
     return { 
         phase: currentInterval.phase, 
         fertilityStatus, 
+        pregnancyChance: pregnancyChanceByFertilityStatus[fertilityStatus],
         cycleDay, 
         source: currentInterval.source,
         isPredictedMenstrual: currentInterval.phase === 'MENSTRUAL' && currentInterval.source === 'PREDICTED' 

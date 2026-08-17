@@ -11,7 +11,6 @@ import { ViewModeSlider, ViewMode } from './ViewModeSlider';
 import { DayState } from './DayCell';
 import type { CycleEntry } from '../../../domain/models/Cycle';
 import { todayISO } from '../../../utils/dateUtils';
-import { useProfileStore } from '../../../presentation/stores/useProfileStore';
 import { PredictionEngine, type TimelineData } from '../../../domain/prediction';
 
 // ── Zooming OUT (Month → Year) ──
@@ -47,7 +46,7 @@ interface CycleCalendarProps {
   timelineData: TimelineData;
 }
 
-export function CycleCalendar({ cycles, selectedDate, onSelectDate, onViewModeChange, engine, timelineData }: CycleCalendarProps) {
+export function CycleCalendar({ selectedDate, onSelectDate, onViewModeChange, engine, timelineData }: CycleCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [transitionType, setTransitionType] = useState<TransitionType>('fade');
