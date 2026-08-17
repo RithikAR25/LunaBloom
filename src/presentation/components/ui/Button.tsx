@@ -37,6 +37,14 @@ export interface ButtonProps extends Omit<PressableProps, 'style' | 'children'> 
   rightIcon?: React.ReactNode;
   /** Stretches button to container width */
   fullWidth?: boolean;
+  /** Custom border radius to override default */
+  borderRadius?: number;
+  /** Custom vertical padding override */
+  paddingVertical?: number;
+  /** Custom horizontal padding override */
+  paddingHorizontal?: number;
+  /** Custom minimum height override (defaults to 48px) */
+  minHeight?: number;
   accessibilityLabel?: string;
   accessibilityHint?: string;
 }
@@ -57,6 +65,10 @@ export function Button({
   leftIcon,
   rightIcon,
   fullWidth = false,
+  borderRadius,
+  paddingVertical,
+  paddingHorizontal,
+  minHeight,
   accessibilityLabel,
   accessibilityHint,
   ...rest
@@ -123,9 +135,11 @@ export function Button({
             backgroundColor: bgColor,
             borderColor,
             borderWidth: variant === 'secondary' ? 1.5 : 0,
-            paddingVertical: sizeTokens.paddingVertical,
-            paddingHorizontal: sizeTokens.paddingHorizontal,
+            paddingVertical: paddingVertical ?? sizeTokens.paddingVertical,
+            paddingHorizontal: paddingHorizontal ?? sizeTokens.paddingHorizontal,
             opacity: isDisabled ? 0.4 : 1,
+            ...(borderRadius !== undefined ? { borderRadius } : {}),
+            ...(minHeight !== undefined ? { minHeight } : {}),
           },
           fullWidth && styles.fullWidth,
         ]}

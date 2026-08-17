@@ -12,7 +12,7 @@ import { DayState } from './DayCell';
 import type { CycleEntry } from '../../../domain/models/Cycle';
 import { todayISO } from '../../../utils/dateUtils';
 import { useProfileStore } from '../../../presentation/stores/useProfileStore';
-import { PredictionEngine } from '../../../domain/prediction';
+import { PredictionEngine, type TimelineData } from '../../../domain/prediction';
 
 // ── Zooming OUT (Month → Year) ──
 const ZoomOutMonth = new Keyframe({
@@ -43,9 +43,11 @@ interface CycleCalendarProps {
   selectedDate: string | null;
   onSelectDate: (dateStr: string) => void;
   onViewModeChange?: (mode: ViewMode) => void;
+  engine: PredictionEngine;
+  timelineData: TimelineData;
 }
 
-export function CycleCalendar({ cycles, selectedDate, onSelectDate, onViewModeChange }: CycleCalendarProps) {
+export function CycleCalendar({ cycles, selectedDate, onSelectDate, onViewModeChange, engine, timelineData }: CycleCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [transitionType, setTransitionType] = useState<TransitionType>('fade');
@@ -58,19 +60,6 @@ export function CycleCalendar({ cycles, selectedDate, onSelectDate, onViewModeCh
       onViewModeChange?.('month');
     }, [onViewModeChange])
   );
-
-  const profile = useProfileStore((s) => s.profile);
-  const avgCycleLength = profile?.avgCycleLength || 28;
-  const avgPeriodDuration = profile?.avgPeriodDuration || 5;
-
-  // ── Stable engine instance ──────────────────────────────────────────────────
-  // PredictionEngine is stateless for getPhaseForDate — safe to memoize once.
-  const engine = useMemo(() => new PredictionEngine(), []);
-
-  // ── Timeline (recomputed when cycles or profile change, NOT on month/view) ──
-  const timelineData = useMemo(() => {
-    return engine.generateTimeline(cycles, avgCycleLength, avgPeriodDuration);
-  }, [engine, cycles, avgCycleLength, avgPeriodDuration]);
 
   // ── Monthly grid (recomputed when month or timelineData changes) ────────────
   const days = useMemo(() => {

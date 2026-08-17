@@ -1,18 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Switch, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing } from '@/design-system';
+import { spacing, borderRadius } from '@/design-system';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
 import { useProfileStore } from '@/presentation/stores/useProfileStore';
 import { CycleCalendar } from '@/presentation/components/calendar/CycleCalendar';
-import { todayISO } from '@/utils/dateUtils';
+import { todayISO, formatDateCompact } from '@/utils/dateUtils';
 import { Button } from '@/presentation/components/ui/Button';
 import { ConfirmModal } from '@/presentation/components/ui/ConfirmModal';
 import { AlertModal } from '@/presentation/components/ui/AlertModal';
 import { EditCycleModal } from '@/presentation/components/calendar/EditCycleModal';
 import type { CycleEntry } from '@/domain/models/Cycle';
 import { ValidationService } from '@/domain/services/ValidationService';
+import { PredictionEngine } from '@/domain/prediction';
 import type { ViewMode } from '@/presentation/components/calendar/ViewModeSlider';
 
 /** Calendar Screen — Phase 1 */
@@ -44,7 +45,18 @@ export default function CalendarScreen() {
     loadCycles();
   }, [loadCycles]);
 
+  const engine = useMemo(() => new PredictionEngine(), []);
 
+  const timelineData = useMemo(() => {
+    return engine.generateTimeline(
+      cycles,
+      profile?.avgCycleLength || 28,
+      profile?.avgPeriodDuration || 5
+    );
+  }, [engine, cycles, profile?.avgCycleLength, profile?.avgPeriodDuration]);
+
+  const phaseInfo = selectedDate ? engine.getPhaseForDate(selectedDate, timelineData) : null;
+  const shouldShowCycleDay = phaseInfo?.phase != null && phaseInfo?.cycleDay != null;
 
   const handleSelectDate = (dateStr: string) => {
     setSelectedDate(dateStr);
@@ -68,31 +80,45 @@ export default function CalendarScreen() {
           selectedDate={selectedDate}
           onSelectDate={handleSelectDate}
           onViewModeChange={setViewMode}
+          engine={engine}
+          timelineData={timelineData}
         />
 
         {viewMode === 'month' && (
-          <View style={[styles.actions, { padding: spacing[6] }]}>
+          <View style={[styles.actions, { paddingHorizontal: spacing[6] }]}>
             {selectedDate && (
-              <Text style={[styles.selectedLabel, { color: colors.text.primary, marginBottom: spacing[4] }]}>
-                Selected: {selectedDate}
-              </Text>
+              <View style={styles.selectedDateContainer}>
+                <Text style={[styles.selectedLabel, { color: colors.text.primary }]}>
+                  {formatDateCompact(selectedDate)}
+                </Text>
+                {shouldShowCycleDay && (
+                  <Text style={[styles.cycleDayLabel, { color: colors.text.secondary }]}>
+                    Cycle day {phaseInfo.cycleDay}{phaseInfo.source === 'PREDICTED' ? ' · Predicted' : ''}
+                  </Text>
+                )}
+              </View>
             )}
           
-          <View style={{ flexDirection: 'row', gap: spacing[4], justifyContent: 'center', width: '100%' }}>
+          <View style={{ flexDirection: 'row', gap: spacing.sm, flexShrink: 0 }}>
             {selectedCycle ? (
               <>
-                <View style={{ flex: 1 }}>
-                  <Button
-                    label="Edit Cycle"
-                    variant="secondary"
-                    onPress={() => setIsEditModalVisible(true)}
-                  />
-                </View>
+                <Button
+                  label="Edit Cycle"
+                  variant="secondary"
+                  borderRadius={borderRadius['2xl']}
+                  paddingVertical={spacing.base}
+                  paddingHorizontal={spacing.sm}
+                  minHeight={0}
+                  onPress={() => setIsEditModalVisible(true)}
+                />
                 {!selectedCycle.endDate && (
-                  <View style={{ flex: 1 }}>
-                    <Button
-                      label="End Period"
+                  <Button
+                    label="End Period"
                       variant="primary"
+                      borderRadius={borderRadius['2xl']}
+                      paddingVertical={spacing.base}
+                      paddingHorizontal={spacing.sm}
+                      minHeight={0}
                       onPress={async () => {
                         const endDate = selectedDate || todayISO();
                         const activeCycle = cycles.find(c => c.endDate === null);
@@ -126,14 +152,16 @@ export default function CalendarScreen() {
                         }
                       }}
                     />
-                  </View>
                 )}
               </>
             ) : (
-              <View style={{ flex: 1 }}>
-                <Button
-                  label="Start Period"
+              <Button
+                label="Start Period"
                   variant="primary"
+                  borderRadius={borderRadius['2xl']}
+                  paddingVertical={spacing.xs}
+                  paddingHorizontal={spacing.sm}
+                  minHeight={0}
                   onPress={async () => {
                     const date = selectedDate || todayISO();
                     const validationService = new ValidationService();
@@ -162,7 +190,6 @@ export default function CalendarScreen() {
                     }
                   }}
                 />
-              </View>
             )}
           </View>
         </View>
@@ -237,8 +264,25 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flexGrow: 1 },
-  actions: { alignItems: 'center', marginTop: 16 },
-  selectedLabel: { fontSize: 16, fontWeight: '500' },
+  actions: { 
+    flexDirection: 'row',
+    alignItems: 'center', 
+    justifyContent: 'space-between',
+    paddingVertical: spacing.md,
+  },
+  selectedDateContainer: {
+    flexShrink: 1,
+    marginRight: spacing.sm,
+    justifyContent: 'center',
+  },
+  selectedLabel: { 
+    fontSize: 16, 
+    fontWeight: '900',
+  },
+  cycleDayLabel: {
+    fontSize: 13,
+    marginTop: spacing.xxs,
+  },
   toggleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

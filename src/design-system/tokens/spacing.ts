@@ -6,6 +6,7 @@
 export const spacing = {
   // Sanguine spacing scale
   base: 4,
+  xxs: 2,
   xs: 8,
   sm: 16,
   md: 24,

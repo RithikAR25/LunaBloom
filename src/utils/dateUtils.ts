@@ -103,3 +103,19 @@ export function formatDateShort(isoDate: string): string {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return `${months[month - 1]} ${day}`;
 }
+
+/**
+ * Formats an ISO date string (YYYY-MM-DD) into a compact format (e.g., "AUG 17").
+ * Month uses 3-letter uppercase abbreviation, day is numeric without leading zero.
+ */
+export function formatDateCompact(isoDate: string): string {
+  if (!isoDate) return '';
+  const parts = isoDate.split('-');
+  if (parts.length < 3) return isoDate;
+  
+  const month = parseInt(parts[1]!, 10);
+  const day = parseInt(parts[2]!.split('T')[0]!, 10);
+  
+  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  return `${months[month - 1]} ${day}`;
+}
