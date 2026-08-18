@@ -3,7 +3,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { fontSize, fontFamily, lineHeight } from '@/design-system';
 
-type EmptyStateScenario = 'no-cycles' | 'insufficient-cycles' | 'no-logs';
+type EmptyStateScenario = 'no-cycles' | 'insufficient-cycles' | 'no-logs' | 'no-patterns';
 
 interface Props {
   scenario: EmptyStateScenario;
@@ -31,6 +31,12 @@ export function InsightsEmptyState({ scenario }: Props) {
           icon: 'add-circle-outline' as const,
           title: 'No daily logs found',
           message: 'Start logging your daily symptoms and mood to see wellbeing trends over time.',
+        };
+      case 'no-patterns':
+        return {
+          icon: 'trending-up-outline' as const,
+          title: 'Not enough data yet',
+          message: 'Keep logging to uncover your personal patterns over time.',
         };
     }
   };

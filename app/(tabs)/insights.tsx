@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '@/presentation/hooks/useTheme';
@@ -10,18 +10,18 @@ import { useInsightsStore } from '@/presentation/stores/useInsightsStore';
 import { InsightsEmptyState } from '@/presentation/components/insights/InsightsEmptyState';
 import { OverviewTab } from '@/presentation/components/insights/OverviewTab';
 import { CycleTab } from '@/presentation/components/insights/CycleTab';
-import { SymptomsTab } from '@/presentation/components/insights/SymptomsTab';
-import { WellbeingTab } from '@/presentation/components/insights/WellbeingTab';
+import { BodyAndMoodTab } from '@/presentation/components/insights/BodyAndMoodTab';
+import { PatternsTab } from '@/presentation/components/insights/PatternsTab';
 
-type Tab = 'Overview' | 'Cycle' | 'Symptoms' | 'Wellbeing';
-const TABS: Tab[] = ['Overview', 'Cycle', 'Symptoms', 'Wellbeing'];
+type Tab = 'Overview' | 'Cycle' | 'Body & Mood' | 'Patterns';
+const TABS: Tab[] = ['Overview', 'Cycle', 'Body & Mood', 'Patterns'];
 
 export default function InsightsScreen() {
   const { colors } = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('Overview');
   
   const { 
-    cycleStats, symptomTrends, moodTrends, wellbeingTrends, 
+    cycleStats, symptomTrends, moodTrends, wellbeingTrends, patternInsights,
     isLoading, error, loadInsights 
   } = useInsightsStore();
 
@@ -40,7 +40,7 @@ export default function InsightsScreen() {
     const hasLogs = symptomTrends?.some(t => t.topSymptoms.length > 0) || 
                    wellbeingTrends?.some(w => w.metrics.painSampleCount > 0);
                    
-    if (!hasLogs && (activeTab === 'Symptoms' || activeTab === 'Wellbeing')) {
+    if (!hasLogs && activeTab === 'Body & Mood') {
       return 'no-logs';
     }
     
@@ -69,7 +69,7 @@ export default function InsightsScreen() {
       return <InsightsEmptyState scenario={emptyState} />;
     }
     
-    // If we're on Symptoms/Wellbeing and there's no logs, show empty state for logs
+    // If we're on Body & Mood and there's no logs, show empty state for logs
     if (emptyState === 'no-logs') {
       return <InsightsEmptyState scenario={emptyState} />;
     }
@@ -83,10 +83,12 @@ export default function InsightsScreen() {
         );
       case 'Cycle':
         return <CycleTab stats={cycleStats!} />;
-      case 'Symptoms':
-        return <SymptomsTab trends={symptomTrends!} />;
-      case 'Wellbeing':
-        return <WellbeingTab wellbeing={wellbeingTrends!} moods={moodTrends!} />;
+      case 'Body & Mood':
+        return <BodyAndMoodTab trends={symptomTrends!} wellbeing={wellbeingTrends!} moods={moodTrends!} />;
+      case 'Patterns':
+        return patternInsights
+          ? <PatternsTab patterns={patternInsights} />
+          : <InsightsEmptyState scenario="no-patterns" />;
       default:
         return null;
     }
@@ -98,7 +100,13 @@ export default function InsightsScreen() {
         <Heading level="h2" style={{ color: colors.text.primary }} accessibilityRole="header">Insights</Heading>
       </View>
       
-      <View style={styles.tabBar} accessibilityRole="tablist">
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        style={{ flexGrow: 0 }}
+        contentContainerStyle={styles.tabBar} 
+        accessibilityRole="tablist"
+      >
         {TABS.map(tab => {
           const isActive = activeTab === tab;
           return (
@@ -119,7 +127,7 @@ export default function InsightsScreen() {
             </TouchableOpacity>
           );
         })}
-      </View>
+      </ScrollView>
 
       <View style={styles.content}>
         {renderContent()}
@@ -141,7 +149,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   tabButton: {
-    flex: 1,
+    paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',

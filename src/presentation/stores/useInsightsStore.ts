@@ -6,19 +6,22 @@ import type {
   CycleStatistics, 
   PhaseSymptomTrends, 
   PhaseMoodTrends, 
-  PhaseWellbeingTrends 
+  PhaseWellbeingTrends,
+  PatternInsights
 } from '../../domain/models/Insights';
 
 import { GetCycleStatistics } from '../../domain/use-cases/insights/GetCycleStatistics';
 import { GetSymptomTrends } from '../../domain/use-cases/insights/GetSymptomTrends';
 import { GetMoodTrends } from '../../domain/use-cases/insights/GetMoodTrends';
 import { GetWellbeingTrends } from '../../domain/use-cases/insights/GetWellbeingTrends';
+import { GetPatternInsights } from '../../domain/use-cases/insights/GetPatternInsights';
 
 type InsightsState = {
   cycleStats: CycleStatistics | null;
   symptomTrends: PhaseSymptomTrends[] | null;
   moodTrends: PhaseMoodTrends[] | null;
   wellbeingTrends: PhaseWellbeingTrends[] | null;
+  patternInsights: PatternInsights | null;
   
   isLoading: boolean;
   error: string | null;
@@ -37,6 +40,7 @@ export const useInsightsStore = create<InsightsState>((set, get) => ({
   symptomTrends: null,
   moodTrends: null,
   wellbeingTrends: null,
+  patternInsights: null,
   
   isLoading: false,
   error: null,
@@ -62,12 +66,14 @@ export const useInsightsStore = create<InsightsState>((set, get) => ({
       const getSymptoms = new GetSymptomTrends(_cycleRepo, _logRepo, _profileRepo);
       const getMoods = new GetMoodTrends(_cycleRepo, _logRepo, _profileRepo);
       const getWellbeing = new GetWellbeingTrends(_cycleRepo, _logRepo, _profileRepo);
+      const getPatterns = new GetPatternInsights(_cycleRepo, _logRepo);
 
-      const [cycleStats, symptomTrends, moodTrends, wellbeingTrends] = await Promise.all([
+      const [cycleStats, symptomTrends, moodTrends, wellbeingTrends, patternInsights] = await Promise.all([
         getCycleStats.execute(),
         getSymptoms.execute(),
         getMoods.execute(),
         getWellbeing.execute(),
+        getPatterns.execute(),
       ]);
 
       set({
@@ -75,6 +81,7 @@ export const useInsightsStore = create<InsightsState>((set, get) => ({
         symptomTrends,
         moodTrends,
         wellbeingTrends,
+        patternInsights,
         isLoading: false,
         lastUpdated: new Date().toISOString(),
       });

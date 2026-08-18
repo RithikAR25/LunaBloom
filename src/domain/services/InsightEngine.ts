@@ -4,8 +4,13 @@ import type {
   PhaseSymptomTrends, 
   PhaseMoodTrends, 
   PhaseWellbeingTrends, 
-  CyclePhase 
+  CyclePhase,
+  PatternInsights,
+  CycleLengthDataPoint,
+  PeriodDurationDataPoint,
+  MonthlyPainDataPoint
 } from '../models/Insights';
+import { formatDateShort, daysBetween, addDays } from '../../utils/dateUtils';
 import { CyclePhaseService } from './CyclePhaseService';
 
 export class InsightEngine {
@@ -123,5 +128,130 @@ export class InsightEngine {
     const cycle = cycles.find(c => c.id === log.cycleEntryId);
     if (!cycle) return 'UNKNOWN';
     return CyclePhaseService.getPhaseForDate(log.date, cycle, avgCycleLength);
+  }
+
+  /**
+   * Aggregates longitudinal data for the Patterns tab.
+   * - Uses only completed cycles (cycleLengthDays set, endDate set).
+   * - Derives cycle day from cycle.startDate at aggregation time.
+   * - Deduplicates log dates per cycle using a Set.
+   * - Caps logging consistency at 100.
+   */
+  public getPatternInsights(logs: DailyLog[], cycles: CycleEntry[]): PatternInsights {
+    const completedCycles = [...cycles]
+      .filter(c => c.cycleLengthDays !== null && c.endDate !== null)
+      .sort((a, b) => a.startDate.localeCompare(b.startDate));
+
+    // 1. Cycle length history
+    const cycleLengthHistory: CycleLengthDataPoint[] = completedCycles.map((c, i) => ({
+      cycleIndex: i + 1,
+      startDate: c.startDate,
+      cycleLengthDays: c.cycleLengthDays as number,
+    }));
+
+    // 2. Period duration history
+    const periodDurationHistory: PeriodDurationDataPoint[] = completedCycles
+      .filter(c => c.durationDays !== null)
+      .map((c, i) => ({
+        cycleIndex: i + 1,
+        startDate: c.startDate,
+        durationDays: c.durationDays as number,
+      }));
+
+    // 3. Monthly pain — group by YYYY-MM
+    const painByMonth: Record<string, { sum: number; count: number }> = {};
+    logs.forEach(log => {
+      if (log.painLevel !== null) {
+        const ym = log.date.substring(0, 7);
+        if (!painByMonth[ym]) painByMonth[ym] = { sum: 0, count: 0 };
+        painByMonth[ym].sum += log.painLevel;
+        painByMonth[ym].count += 1;
+      }
+    });
+    const monthlyPainHistory: MonthlyPainDataPoint[] = Object.entries(painByMonth)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([ym, { sum, count }]) => {
+        const monthPart = formatDateShort(`${ym}-01`).split(' ')[0] ?? ym;
+        const yearPart = ym.split('-')[0] ?? '';
+        return {
+          yearMonth: ym,
+          label: `${monthPart} ${yearPart}`,
+          averagePain: Number((sum / count).toFixed(1)),
+          sampleCount: count,
+        };
+      });
+
+    // 4. Energy peak day — re-derive cycleDay from cycle.startDate
+    // Deterministic match: most recent cycle where startDate <= log.date
+    const energyByDay: Record<number, { sum: number; count: number }> = {};
+    logs.forEach(log => {
+      if (log.energyLevel === null) return;
+      
+      // Select most recent completed cycle where log date falls within bounds
+      // The cycle spans from startDate to (startDate + cycleLengthDays - 1)
+      const matchedCycle = [...completedCycles]
+        .sort((a, b) => b.startDate.localeCompare(a.startDate))
+        .find(c => {
+          const cycleEnd = addDays(c.startDate, (c.cycleLengthDays as number) - 1);
+          return log.date >= c.startDate && log.date <= cycleEnd;
+        });
+        
+      if (!matchedCycle) return;
+      
+      // daysBetween is 0-indexed; add 1 for 1-based cycle day
+      const computedCycleDay = daysBetween(matchedCycle.startDate, log.date) + 1;
+      if (!energyByDay[computedCycleDay]) energyByDay[computedCycleDay] = { sum: 0, count: 0 };
+      energyByDay[computedCycleDay].sum += log.energyLevel;
+      energyByDay[computedCycleDay].count += 1;
+    });
+
+    let energyPeakCycleDay: number | null = null;
+    let energyPeakAverage: number | null = null;
+    let energyPeakSampleCount: number | null = null;
+
+    Object.entries(energyByDay).forEach(([dayStr, { sum, count }]) => {
+      if (count >= 2) {
+        const avg = sum / count;
+        if (energyPeakAverage === null || avg > energyPeakAverage) {
+          energyPeakAverage = Number(avg.toFixed(1));
+          energyPeakCycleDay = Number(dayStr);
+          energyPeakSampleCount = count;
+        }
+      }
+    });
+
+    // 5. Logging consistency — unique logged dates per cycle, capped at 100
+    const recentCycles = completedCycles.slice(-3);
+    let totalExpectedDays = 0;
+    let totalLoggedDays = 0;
+
+    recentCycles.forEach(cycle => {
+      const length = cycle.cycleLengthDays as number;
+      totalExpectedDays += length;
+      
+      const cycleEnd = addDays(cycle.startDate, length - 1);
+      
+      // Use a Set to count unique logged dates within this cycle's date range
+      const loggedDatesInCycle = new Set<string>(
+        logs
+          .filter(l => l.date >= cycle.startDate && l.date <= cycleEnd)
+          .map(l => l.date)
+      );
+      totalLoggedDays += loggedDatesInCycle.size;
+    });
+
+    const loggingConsistencyPercent = (recentCycles.length >= 3 && totalExpectedDays > 0)
+      ? Math.min(100, Math.round((totalLoggedDays / totalExpectedDays) * 100))
+      : null;
+
+    return {
+      cycleLengthHistory,
+      periodDurationHistory,
+      monthlyPainHistory,
+      energyPeakCycleDay,
+      energyPeakAverage,
+      energyPeakSampleCount,
+      loggingConsistencyPercent,
+    };
   }
 }
