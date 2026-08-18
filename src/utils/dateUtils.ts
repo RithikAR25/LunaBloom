@@ -119,3 +119,27 @@ export function formatDateCompact(isoDate: string): string {
   const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
   return `${months[month - 1]} ${day}`;
 }
+
+/**
+ * Formats a date range to include the year (e.g., "Jul 22 - Jul 26, 2026").
+ * If the dates span across different years, it formats as "Dec 28, 2025 - Jan 2, 2026".
+ */
+export function formatDateRangeWithYear(startDate: string, endDate: string): string {
+  if (!startDate || !endDate) return '';
+  const startParts = startDate.split('-');
+  const endParts = endDate.split('-');
+  if (startParts.length < 3 || endParts.length < 3) return '';
+
+  const startYear = startParts[0];
+  const endYear = endParts[0];
+
+  const formattedStart = formatDateShort(startDate);
+  const formattedEnd = formatDateShort(endDate);
+
+  if (startYear !== endYear) {
+    return `${formattedStart}, ${startYear} - ${formattedEnd}, ${endYear}`;
+  }
+
+  return `${formattedStart} - ${formattedEnd}, ${endYear}`;
+}
+

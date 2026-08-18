@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
-import { formatDateShort, addDays } from '@/utils/dateUtils';
+import { formatDateRangeWithYear, addDays } from '@/utils/dateUtils';
 import { Ionicons } from '@expo/vector-icons';
 import type { CycleStatistics } from '../../../domain/models/Insights';
 
@@ -123,7 +123,7 @@ export function CycleTab({ stats }: Props) {
                         styles.cycleCardDate, 
                         { color: isActive ? colors.brand.primary : colors.text.primary }
                       ]}>
-                        {formatDateShort(cycle.startDate)} \u2013 {formatDateShort(periodEndDate)}
+                        {formatDateRangeWithYear(cycle.startDate, periodEndDate)}
                       </Text>
                       {isActive && (
                         <View style={[styles.activeBadge, { backgroundColor: 'rgba(215, 61, 89, 0.15)' }]}>
