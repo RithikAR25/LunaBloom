@@ -86,7 +86,7 @@ export const useDailyLogStore = create<DailyLogState>((set, get) => ({
       
       set((state) => ({
         logs: { ...state.logs, [savedLog.date]: savedLog },
-        currentLog: state.currentLog?.date === savedLog.date ? savedLog : state.currentLog,
+        currentLog: (!state.currentLog || state.currentLog.date === savedLog.date) ? savedLog : state.currentLog,
         isLoading: false,
       }));
     } catch (err) {

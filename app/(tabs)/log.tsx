@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -10,6 +10,7 @@ import { spacing } from '@/design-system';
 import { Text } from '@/presentation/components/ui/Text';
 import { Heading } from '@/presentation/components/ui/Heading';
 import { Button } from '@/presentation/components/ui/Button';
+import { AlertModal } from '@/presentation/components/ui/AlertModal';
 
 import { useDailyLogStore } from '@/presentation/stores/useDailyLogStore';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
@@ -27,6 +28,7 @@ export default function LogScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const params = useLocalSearchParams<{ date?: string }>();
 
   const { activeCycle } = useCycleStore();
   const { currentLog, saveLogData, isLoading, error } = useDailyLogStore();
@@ -34,6 +36,30 @@ export default function LogScreen() {
 
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const consumedDateParam = useRef<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      let targetDate = new Date();
+      
+      if (
+        params.date && 
+        typeof params.date === 'string' && 
+        /^\d{4}-\d{2}-\d{2}$/.test(params.date)
+      ) {
+        if (consumedDateParam.current !== params.date) {
+          targetDate = new Date(params.date);
+          consumedDateParam.current = params.date;
+          router.setParams({ date: undefined });
+        }
+      }
+      
+      const dateStr = targetDate.toISOString().split('T')[0] || '';
+      
+      setDate(targetDate);
+      useDailyLogStore.getState().loadLogForDate(dateStr);
+    }, [params.date, router])
+  );
 
   // Local state for the form
   const [flow, setFlow] = useState<FlowIntensity | null>(null);
@@ -44,6 +70,32 @@ export default function LogScreen() {
   const [sleepQuality, setSleepQuality] = useState<number | null>(null);
   
   const [prevLog, setPrevLog] = useState<any>(null);
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const hasChanges = useMemo(() => {
+    const normalize = (arr: string[]) => [...arr].sort().join(',');
+
+    if (!currentLog) {
+      return (
+        flow !== null ||
+        moods.length > 0 ||
+        symptoms.length > 0 ||
+        painLevel !== null ||
+        energyLevel !== null ||
+        sleepQuality !== null
+      );
+    }
+
+    return (
+      flow !== currentLog.flowIntensity ||
+      painLevel !== currentLog.painLevel ||
+      energyLevel !== currentLog.energyLevel ||
+      sleepQuality !== currentLog.sleepQuality ||
+      normalize(moods) !== normalize(currentLog.moods) ||
+      normalize(symptoms) !== normalize(currentLog.symptoms)
+    );
+  }, [currentLog, flow, moods, symptoms, painLevel, energyLevel, sleepQuality]);
 
   if (currentLog !== prevLog) {
     setPrevLog(currentLog);
@@ -90,7 +142,8 @@ export default function LogScreen() {
         energyLevel,
         sleepQuality,
       });
-      router.back();
+      
+      setShowSuccessModal(true);
     } catch {
       // Error is handled by the store and displayed in UI
     }
@@ -203,11 +256,19 @@ export default function LogScreen() {
         <Button 
           label="Save Log" 
           onPress={handleSave} 
-          disabled={isLoading}
+          disabled={isLoading || !hasChanges}
           loading={isLoading}
           fullWidth
         />
       </View>
+
+      <AlertModal
+        visible={showSuccessModal}
+        type="success"
+        title="Log Saved"
+        message="Your daily log has been updated."
+        onDismiss={() => setShowSuccessModal(false)}
+      />
     </SafeAreaView>
   );
 }

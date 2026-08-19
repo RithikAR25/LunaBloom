@@ -1,0 +1,342 @@
+{
+  "version": 1,
+  "exportDate": "2026-08-18T10:11:36.535Z",
+  "data": {
+    "profile": {
+      "id": "72dfba5b-fd0b-467d-85d7-579b93db72c5",
+      "preferredName": null,
+      "dateOfBirth": null,
+      "heightCm": null,
+      "weightKg": null,
+      "avgCycleLength": 28,
+      "avgPeriodDuration": 5,
+      "primaryGoal": "TRACK_CYCLE",
+      "conditions": [],
+      "birthControlType": "NONE",
+      "trackingMode": "CYCLE",
+      "learnModeEnabled": true,
+      "onboardingCompleted": true,
+      "createdAt": "2026-08-17T21:43:56.335Z",
+      "updatedAt": "2026-08-17T21:43:56.335Z",
+      "deletedAt": null,
+      "syncStatus": "LOCAL"
+    },
+    "cycles": [
+      {
+        "id": "c8642c0b-36f2-458c-b1d7-f0fe88eb753f",
+        "startDate": "2026-07-22",
+        "endDate": "2026-07-26",
+        "durationDays": 5,
+        "cycleLengthDays": null,
+        "notes": null,
+        "isExcludedFromPredictions": false,
+        "createdAt": "2026-08-17T21:44:35.599Z",
+        "updatedAt": "2026-08-17T21:44:35.599Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "5946e45a-8c57-4466-b790-137e27171f0d",
+        "startDate": "2026-06-25",
+        "endDate": "2026-06-29",
+        "durationDays": 5,
+        "cycleLengthDays": 27,
+        "notes": null,
+        "isExcludedFromPredictions": false,
+        "createdAt": "2026-08-17T21:44:33.698Z",
+        "updatedAt": "2026-08-17T21:44:35.615Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "f8efe0fe-6e8d-4833-bef6-2a6b260bcc33",
+        "startDate": "2026-05-25",
+        "endDate": "2026-05-29",
+        "durationDays": 5,
+        "cycleLengthDays": 31,
+        "notes": null,
+        "isExcludedFromPredictions": false,
+        "createdAt": "2026-08-17T21:44:31.453Z",
+        "updatedAt": "2026-08-17T21:44:33.724Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "931b2e77-3f17-44ae-aebe-4844049ce7d2",
+        "startDate": "2026-04-27",
+        "endDate": "2026-05-01",
+        "durationDays": 5,
+        "cycleLengthDays": 28,
+        "notes": null,
+        "isExcludedFromPredictions": false,
+        "createdAt": "2026-08-17T21:44:28.780Z",
+        "updatedAt": "2026-08-17T21:44:31.471Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "287bffca-5c54-484e-bb86-6143ff42e85b",
+        "startDate": "2026-03-25",
+        "endDate": "2026-03-29",
+        "durationDays": 5,
+        "cycleLengthDays": 33,
+        "notes": null,
+        "isExcludedFromPredictions": false,
+        "createdAt": "2026-08-17T21:44:17.846Z",
+        "updatedAt": "2026-08-17T21:44:28.797Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      }
+    ],
+    "dailyLogs": [
+      {
+        "id": "6448db4c-012a-4a98-8d3a-311ab2fb6c1d",
+        "date": "2026-08-18",
+        "cycleEntryId": null,
+        "cycleDay": null,
+        "flowIntensity": null,
+        "symptoms": [
+          "symp_bloating",
+          "symp_cravings"
+        ],
+        "moods": [
+          "mood_happy",
+          "mood_anxious"
+        ],
+        "painLevel": 8,
+        "energyLevel": 4,
+        "sleepQuality": 4,
+        "sleepHours": null,
+        "waterIntakeLiters": null,
+        "exerciseMinutes": null,
+        "exerciseType": null,
+        "libidoLevel": null,
+        "notes": null,
+        "createdAt": "2026-08-18T10:09:16.899Z",
+        "updatedAt": "2026-08-18T10:09:16.899Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "03bb1060-782b-42dd-92c5-5d5a53a1e8d8",
+        "date": "2026-08-05",
+        "cycleEntryId": null,
+        "cycleDay": null,
+        "flowIntensity": null,
+        "symptoms": [
+          "symp_bloating"
+        ],
+        "moods": [
+          "mood_mood_swings"
+        ],
+        "painLevel": 3,
+        "energyLevel": 4,
+        "sleepQuality": 4,
+        "sleepHours": null,
+        "waterIntakeLiters": null,
+        "exerciseMinutes": null,
+        "exerciseType": null,
+        "libidoLevel": null,
+        "notes": null,
+        "createdAt": "2026-08-18T10:09:25.665Z",
+        "updatedAt": "2026-08-18T10:09:25.665Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "ea9ea52d-2845-4391-b4bd-86f0eb23bcce",
+        "date": "2026-07-11",
+        "cycleEntryId": null,
+        "cycleDay": null,
+        "flowIntensity": null,
+        "symptoms": [
+          "symp_cravings",
+          "symp_cramps",
+          "symp_bloating",
+          "symp_acne",
+          "symp_tender_breasts"
+        ],
+        "moods": [
+          "mood_mood_swings",
+          "mood_energetic"
+        ],
+        "painLevel": 8,
+        "energyLevel": 4,
+        "sleepQuality": 5,
+        "sleepHours": null,
+        "waterIntakeLiters": null,
+        "exerciseMinutes": null,
+        "exerciseType": null,
+        "libidoLevel": null,
+        "notes": null,
+        "createdAt": "2026-08-18T10:09:37.845Z",
+        "updatedAt": "2026-08-18T10:09:37.845Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "5238dfa3-e80c-4199-8046-6881fab1bffc",
+        "date": "2026-07-02",
+        "cycleEntryId": null,
+        "cycleDay": null,
+        "flowIntensity": null,
+        "symptoms": [
+          "symp_nausea"
+        ],
+        "moods": [
+          "mood_mood_swings",
+          "mood_focused",
+          "mood_happy"
+        ],
+        "painLevel": 9,
+        "energyLevel": 1,
+        "sleepQuality": 5,
+        "sleepHours": null,
+        "waterIntakeLiters": null,
+        "exerciseMinutes": null,
+        "exerciseType": null,
+        "libidoLevel": null,
+        "notes": null,
+        "createdAt": "2026-08-18T10:09:51.398Z",
+        "updatedAt": "2026-08-18T10:09:51.398Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "e8593b7f-a1fa-4f3c-a710-cf1904e99976",
+        "date": "2026-06-27",
+        "cycleEntryId": null,
+        "cycleDay": null,
+        "flowIntensity": null,
+        "symptoms": [
+          "symp_bloating",
+          "symp_nausea"
+        ],
+        "moods": [
+          "mood_mood_swings",
+          "mood_energetic"
+        ],
+        "painLevel": 3,
+        "energyLevel": null,
+        "sleepQuality": 4,
+        "sleepHours": null,
+        "waterIntakeLiters": null,
+        "exerciseMinutes": null,
+        "exerciseType": null,
+        "libidoLevel": null,
+        "notes": null,
+        "createdAt": "2026-08-18T10:10:02.791Z",
+        "updatedAt": "2026-08-18T10:10:02.791Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "f81a65d9-ab02-48b5-8db3-46956995edc4",
+        "date": "2026-06-16",
+        "cycleEntryId": null,
+        "cycleDay": null,
+        "flowIntensity": null,
+        "symptoms": [
+          "symp_cravings",
+          "symp_bloating"
+        ],
+        "moods": [
+          "mood_mood_swings",
+          "mood_energetic"
+        ],
+        "painLevel": 4,
+        "energyLevel": 4,
+        "sleepQuality": 5,
+        "sleepHours": null,
+        "waterIntakeLiters": null,
+        "exerciseMinutes": null,
+        "exerciseType": null,
+        "libidoLevel": null,
+        "notes": null,
+        "createdAt": "2026-08-18T10:10:13.707Z",
+        "updatedAt": "2026-08-18T10:10:13.707Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "537154b0-90ab-4955-a550-1a628a7cb97b",
+        "date": "2026-06-02",
+        "cycleEntryId": null,
+        "cycleDay": null,
+        "flowIntensity": null,
+        "symptoms": [
+          "symp_bloating",
+          "symp_cravings"
+        ],
+        "moods": [
+          "mood_happy",
+          "mood_anxious",
+          "mood_calm"
+        ],
+        "painLevel": 2,
+        "energyLevel": 4,
+        "sleepQuality": 4,
+        "sleepHours": null,
+        "waterIntakeLiters": null,
+        "exerciseMinutes": null,
+        "exerciseType": null,
+        "libidoLevel": null,
+        "notes": null,
+        "createdAt": "2026-08-18T10:10:33.727Z",
+        "updatedAt": "2026-08-18T10:10:38.873Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "7d5f4f5c-9219-4de0-927f-dd04503f28e5",
+        "date": "2026-04-24",
+        "cycleEntryId": null,
+        "cycleDay": null,
+        "flowIntensity": null,
+        "symptoms": [
+          "symp_nausea"
+        ],
+        "moods": [
+          "mood_distracted"
+        ],
+        "painLevel": null,
+        "energyLevel": null,
+        "sleepQuality": null,
+        "sleepHours": null,
+        "waterIntakeLiters": null,
+        "exerciseMinutes": null,
+        "exerciseType": null,
+        "libidoLevel": null,
+        "notes": null,
+        "createdAt": "2026-08-18T10:10:49.593Z",
+        "updatedAt": "2026-08-18T10:10:49.593Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      },
+      {
+        "id": "dd4ba5f3-6dd6-427c-88f5-70a8fe7b615d",
+        "date": "2026-04-05",
+        "cycleEntryId": null,
+        "cycleDay": null,
+        "flowIntensity": null,
+        "symptoms": [
+          "symp_backache"
+        ],
+        "moods": [],
+        "painLevel": 9,
+        "energyLevel": null,
+        "sleepQuality": 4,
+        "sleepHours": null,
+        "waterIntakeLiters": null,
+        "exerciseMinutes": null,
+        "exerciseType": null,
+        "libidoLevel": null,
+        "notes": null,
+        "createdAt": "2026-08-18T10:10:56.517Z",
+        "updatedAt": "2026-08-18T10:10:56.517Z",
+        "deletedAt": null,
+        "syncStatus": "LOCAL"
+      }
+    ]
+  }
+}
