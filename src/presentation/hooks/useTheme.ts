@@ -6,14 +6,22 @@
  *   const { colors, isDark } = useTheme();
  *   <View style={{ backgroundColor: colors.background }} />
  *
- * NOTE: Full implementation in Phase 4 (Settings store with theme preference).
- * For now, returns lightTheme by default during Phase 0–3 development.
+ *
+ * Updated to respect the themePreference setting in UserProfile.
  */
 import { useColorScheme } from 'react-native';
 import { darkTheme, lightTheme } from '@/design-system';
 import type { Theme } from '@/design-system';
+import { useProfileStore } from '@/presentation/stores/useProfileStore';
 
 export function useTheme(): Theme {
   const colorScheme = useColorScheme();
+  const profile = useProfileStore((state) => state.profile);
+  
+  const themePref = profile?.themePreference || 'SYSTEM';
+
+  if (themePref === 'LIGHT') return lightTheme;
+  if (themePref === 'DARK') return darkTheme;
+  
   return colorScheme === 'dark' ? darkTheme : lightTheme;
 }

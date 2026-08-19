@@ -6,6 +6,8 @@ import type {
 } from './index';
 import { UserGoal } from './index';
 
+export type ThemePreference = 'SYSTEM' | 'LIGHT' | 'DARK';
+
 /** The user's personal profile and app preferences. Single row in V1. */
 export interface UserProfile {
   id: string;
@@ -22,6 +24,7 @@ export interface UserProfile {
   conditions: MedicalCondition[];
   birthControlType: BirthControlType;
   trackingMode: TrackingMode;
+  themePreference: ThemePreference;
   learnModeEnabled: boolean;
   onboardingCompleted: boolean;
   createdAt: string;
@@ -42,6 +45,7 @@ export const DEFAULT_PROFILE: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'
   conditions: [],
   birthControlType: 'NONE',
   trackingMode: 'CYCLE',
+  themePreference: 'SYSTEM',
   learnModeEnabled: true,
   onboardingCompleted: false,
   deletedAt: null,

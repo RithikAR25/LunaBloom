@@ -185,6 +185,15 @@ const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    version: 3,
+    description: 'Add theme_preference to user_profiles table',
+    up: async (db) => {
+      await db.execAsync(`
+        ALTER TABLE user_profiles ADD COLUMN theme_preference TEXT NOT NULL DEFAULT 'SYSTEM';
+      `);
+    },
+  },
 ];
 
 async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {

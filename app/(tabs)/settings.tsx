@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -9,12 +10,32 @@ import { SettingsRow } from '../../src/presentation/components/settings/Settings
 import { SettingsToggle } from '../../src/presentation/components/settings/SettingsToggle';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
 import { Text } from '../../src/presentation/components/ui/Text';
+import { BottomPickerModal } from '../../src/presentation/components/ui/BottomPickerModal';
+import { WheelPicker, LIST_HEIGHT, ITEM_HEIGHT } from '../../src/presentation/components/ui/WheelPicker';
 
 export default function SettingsScreen() {
   const { colors } = useTheme();
   const router = useRouter();
   const profile = useProfileStore((state) => state.profile);
   const updateProfile = useProfileStore((state) => state.updateProfile);
+
+  const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
+  const [draftThemeIndex, setDraftThemeIndex] = useState(0);
+
+  const themeOptions = ['System Default', 'Light', 'Dark'];
+  const themeValues = ['SYSTEM', 'LIGHT', 'DARK'] as const;
+
+  const currentThemeIndex = themeValues.indexOf(profile?.themePreference || 'SYSTEM');
+
+  const openThemeModal = () => {
+    setDraftThemeIndex(Math.max(0, currentThemeIndex));
+    setIsThemeModalVisible(true);
+  };
+
+  const handleConfirmTheme = () => {
+    updateProfile({ themePreference: themeValues[draftThemeIndex] });
+    setIsThemeModalVisible(false);
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -54,6 +75,12 @@ export default function SettingsScreen() {
         </SettingsSection>
 
         <SettingsSection title="App">
+          <SettingsRow 
+            icon="color-palette-outline" 
+            label="App Theme" 
+            value={themeOptions[Math.max(0, currentThemeIndex)]}
+            onPress={openThemeModal} 
+          />
           <SettingsRow icon="notifications-outline" label="Notifications" onPress={() => router.push('/settings/notifications' as any)} />
           <SettingsRow icon="lock-closed-outline" label="Privacy & PIN" onPress={() => router.push('/settings/privacy' as any)} />
           <SettingsRow icon="download-outline" label="Data Export & Import" onPress={() => router.push('/settings/data' as any)} isLast />
@@ -71,6 +98,36 @@ export default function SettingsScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      <BottomPickerModal
+        visible={isThemeModalVisible}
+        onCancel={() => setIsThemeModalVisible(false)}
+        onConfirm={handleConfirmTheme}
+      >
+        <View style={{ height: LIST_HEIGHT, width: '100%', position: 'relative' }}>
+          {/* Continuous Center Highlight */}
+          <View 
+            style={{
+              position: 'absolute',
+              left: 16,
+              right: 16,
+              borderRadius: 8,
+              opacity: 0.5,
+              backgroundColor: colors.surfaceElevated,
+              height: ITEM_HEIGHT,
+              top: (LIST_HEIGHT - ITEM_HEIGHT) / 2,
+            }} 
+            pointerEvents="none"
+          />
+          <View style={{ flexDirection: 'row', width: '100%', height: '100%' }}>
+            <WheelPicker
+              items={themeOptions}
+              selectedIndex={draftThemeIndex}
+              onChange={setDraftThemeIndex}
+            />
+          </View>
+        </View>
+      </BottomPickerModal>
     </SafeAreaView>
   );
 }

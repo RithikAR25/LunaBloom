@@ -20,6 +20,7 @@ type ProfileRow = {
   conditions: string;
   birth_control_type: string;
   tracking_mode: string;
+  theme_preference: string;
   learn_mode_enabled: number;
   onboarding_completed: number;
   created_at: string;
@@ -41,6 +42,7 @@ function rowToModel(row: ProfileRow): UserProfile {
     conditions: JSON.parse(row.conditions) as UserProfile['conditions'],
     birthControlType: row.birth_control_type as UserProfile['birthControlType'],
     trackingMode: row.tracking_mode as UserProfile['trackingMode'],
+    themePreference: row.theme_preference as UserProfile['themePreference'],
     learnModeEnabled: row.learn_mode_enabled === 1,
     onboardingCompleted: row.onboarding_completed === 1,
     createdAt: row.created_at,
@@ -70,9 +72,9 @@ export class SQLiteUserProfileRepository implements IUserProfileRepository {
         `INSERT INTO user_profiles
           (id, preferred_name, date_of_birth, height_cm, weight_kg,
            avg_cycle_length, avg_period_duration, primary_goal, conditions,
-           birth_control_type, tracking_mode, learn_mode_enabled,
+           birth_control_type, tracking_mode, theme_preference, learn_mode_enabled,
            onboarding_completed, created_at, updated_at, deleted_at, sync_status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           profile.id,
           profile.preferredName,
@@ -85,6 +87,7 @@ export class SQLiteUserProfileRepository implements IUserProfileRepository {
           JSON.stringify(profile.conditions),
           profile.birthControlType,
           profile.trackingMode,
+          profile.themePreference,
           profile.learnModeEnabled ? 1 : 0,
           profile.onboardingCompleted ? 1 : 0,
           profile.createdAt,
@@ -116,6 +119,7 @@ export class SQLiteUserProfileRepository implements IUserProfileRepository {
           conditions = ?,
           birth_control_type = ?,
           tracking_mode = ?,
+          theme_preference = ?,
           learn_mode_enabled = ?,
           onboarding_completed = ?,
           updated_at = ?,
@@ -132,6 +136,7 @@ export class SQLiteUserProfileRepository implements IUserProfileRepository {
           JSON.stringify(data.conditions ?? existing.conditions),
           data.birthControlType ?? existing.birthControlType,
           data.trackingMode ?? existing.trackingMode,
+          data.themePreference ?? existing.themePreference,
           (data.learnModeEnabled ?? existing.learnModeEnabled) ? 1 : 0,
           (data.onboardingCompleted ?? existing.onboardingCompleted) ? 1 : 0,
           nowISO(),
