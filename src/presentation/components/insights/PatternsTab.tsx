@@ -1,3 +1,5 @@
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
@@ -5,6 +7,8 @@ import type { PatternInsights } from '../../../domain/models/Insights';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDateShort } from '@/utils/dateUtils';
 import { InsightsEmptyState } from './InsightsEmptyState';
+import { PatternChartHeader } from './PatternChartHeader';
+import { DynamicLineChart } from './DynamicLineChart';
 
 interface Props {
   patterns: PatternInsights;
@@ -24,6 +28,22 @@ export function PatternsTab({ patterns }: Props) {
     energyPeakSampleCount,
     loggingConsistencyPercent,
   } = patterns;
+
+  const [cycleSort, setCycleSort] = useState<'desc' | 'asc'>('desc');
+  const [periodSort, setPeriodSort] = useState<'desc' | 'asc'>('desc');
+  const [painSort, setPainSort] = useState<'desc' | 'asc'>('desc');
+
+  const [cycleView, setCycleView] = useState<'bar' | 'line'>('bar');
+  const [periodView, setPeriodView] = useState<'bar' | 'line'>('bar');
+  const [painView, setPainView] = useState<'bar' | 'line'>('bar');
+
+  useFocusEffect(
+    useCallback(() => {
+      setCycleSort('desc');
+      setPeriodSort('desc');
+      setPainSort('desc');
+    }, [])
+  );
 
   // Global empty state guard
   if (
@@ -46,6 +66,24 @@ export function PatternsTab({ patterns }: Props) {
   const maxPeriodDuration = Math.max(10, ...periodDurationHistory.map(d => d.durationDays));
   const maxPain = Math.max(0, ...monthlyPainHistory.map(d => d.averagePain));
 
+  const displayCycleHistory = [...cycleLengthHistory].sort((a, b) =>
+    cycleSort === 'desc'
+      ? b.startDate.localeCompare(a.startDate)
+      : a.startDate.localeCompare(b.startDate)
+  );
+
+  const displayPeriodHistory = [...periodDurationHistory].sort((a, b) =>
+    periodSort === 'desc'
+      ? b.startDate.localeCompare(a.startDate)
+      : a.startDate.localeCompare(b.startDate)
+  );
+
+  const displayPainHistory = [...monthlyPainHistory].sort((a, b) =>
+    painSort === 'desc'
+      ? b.yearMonth.localeCompare(a.yearMonth)
+      : a.yearMonth.localeCompare(b.yearMonth)
+  );
+
   return (
     <ScrollView 
       contentContainerStyle={styles.container}
@@ -56,115 +94,174 @@ export function PatternsTab({ patterns }: Props) {
       {/* Widget 1: Cycle Length */}
       {cycleLengthHistory.length >= 2 && (
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.cardTitle, { color: colors.text.primary }]}>Cycle Length</Text>
-          <Text style={[styles.cardSubtitle, { color: colors.text.secondary }]}>Completed cycles, oldest to newest</Text>
+          <PatternChartHeader
+            title="Cycle Length"
+            subtitle={`Completed cycles, ${cycleSort === 'desc' ? 'newest to oldest' : 'oldest to newest'}`}
+            viewMode={cycleView}
+            sortOrder={cycleSort}
+            onToggleView={() => setCycleView(v => v === 'bar' ? 'line' : 'bar')}
+            onToggleSort={() => setCycleSort(s => s === 'desc' ? 'asc' : 'desc')}
+          />
           
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            contentContainerStyle={[
-              styles.chartScroll,
-              cycleLengthHistory.length < 6 && { flexGrow: 1, justifyContent: 'space-around' }
-            ]}
-          >
-            {cycleLengthHistory.map((point) => (
-              <View key={point.cycleIndex} style={styles.barColumn}>
-                <Text style={[styles.barValue, { color: colors.text.primary }]}>{point.cycleLengthDays}d</Text>
-                <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: MAX_BAR_HEIGHT }]}>
-                  <View 
-                    style={[
-                      styles.barFillVertical, 
-                      { 
-                        height: getBarHeight(point.cycleLengthDays, maxCycleLength), 
-                        backgroundColor: colors.brand.primary 
-                      }
-                    ]} 
-                  />
+          {cycleView === 'bar' ? (
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false} 
+              contentContainerStyle={[
+                styles.chartScroll,
+                cycleLengthHistory.length < 6 && { flexGrow: 1, justifyContent: 'space-around' }
+              ]}
+            >
+              {displayCycleHistory.map((point) => (
+                <View key={point.cycleIndex} style={styles.barColumn}>
+                  <Text style={[styles.barValue, { color: colors.text.primary }]}>{point.cycleLengthDays}d</Text>
+                  <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: MAX_BAR_HEIGHT }]}>
+                    <View 
+                      style={[
+                        styles.barFillVertical, 
+                        { 
+                          height: getBarHeight(point.cycleLengthDays, maxCycleLength), 
+                          backgroundColor: colors.brand.primary 
+                        }
+                      ]} 
+                    />
+                  </View>
+                  <Text style={[styles.barLabel, { color: colors.text.secondary }]}>
+                    {formatDateShort(point.startDate)}
+                  </Text>
+                  <Text style={[styles.barLabelYear, { color: colors.text.tertiary }]}>
+                    '{point.startDate.substring(2, 4)}
+                  </Text>
                 </View>
-                <Text style={[styles.barLabel, { color: colors.text.secondary }]}>
-                  {formatDateShort(point.startDate)}
-                </Text>
-                <Text style={[styles.barLabelYear, { color: colors.text.tertiary }]}>
-                  '{point.startDate.substring(2, 4)}
-                </Text>
-              </View>
-            ))}
-          </ScrollView>
+              ))}
+            </ScrollView>
+          ) : (
+            <DynamicLineChart 
+              data={displayCycleHistory.map(p => ({
+                id: p.cycleIndex.toString(),
+                value: p.cycleLengthDays,
+                topLabel: `${p.cycleLengthDays}d`,
+                bottomLabelPrimary: formatDateShort(p.startDate),
+                bottomLabelSecondary: `'${p.startDate.substring(2, 4)}`
+              }))}
+              color={colors.brand.primary}
+              height={MAX_BAR_HEIGHT}
+            />
+          )}
         </View>
       )}
 
       {/* Widget 2: Period Duration */}
       {periodDurationHistory.length >= 2 && (
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.cardTitle, { color: colors.text.primary }]}>Period Duration</Text>
-          <Text style={[styles.cardSubtitle, { color: colors.text.secondary }]}>Days of bleeding per cycle</Text>
+          <PatternChartHeader
+            title="Period Duration"
+            subtitle={`Days of bleeding per cycle, ${periodSort === 'desc' ? 'newest to oldest' : 'oldest to newest'}`}
+            viewMode={periodView}
+            sortOrder={periodSort}
+            onToggleView={() => setPeriodView(v => v === 'bar' ? 'line' : 'bar')}
+            onToggleSort={() => setPeriodSort(s => s === 'desc' ? 'asc' : 'desc')}
+          />
           
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            contentContainerStyle={[
-              styles.chartScroll,
-              periodDurationHistory.length < 6 && { flexGrow: 1, justifyContent: 'space-around' }
-            ]}
-          >
-            {periodDurationHistory.map((point) => (
-              <View key={point.cycleIndex} style={styles.barColumn}>
-                <Text style={[styles.barValue, { color: colors.text.primary }]}>{point.durationDays}d</Text>
-                <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: MAX_BAR_HEIGHT }]}>
-                  <View 
-                    style={[
-                      styles.barFillVertical, 
-                      { 
-                        height: getBarHeight(point.durationDays, maxPeriodDuration), 
-                        backgroundColor: colors.phase.menstrual 
-                      }
-                    ]} 
-                  />
+          {periodView === 'bar' ? (
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false} 
+              contentContainerStyle={[
+                styles.chartScroll,
+                periodDurationHistory.length < 6 && { flexGrow: 1, justifyContent: 'space-around' }
+              ]}
+            >
+              {displayPeriodHistory.map((point) => (
+                <View key={point.cycleIndex} style={styles.barColumn}>
+                  <Text style={[styles.barValue, { color: colors.text.primary }]}>{point.durationDays}d</Text>
+                  <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: MAX_BAR_HEIGHT }]}>
+                    <View 
+                      style={[
+                        styles.barFillVertical, 
+                        { 
+                          height: getBarHeight(point.durationDays, maxPeriodDuration), 
+                          backgroundColor: colors.phase.menstrual 
+                        }
+                      ]} 
+                    />
+                  </View>
+                  <Text style={[styles.barLabel, { color: colors.text.secondary }]}>
+                    {formatDateShort(point.startDate)}
+                  </Text>
+                  <Text style={[styles.barLabelYear, { color: colors.text.tertiary }]}>
+                    '{point.startDate.substring(2, 4)}
+                  </Text>
                 </View>
-                <Text style={[styles.barLabel, { color: colors.text.secondary }]}>
-                  {formatDateShort(point.startDate)}
-                </Text>
-                <Text style={[styles.barLabelYear, { color: colors.text.tertiary }]}>
-                  '{point.startDate.substring(2, 4)}
-                </Text>
-              </View>
-            ))}
-          </ScrollView>
+              ))}
+            </ScrollView>
+          ) : (
+            <DynamicLineChart 
+              data={displayPeriodHistory.map(p => ({
+                id: p.cycleIndex.toString(),
+                value: p.durationDays,
+                topLabel: `${p.durationDays}d`,
+                bottomLabelPrimary: formatDateShort(p.startDate),
+                bottomLabelSecondary: `'${p.startDate.substring(2, 4)}`
+              }))}
+              color={colors.phase.menstrual}
+              height={MAX_BAR_HEIGHT}
+            />
+          )}
         </View>
       )}
 
       {/* Widget 3: Monthly Pain Trend */}
       {monthlyPainHistory.length >= 2 && (
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.cardTitle, { color: colors.text.primary }]}>Pain Over Time</Text>
-          <Text style={[styles.cardSubtitle, { color: colors.text.secondary }]}>Calendar-month average (scale 1–10)</Text>
+          <PatternChartHeader
+            title="Pain Over Time"
+            subtitle={`Calendar-month average (scale 1–10), ${painSort === 'desc' ? 'newest to oldest' : 'oldest to newest'}`}
+            viewMode={painView}
+            sortOrder={painSort}
+            onToggleView={() => setPainView(v => v === 'bar' ? 'line' : 'bar')}
+            onToggleSort={() => setPainSort(s => s === 'desc' ? 'asc' : 'desc')}
+          />
           
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            contentContainerStyle={[
-              styles.chartScroll,
-              monthlyPainHistory.length < 6 && { flexGrow: 1, justifyContent: 'space-around' }
-            ]}
-          >
-            {monthlyPainHistory.map((point) => (
-              <View key={point.yearMonth} style={styles.barColumn}>
-                <Text style={[styles.barValue, { color: colors.text.primary }]}>{point.averagePain.toFixed(1)}</Text>
-                <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: MAX_BAR_HEIGHT }]}>
-                  <View 
-                    style={[
-                      styles.barFillVertical, 
-                      { 
-                        height: getBarHeight(point.averagePain, maxPain), 
-                        backgroundColor: colors.semantic.error 
-                      }
-                    ]} 
-                  />
+          {painView === 'bar' ? (
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false} 
+              contentContainerStyle={[
+                styles.chartScroll,
+                monthlyPainHistory.length < 6 && { flexGrow: 1, justifyContent: 'space-around' }
+              ]}
+            >
+              {displayPainHistory.map((point) => (
+                <View key={point.yearMonth} style={styles.barColumn}>
+                  <Text style={[styles.barValue, { color: colors.text.primary }]}>{point.averagePain.toFixed(1)}</Text>
+                  <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: MAX_BAR_HEIGHT }]}>
+                    <View 
+                      style={[
+                        styles.barFillVertical, 
+                        { 
+                          height: getBarHeight(point.averagePain, maxPain), 
+                          backgroundColor: colors.semantic.error 
+                        }
+                      ]} 
+                    />
+                  </View>
+                  <Text style={[styles.barLabel, { color: colors.text.secondary }]}>{point.label}</Text>
                 </View>
-                <Text style={[styles.barLabel, { color: colors.text.secondary }]}>{point.label}</Text>
-              </View>
-            ))}
-          </ScrollView>
+              ))}
+            </ScrollView>
+          ) : (
+            <DynamicLineChart 
+              data={displayPainHistory.map(p => ({
+                id: p.yearMonth,
+                value: p.averagePain,
+                topLabel: p.averagePain.toFixed(1),
+                bottomLabelPrimary: p.label
+              }))}
+              color={colors.semantic.error}
+              height={MAX_BAR_HEIGHT}
+            />
+          )}
         </View>
       )}
 
