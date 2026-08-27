@@ -12,6 +12,7 @@ import { useCycleStore } from '@/presentation/stores/useCycleStore';
 import { useContentStore } from '@/presentation/stores/useContentStore';
 import { LockScreen } from '@/presentation/components/privacy/LockScreen';
 import { PrivacyService } from '@/application/services/PrivacyService';
+import { NotificationService } from '@/application/services/NotificationService';
 
 import {
   useFonts,
@@ -44,12 +45,22 @@ function AppProviders({ children }: { children: React.ReactNode }) {
   const loadCycles = useCycleStore((s) => s.loadCycles);
   const loadContent = useContentStore((s) => s.loadContent);
 
+  const profile = useProfileStore((s) => s.profile);
+  const cycles = useCycleStore((s) => s.cycles);
+
   useEffect(() => {
     void loadProfile();
     void loadCycles();
     void loadContent();
     PrivacyService.initialize();
   }, [loadProfile, loadCycles, loadContent]);
+
+  // Sync notifications whenever profile or cycles change
+  useEffect(() => {
+    if (profile) {
+      void NotificationService.syncScheduledNotifications(cycles, profile);
+    }
+  }, [profile, cycles]);
 
   return <>{children}</>;
 }

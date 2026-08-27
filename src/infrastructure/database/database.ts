@@ -194,6 +194,17 @@ const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    version: 4,
+    description: 'Add notification preferences to user_profiles table',
+    up: async (db) => {
+      await db.execAsync(`
+        ALTER TABLE user_profiles ADD COLUMN cycle_reminders_enabled INTEGER NOT NULL DEFAULT 0;
+        ALTER TABLE user_profiles ADD COLUMN intimacy_reminder_enabled INTEGER NOT NULL DEFAULT 0;
+        ALTER TABLE user_profiles ADD COLUMN intimacy_reminder_time TEXT NOT NULL DEFAULT '21:00';
+      `);
+    },
+  },
 ];
 
 async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {

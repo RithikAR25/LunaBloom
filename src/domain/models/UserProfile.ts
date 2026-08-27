@@ -26,6 +26,9 @@ export interface UserProfile {
   trackingMode: TrackingMode;
   themePreference: ThemePreference;
   learnModeEnabled: boolean;
+  cycleRemindersEnabled: boolean;
+  intimacyReminderEnabled: boolean;
+  intimacyReminderTime: string; // HH:mm
   onboardingCompleted: boolean;
   createdAt: string;
   updatedAt: string;
@@ -47,6 +50,9 @@ export const DEFAULT_PROFILE: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'
   trackingMode: 'CYCLE',
   themePreference: 'SYSTEM',
   learnModeEnabled: true,
+  cycleRemindersEnabled: false,
+  intimacyReminderEnabled: false,
+  intimacyReminderTime: '21:00',
   onboardingCompleted: false,
   deletedAt: null,
   syncStatus: 'LOCAL',

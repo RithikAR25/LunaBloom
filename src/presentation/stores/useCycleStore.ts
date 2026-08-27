@@ -11,7 +11,6 @@ import { EndPeriod } from '../../domain/use-cases/cycle/EndPeriod';
 import { EditCycleEntry } from '../../domain/use-cases/cycle/EditCycleEntry';
 import { DeleteCycleEntry } from '../../domain/use-cases/cycle/DeleteCycleEntry';
 import { ValidationService } from '../../domain/services/ValidationService';
-import { NotificationService } from '../../application/services/NotificationService';
 import { useProfileStore } from './useProfileStore';
 
 type CycleState = {
@@ -48,9 +47,6 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       const cycles = await _repository.getAll();
       const activeCycle = cycles.find((c) => c.endDate === null) ?? null;
       set({ cycles, activeCycle });
-      
-      // Reschedule any local notifications based on new cycle data
-      void NotificationService.rescheduleIfEnabled(cycles);
     } catch (err) {
       const message = err instanceof RepositoryError ? err.message : 'Failed to load cycles';
       set({ error: message });

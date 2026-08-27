@@ -22,6 +22,9 @@ type ProfileRow = {
   tracking_mode: string;
   theme_preference: string;
   learn_mode_enabled: number;
+  cycle_reminders_enabled: number;
+  intimacy_reminder_enabled: number;
+  intimacy_reminder_time: string;
   onboarding_completed: number;
   created_at: string;
   updated_at: string;
@@ -44,6 +47,9 @@ function rowToModel(row: ProfileRow): UserProfile {
     trackingMode: row.tracking_mode as UserProfile['trackingMode'],
     themePreference: row.theme_preference as UserProfile['themePreference'],
     learnModeEnabled: row.learn_mode_enabled === 1,
+    cycleRemindersEnabled: row.cycle_reminders_enabled === 1,
+    intimacyReminderEnabled: row.intimacy_reminder_enabled === 1,
+    intimacyReminderTime: row.intimacy_reminder_time,
     onboardingCompleted: row.onboarding_completed === 1,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -73,8 +79,9 @@ export class SQLiteUserProfileRepository implements IUserProfileRepository {
           (id, preferred_name, date_of_birth, height_cm, weight_kg,
            avg_cycle_length, avg_period_duration, primary_goal, conditions,
            birth_control_type, tracking_mode, theme_preference, learn_mode_enabled,
+           cycle_reminders_enabled, intimacy_reminder_enabled, intimacy_reminder_time,
            onboarding_completed, created_at, updated_at, deleted_at, sync_status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           profile.id,
           profile.preferredName,
@@ -89,6 +96,9 @@ export class SQLiteUserProfileRepository implements IUserProfileRepository {
           profile.trackingMode,
           profile.themePreference,
           profile.learnModeEnabled ? 1 : 0,
+          profile.cycleRemindersEnabled ? 1 : 0,
+          profile.intimacyReminderEnabled ? 1 : 0,
+          profile.intimacyReminderTime,
           profile.onboardingCompleted ? 1 : 0,
           profile.createdAt,
           profile.updatedAt,
@@ -121,6 +131,9 @@ export class SQLiteUserProfileRepository implements IUserProfileRepository {
           tracking_mode = ?,
           theme_preference = ?,
           learn_mode_enabled = ?,
+          cycle_reminders_enabled = ?,
+          intimacy_reminder_enabled = ?,
+          intimacy_reminder_time = ?,
           onboarding_completed = ?,
           updated_at = ?,
           sync_status = ?
@@ -138,6 +151,9 @@ export class SQLiteUserProfileRepository implements IUserProfileRepository {
           data.trackingMode ?? existing.trackingMode,
           data.themePreference ?? existing.themePreference,
           (data.learnModeEnabled ?? existing.learnModeEnabled) ? 1 : 0,
+          (data.cycleRemindersEnabled ?? existing.cycleRemindersEnabled) ? 1 : 0,
+          (data.intimacyReminderEnabled ?? existing.intimacyReminderEnabled) ? 1 : 0,
+          data.intimacyReminderTime ?? existing.intimacyReminderTime,
           (data.onboardingCompleted ?? existing.onboardingCompleted) ? 1 : 0,
           nowISO(),
           'LOCAL',
