@@ -1,6 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { SlideInRight, SlideOutLeft, SlideInLeft, SlideOutRight, runOnJS } from 'react-native-reanimated';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { spacing, borderRadius } from '@/design-system';
@@ -19,11 +21,69 @@ const TABS: Tab[] = ['Overview', 'Cycle', 'Body & Mood', 'Patterns'];
 export default function InsightsScreen() {
   const { colors } = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('Overview');
+  const [transitionDirection, setTransitionDirection] = useState<'left' | 'right'>('right');
+  
+  const isInitialRender = useRef(true);
+  useEffect(() => {
+    isInitialRender.current = false;
+  }, []);
   
   const { 
     cycleStats, symptomTrends, moodTrends, wellbeingTrends, patternInsights,
     isLoading, error, loadInsights 
   } = useInsightsStore();
+
+  const SWIPE_ACTIVATION_DISTANCE = 40;
+  const SWIPE_TRIGGER_DISTANCE = 50;
+  const SWIPE_VERTICAL_FAILURE_DISTANCE = 20;
+
+  const handleTabChange = useCallback((newTab: Tab) => {
+    setActiveTab(prev => {
+      const currentIdx = TABS.indexOf(prev);
+      const newIdx = TABS.indexOf(newTab);
+      if (currentIdx !== newIdx) {
+        setTransitionDirection(newIdx > currentIdx ? 'right' : 'left');
+      }
+      return newTab;
+    });
+  }, []);
+
+  const handlePrevTab = useCallback(() => {
+    setActiveTab(prev => {
+      const idx = TABS.indexOf(prev);
+      if (idx > 0) {
+        setTransitionDirection('left');
+        return TABS[idx - 1]!;
+      }
+      return prev;
+    });
+  }, []);
+
+  const handleNextTab = useCallback(() => {
+    setActiveTab(prev => {
+      const idx = TABS.indexOf(prev);
+      if (idx < TABS.length - 1) {
+        setTransitionDirection('right');
+        return TABS[idx + 1]!;
+      }
+      return prev;
+    });
+  }, []);
+
+  const pan = useMemo(
+    () =>
+      Gesture.Pan()
+        .activeOffsetX([-SWIPE_ACTIVATION_DISTANCE, SWIPE_ACTIVATION_DISTANCE])
+        .failOffsetY([-SWIPE_VERTICAL_FAILURE_DISTANCE, SWIPE_VERTICAL_FAILURE_DISTANCE])
+        .onEnd((e) => {
+          if (e.translationX > SWIPE_TRIGGER_DISTANCE) {
+            runOnJS(handlePrevTab)();
+          } else if (e.translationX < -SWIPE_TRIGGER_DISTANCE) {
+            runOnJS(handleNextTab)();
+          }
+        }),
+    [handlePrevTab, handleNextTab]
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -117,7 +177,7 @@ export default function InsightsScreen() {
                 isActive && { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary },
                 !isActive && { backgroundColor: colors.surface, borderColor: colors.border }
               ]}
-              onPress={() => setActiveTab(tab)}
+              onPress={() => handleTabChange(tab)}
               accessibilityRole="tab"
               accessibilityState={{ selected: isActive }}
             >
@@ -130,7 +190,16 @@ export default function InsightsScreen() {
       </ScrollView>
 
       <View style={styles.content}>
-        {renderContent()}
+        <GestureDetector gesture={pan}>
+          <Animated.View 
+            key={activeTab}
+            {...(!isInitialRender.current ? { entering: transitionDirection === 'right' ? SlideInRight : SlideInLeft } : {})}
+            exiting={transitionDirection === 'right' ? SlideOutLeft : SlideOutRight}
+            style={[styles.content, StyleSheet.absoluteFill]}
+          >
+            {renderContent()}
+          </Animated.View>
+        </GestureDetector>
       </View>
     </SafeAreaView>
   );
