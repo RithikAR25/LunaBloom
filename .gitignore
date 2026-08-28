@@ -56,3 +56,6 @@ coverage/
 # Environment
 .env
 .env.*
+
+codebase_analysis.md
+.guide
