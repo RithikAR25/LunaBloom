@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, LayoutChangeEvent } from 'react-native';
+import { View, Text, StyleSheet, LayoutChangeEvent } from 'react-native';
 import Svg, { Polyline, Circle } from 'react-native-svg';
 import { fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
@@ -16,12 +16,14 @@ interface Props {
   data: LineChartPoint[];
   color: string;
   height: number;
+  valueFormatter?: (value: number) => string;
 }
 
-const MIN_POINT_SPACING = 60;
+const MIN_LABEL_SPACING = 50;
 const POINT_RADIUS = 4;
+const Y_AXIS_WIDTH = 40;
 
-export function DynamicLineChart({ data, color, height }: Props) {
+export function DynamicLineChart({ data, color, height, valueFormatter }: Props) {
   const { colors } = useTheme();
   const [containerWidth, setContainerWidth] = useState(0);
 
@@ -37,10 +39,8 @@ export function DynamicLineChart({ data, color, height }: Props) {
     );
   }
 
-  // Horizontal Sizing
-  const contentWidth = Math.max(containerWidth, data.length * MIN_POINT_SPACING);
-  const pointWidth = contentWidth / data.length;
-
+  const chartWidth = containerWidth;
+  
   // Vertical Scaling
   const values = data.map(d => d.value);
   const minVal = Math.min(...values);
@@ -53,8 +53,19 @@ export function DynamicLineChart({ data, color, height }: Props) {
   const paddedRange = chartMax - chartMin;
 
   // Coordinate Calculations
-  // SVG drawing area is just `height`, but the labels take extra space.
-  const getX = (index: number) => (index * pointWidth) + (pointWidth / 2);
+  const paddingRight = 24;
+  const paddingLeft = Y_AXIS_WIDTH + 8; // 40px for axis + 8px gap
+  const drawableWidth = Math.max(0, chartWidth - paddingLeft - paddingRight);
+  const pointSpacing = data.length > 1 ? drawableWidth / (data.length - 1) : drawableWidth;
+  const labelStep = Math.max(1, Math.ceil(MIN_LABEL_SPACING / pointSpacing));
+
+  const getX = (index: number) => {
+    if (data.length <= 1) {
+      return paddingLeft + drawableWidth / 2;
+    }
+    return paddingLeft + (index / (data.length - 1)) * drawableWidth;
+  };
+  
   const getY = (val: number) => {
     if (paddedRange === 0) return height / 2;
     return height - ((val - chartMin) / paddedRange) * height;
@@ -64,31 +75,79 @@ export function DynamicLineChart({ data, color, height }: Props) {
     .map((point, index) => `${getX(index)},${getY(point.value)}`)
     .join(' ');
 
+  // Label Visibility Logic (Bottom Dates)
+  const shouldShowLabel = (index: number) => {
+    if (index === 0) return true; 
+    
+    if (index === data.length - 1) {
+      const lastIntermediateIndex = Math.floor((data.length - 2) / labelStep) * labelStep;
+      const indexToCompare = lastIntermediateIndex > 0 ? lastIntermediateIndex : 0;
+      if ((index - indexToCompare) * pointSpacing < MIN_LABEL_SPACING) {
+        return false;
+      }
+      return true;
+    }
+    
+    if (index % labelStep === 0) return true;
+    return false;
+  };
+
+  // Y-axis labels
+  const yLabels = maxVal === minVal ? [minVal] : [maxVal, (maxVal + minVal) / 2, minVal];
+  const formatYValue = (val: number) => valueFormatter ? valueFormatter(val) : val.toString();
+
   return (
     <View style={styles.wrapper}>
-      {/* Invisible container to measure available width, overlays over scroll view? No, we just use flex: 1 on a wrapper. */}
+      {/* Invisible container to measure available width */}
       {containerWidth === 0 && (
         <View style={StyleSheet.absoluteFill} onLayout={handleLayout} />
       )}
       
       {containerWidth > 0 && (
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ minWidth: contentWidth }}
-        >
-          <View style={{ width: contentWidth }}>
-            {/* React Native Labels Layer */}
-            <View style={styles.labelsLayer}>
-              {data.map((point) => (
-                <View key={`label-${point.id}`} style={[styles.labelColumn, { width: pointWidth }]}>
-                  <Text style={[styles.topLabel, { color: colors.text.primary }]}>
-                    {point.topLabel}
-                  </Text>
-                  
-                  {/* Invisible placeholder matching SVG chart height to space labels correctly */}
-                  <View style={{ height }} />
+        <View style={{ width: chartWidth }}>
+          
+          {/* Y-Axis Layer */}
+          <View style={[StyleSheet.absoluteFill, { zIndex: 3, marginTop: 24, width: Y_AXIS_WIDTH }]}>
+            {yLabels.map((val, i) => (
+              <Text 
+                key={`y-axis-${i}`} 
+                style={[
+                  styles.yAxisLabel, 
+                  { 
+                    color: colors.text.secondary,
+                    position: 'absolute',
+                    top: getY(val) - 8, // center vertically (height 16 / 2)
+                    width: Y_AXIS_WIDTH,
+                  }
+                ]}
+              >
+                {formatYValue(val)}
+              </Text>
+            ))}
+          </View>
 
+          {/* React Native Labels Layer (Bottom dates only) */}
+          <View style={[styles.labelsLayer, { height: height + 48 }]}>
+            {data.map((point, index) => {
+              const isVisible = shouldShowLabel(index);
+              const xPos = getX(index);
+              const LABEL_WIDTH = 60; 
+
+              if (!isVisible) return null;
+
+              return (
+                <View 
+                  key={`label-${point.id}`} 
+                  style={[
+                    styles.labelColumn, 
+                    { 
+                      position: 'absolute',
+                      left: xPos - (LABEL_WIDTH / 2),
+                      width: LABEL_WIDTH,
+                      bottom: 0 // anchor to bottom
+                    }
+                  ]}
+                >
                   <View style={styles.bottomLabels}>
                     <Text style={[styles.bottomLabelPrimary, { color: colors.text.secondary }]}>
                       {point.bottomLabelPrimary}
@@ -100,31 +159,31 @@ export function DynamicLineChart({ data, color, height }: Props) {
                     ) : null}
                   </View>
                 </View>
-              ))}
-            </View>
-
-            {/* SVG Graphics Layer */}
-            <View style={[StyleSheet.absoluteFill, { zIndex: 1, marginTop: 24 }]}>
-              <Svg width={contentWidth} height={height}>
-                <Polyline
-                  points={pointsString}
-                  fill="none"
-                  stroke={color}
-                  strokeWidth="2"
-                />
-                {data.map((point, index) => (
-                  <Circle
-                    key={`circle-${point.id}`}
-                    cx={getX(index)}
-                    cy={getY(point.value)}
-                    r={POINT_RADIUS}
-                    fill={color}
-                  />
-                ))}
-              </Svg>
-            </View>
+              );
+            })}
           </View>
-        </ScrollView>
+
+          {/* SVG Graphics Layer */}
+          <View style={[StyleSheet.absoluteFill, { zIndex: 1, marginTop: 24 }]}>
+            <Svg width={chartWidth} height={height}>
+              <Polyline
+                points={pointsString}
+                fill="none"
+                stroke={color}
+                strokeWidth="2"
+              />
+              {data.map((point, index) => (
+                <Circle
+                  key={`circle-${point.id}`}
+                  cx={getX(index)}
+                  cy={getY(point.value)}
+                  r={POINT_RADIUS}
+                  fill={color}
+                />
+              ))}
+            </Svg>
+          </View>
+        </View>
       )}
     </View>
   );
@@ -142,32 +201,34 @@ const styles = StyleSheet.create({
     fontSize: fontSize.body,
     fontFamily: fontFamily.regular,
   },
+  yAxisLabel: {
+    fontSize: fontSize.caption,
+    fontFamily: fontFamily.semiBold,
+    textAlign: 'right',
+    paddingRight: 4,
+    height: 16,
+    lineHeight: 16, 
+  },
   labelsLayer: {
-    flexDirection: 'row',
+    width: '100%',
     zIndex: 2,
   },
   labelColumn: {
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 0,
-  },
-  topLabel: {
-    fontSize: fontSize.caption,
-    fontFamily: fontFamily.semiBold, // matching barValue
-    height: 16,
-    marginBottom: 8, // matching gap in barColumn
+    justifyContent: 'flex-end',
   },
   bottomLabels: {
     alignItems: 'center',
     height: 24,
-    marginTop: 8, // matching gap in barColumn
   },
   bottomLabelPrimary: {
     fontSize: 10,
     fontFamily: fontFamily.regular,
+    textAlign: 'center',
   },
   bottomLabelSecondary: {
-    fontSize: 10, // matching existing barLabelYear
+    fontSize: 10,
     fontFamily: fontFamily.regular,
+    textAlign: 'center',
   }
 });

@@ -146,6 +146,7 @@ export function PatternsTab({ patterns }: Props) {
               }))}
               color={colors.brand.primary}
               height={MAX_BAR_HEIGHT}
+              valueFormatter={(value) => `${value}d`}
             />
           )}
         </View>
@@ -206,6 +207,7 @@ export function PatternsTab({ patterns }: Props) {
               }))}
               color={colors.phase.menstrual}
               height={MAX_BAR_HEIGHT}
+              valueFormatter={(value) => `${value}d`}
             />
           )}
         </View>
@@ -260,6 +262,7 @@ export function PatternsTab({ patterns }: Props) {
               }))}
               color={colors.semantic.error}
               height={MAX_BAR_HEIGHT}
+              valueFormatter={(value) => value.toFixed(1)}
             />
           )}
         </View>
