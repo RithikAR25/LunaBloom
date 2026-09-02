@@ -33,7 +33,10 @@ export default function SettingsScreen() {
   };
 
   const handleConfirmTheme = () => {
-    updateProfile({ themePreference: themeValues[draftThemeIndex] });
+    const theme = themeValues[draftThemeIndex];
+    if (theme) {
+      updateProfile({ themePreference: theme });
+    }
     setIsThemeModalVisible(false);
   };
 
@@ -78,8 +81,13 @@ export default function SettingsScreen() {
           <SettingsRow 
             icon="color-palette-outline" 
             label="App Theme" 
-            value={themeOptions[Math.max(0, currentThemeIndex)]}
+            value={themeOptions[Math.max(0, currentThemeIndex)] ?? 'System Default'}
             onPress={openThemeModal} 
+          />
+          <SettingsRow 
+            icon="hardware-chip-outline" 
+            label="LunaBloom AI Storage" 
+            onPress={() => router.push('/settings/ai' as any)} 
           />
           <SettingsRow icon="notifications-outline" label="Notifications" onPress={() => router.push('/settings/notifications' as any)} />
           <SettingsRow icon="lock-closed-outline" label="Privacy & PIN" onPress={() => router.push('/settings/privacy' as any)} />
@@ -90,6 +98,15 @@ export default function SettingsScreen() {
           <SettingsRow icon="information-circle-outline" label="About LunaBloom" onPress={() => router.push('/settings/about' as any)} />
           <SettingsRow icon="document-text-outline" label="Terms of Service" onPress={() => Alert.alert('Terms of Service', 'Available at lunabloom.app/terms (placeholder)')} />
           <SettingsRow icon="shield-checkmark-outline" label="Privacy Policy" onPress={() => Alert.alert('Privacy Policy', 'Available at lunabloom.app/privacy (placeholder)')} isLast />
+        </SettingsSection>
+
+        <SettingsSection title="Developer (Debug Only)">
+          <SettingsRow 
+            icon="bug-outline" 
+            label="AI Evaluation Runner" 
+            onPress={() => router.push('/settings/eval' as any)} 
+            isLast 
+          />
         </SettingsSection>
         
         <View style={styles.footer}>

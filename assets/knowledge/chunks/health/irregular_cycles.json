@@ -1,0 +1,20 @@
+{
+  "id": "irregular_cycles",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "irregular",
+    "cycle",
+    "length",
+    "late",
+    "early",
+    "skipped"
+  ],
+  "title": "Irregular Cycles",
+  "source": "NHS",
+  "sourceUrl": "https://www.nhs.uk/conditions/irregular-periods/",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "A cycle is considered clinically irregular if its length varies significantly from month to month (e.g., varying by more than 20 days), or falls outside the typical 21-35 day range. Common non-medical causes of temporary irregularity include high stress, extreme exercise, significant weight changes, travel, or starting/stopping hormonal birth control. Persistent irregularity can be related to conditions like PCOS or thyroid imbalances."
+}

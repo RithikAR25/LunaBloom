@@ -11,6 +11,7 @@ import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
 import { MinimalCycleHero } from '../../src/presentation/components/dashboard/MinimalCycleHero';
 import { GridActionButton } from '../../src/presentation/components/dashboard/GridActionButton';
+
 import { TodayLogCard } from '../../src/presentation/components/dashboard/TodayLogCard';
 import { HealthTipCard } from '../../src/presentation/components/dashboard/HealthTipCard';
 import { CycleHistoryChart } from '../../src/presentation/components/dashboard/CycleHistoryChart';
@@ -121,6 +122,10 @@ export default function DashboardScreen() {
           </Text>
         </View>
         <View style={styles.headerRight}>
+          {/* AI Chat Button */}
+          <Pressable accessibilityRole="button" onPress={() => router.push('/chat')}>
+            <Feather name="message-circle" size={22} color={colors.brand.primary} />
+          </Pressable>
           <Pressable accessibilityRole="button" onPress={() => router.push('/settings/notifications')}>
             <Feather name="bell" size={22} color={colors.brand.primary} accessibilityLabel="Notifications" accessibilityHint="View your recent notifications" />
           </Pressable>

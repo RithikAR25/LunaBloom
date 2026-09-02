@@ -1,0 +1,20 @@
+{
+  "id": "fertility_signs",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "fertility",
+    "signs",
+    "fertile window",
+    "bbt",
+    "basal body temperature",
+    "cervical mucus"
+  ],
+  "title": "Signs of Fertility",
+  "source": "American College of Obstetricians and Gynecologists (ACOG)",
+  "sourceUrl": "https://www.acog.org/womens-health/faqs/fertility-awareness-based-methods-of-family-planning",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "The 'fertile window' includes the days leading up to and including ovulation. Key physical signs include: 1. Cervical Mucus Changes: Mucus becomes clear, stretchy, and slippery (like raw egg whites) near ovulation to help sperm survive. 2. Basal Body Temperature (BBT): Body temperature slightly dips just before ovulation and rises sharply after ovulation due to progesterone. Tracking these signs helps identify when ovulation occurs."
+}

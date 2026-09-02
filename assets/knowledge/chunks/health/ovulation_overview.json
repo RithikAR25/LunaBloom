@@ -1,0 +1,18 @@
+{
+  "id": "ovulation_overview",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "ovulation",
+    "egg",
+    "mittelschmerz",
+    "lh surge"
+  ],
+  "title": "Ovulation",
+  "source": "Mayo Clinic",
+  "sourceUrl": "https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cycle/art-20047186",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "Ovulation is the release of a mature egg from the ovary, typically occurring midway through the menstrual cycle (around day 14 of a 28-day cycle), triggered by a surge in Luteinizing Hormone (LH). Some individuals experience 'mittelschmerz'—a brief, mild pain on one side of the lower abdomen during ovulation. The egg survives for 12-24 hours."
+}

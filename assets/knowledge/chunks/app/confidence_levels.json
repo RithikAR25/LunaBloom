@@ -1,0 +1,21 @@
+{
+  "id": "confidence_levels",
+  "version": 2,
+  "category": "app",
+  "keywords": [
+    "confidence",
+    "level",
+    "high",
+    "medium",
+    "low",
+    "accuracy",
+    "sure",
+    "certain"
+  ],
+  "title": "Prediction Confidence Levels",
+  "source": "LunaBloom App Knowledge",
+  "sourceType": "internal_documentation",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "LunaBloom shows three confidence levels for its predictions:\n- HIGH confidence: Shown when you have 3 or more completed cycles AND your cycle length variation (MAD) is 2 days or less. This means cycles are very regular and predictions are likely accurate.\n- MEDIUM confidence: Shown when you have 2 or more cycles AND cycle variation is 5 days or less. Predictions are reasonable but may vary by a few days.\n- LOW confidence: Shown when you have fewer than 2 cycles, or when cycle variation is high. This is normal for new users or those with naturally irregular cycles. Predictions will improve as more data is logged. LOW confidence does not mean the app is broken; it simply means more data is needed."
+}

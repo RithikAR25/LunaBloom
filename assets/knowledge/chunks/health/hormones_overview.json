@@ -1,0 +1,19 @@
+{
+  "id": "hormones_overview",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "hormones",
+    "estrogen",
+    "progesterone",
+    "fsh",
+    "lh"
+  ],
+  "title": "Hormones Across the Menstrual Cycle",
+  "source": "Mayo Clinic",
+  "sourceUrl": "https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cycle/art-20047186",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "The menstrual cycle is driven by four main hormones: Estrogen, Progesterone, Follicle-Stimulating Hormone (FSH), and Luteinizing Hormone (LH). Estrogen rises during the first half (follicular phase) to build the uterine lining. LH and FSH peak at ovulation to release an egg. After ovulation, progesterone rises during the luteal phase to prepare the uterus for potential pregnancy. If pregnancy doesn't occur, estrogen and progesterone levels drop, triggering menstruation."
+}

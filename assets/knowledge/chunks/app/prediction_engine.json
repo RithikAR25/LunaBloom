@@ -1,0 +1,20 @@
+{
+  "id": "prediction_engine",
+  "version": 2,
+  "category": "app",
+  "keywords": [
+    "predict",
+    "prediction",
+    "calculate",
+    "algorithm",
+    "engine",
+    "next period",
+    "expected"
+  ],
+  "title": "LunaBloom Prediction Engine",
+  "source": "LunaBloom App Knowledge",
+  "sourceType": "internal_documentation",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "LunaBloom predicts your next period using a weighted average of your historical cycle lengths.\n1. It only uses completed cycles (where start and end dates are recorded).\n2. It calculates the median of your recorded cycle lengths to avoid unusually long or short cycles skewing the result.\n3. It applies Linear Weighted Moving Average (LWMA) with recency weighting, so recent cycles have more influence.\n4. It uses Median Absolute Deviation (MAD) to detect and softly downweight outlier cycles instead of excluding them entirely.\n5. Users can manually mark a cycle as 'exclude from predictions' if it was affected by unusual circumstances.\nThe next period start date is calculated as: most recent cycle start date + predicted cycle length."
+}

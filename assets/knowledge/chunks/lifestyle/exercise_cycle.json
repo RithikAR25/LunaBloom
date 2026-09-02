@@ -1,0 +1,18 @@
+{
+  "id": "exercise_cycle",
+  "version": 1,
+  "category": "lifestyle",
+  "keywords": [
+    "exercise",
+    "workout",
+    "fitness",
+    "activity"
+  ],
+  "title": "Exercise Across the Cycle",
+  "source": "Healthline (Medical Review)",
+  "sourceUrl": "https://www.healthline.com/health/fitness-exercise/working-out-on-period",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "Energy levels for exercise often track with hormones. During the follicular phase and ovulation, higher estrogen can increase energy, making it a good time for higher-intensity workouts (HIIT, heavy lifting). During the luteal phase and menstruation, energy may dip, making lower-intensity activities like yoga, walking, or light cardio more comfortable."
+}

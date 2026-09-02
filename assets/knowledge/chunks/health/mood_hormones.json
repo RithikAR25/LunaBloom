@@ -1,0 +1,19 @@
+{
+  "id": "mood_hormones",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "mood",
+    "emotions",
+    "sad",
+    "happy",
+    "anxious"
+  ],
+  "title": "Mood and Hormones",
+  "source": "Office on Women's Health (OASH)",
+  "sourceUrl": "https://www.womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "Hormone fluctuations significantly impact mood. Rising estrogen in the follicular phase is often associated with higher energy and improved mood. After ovulation, the rise in progesterone can have a calming or sometimes sedative effect. The rapid drop in both estrogen and progesterone right before menstruation can trigger mood swings, irritability, or sadness (PMS)."
+}

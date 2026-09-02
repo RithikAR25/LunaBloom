@@ -1,0 +1,17 @@
+{
+  "id": "luteal_phase_detail",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "luteal phase",
+    "progesterone",
+    "corpus luteum"
+  ],
+  "title": "The Luteal Phase",
+  "source": "Cleveland Clinic",
+  "sourceUrl": "https://my.clevelandclinic.org/health/articles/24417-luteal-phase",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "The luteal phase occurs after ovulation and before a period begins, typically lasting 11-17 days. The empty follicle that released the egg becomes a structure called the corpus luteum, which secretes progesterone. Progesterone thickens the uterine lining. If a fertilized egg doesn't implant, the corpus luteum breaks down, progesterone levels drop, and the uterine lining sheds (menstruation)."
+}

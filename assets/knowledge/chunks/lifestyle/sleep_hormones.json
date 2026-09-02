@@ -1,0 +1,19 @@
+{
+  "id": "sleep_hormones",
+  "version": 1,
+  "category": "lifestyle",
+  "keywords": [
+    "sleep",
+    "insomnia",
+    "tired",
+    "fatigue",
+    "cortisol"
+  ],
+  "title": "Sleep and Hormones",
+  "source": "Sleep Foundation (Medical Review)",
+  "sourceUrl": "https://www.sleepfoundation.org/women-sleep/menstrual-cycle-and-sleep",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "Hormone changes affect sleep architecture. The drop in estrogen and progesterone before menstruation can lead to poorer sleep quality, trouble falling asleep, or waking up frequently. Progesterone has a slight sleep-inducing effect, but its sudden drop can increase wakefulness. Maintaining good sleep hygiene and managing stress (which lowers cortisol) can help improve sleep quality during the luteal phase."
+}

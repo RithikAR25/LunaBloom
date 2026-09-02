@@ -1,0 +1,18 @@
+{
+  "id": "cervical_health",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "cervix",
+    "cervical",
+    "position",
+    "mucus"
+  ],
+  "title": "Cervical Changes",
+  "source": "Planned Parenthood",
+  "sourceUrl": "https://www.plannedparenthood.org/learn/birth-control/fertility-awareness/whats-cervical-mucus-method-fams",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "The cervix changes position and texture throughout the cycle. Around ovulation, it typically becomes higher, softer, and more open (often summarized by the acronym SHOW: Soft, High, Open, Wet). After ovulation and during menstruation, it becomes lower, firmer, and closed. Cervical mucus also changes from dry/sticky to creamy, and finally to clear/stretchy during the fertile window."
+}

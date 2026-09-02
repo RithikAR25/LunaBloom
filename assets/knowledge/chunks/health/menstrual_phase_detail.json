@@ -1,0 +1,17 @@
+{
+  "id": "menstrual_phase_detail",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "menstrual phase",
+    "period",
+    "bleeding"
+  ],
+  "title": "The Menstrual Phase",
+  "source": "Cleveland Clinic",
+  "sourceUrl": "https://my.clevelandclinic.org/health/articles/10132-menstrual-cycle",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "The menstrual phase is the first part of the cycle, commonly called a period. It occurs when an egg from the previous cycle is not fertilized. Estrogen and progesterone levels drop, and prostaglandins cause the uterus to contract and shed its thickened lining (the endometrium) through the vagina. A typical period lasts 3 to 7 days."
+}

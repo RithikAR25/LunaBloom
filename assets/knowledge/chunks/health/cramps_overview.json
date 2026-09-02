@@ -1,0 +1,18 @@
+{
+  "id": "cramps_overview",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "cramps",
+    "pain",
+    "dysmenorrhea",
+    "prostaglandins"
+  ],
+  "title": "Menstrual Cramps (Dysmenorrhea)",
+  "source": "American College of Obstetricians and Gynecologists (ACOG)",
+  "sourceUrl": "https://www.acog.org/womens-health/faqs/dysmenorrhea-painful-periods",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "Menstrual cramps (dysmenorrhea) are throbbing or cramping pains in the lower abdomen. They are caused by prostaglandins—chemicals made in the lining of the uterus that cause the uterine muscles to contract and shed the lining. Higher levels of prostaglandins are associated with more severe menstrual cramps. Primary dysmenorrhea is common menstrual pain, while secondary dysmenorrhea is caused by a condition like endometriosis or fibroids."
+}

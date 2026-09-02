@@ -1,0 +1,17 @@
+{
+  "id": "follicular_phase_detail",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "follicular phase",
+    "estrogen",
+    "fsh"
+  ],
+  "title": "The Follicular Phase",
+  "source": "Cleveland Clinic",
+  "sourceUrl": "https://my.clevelandclinic.org/health/body/23953-follicular-phase",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "The follicular phase starts on the first day of menstruation and ends with ovulation. The pituitary gland releases Follicle-Stimulating Hormone (FSH), prompting the ovaries to produce 5 to 20 follicles. Usually, only one follicle matures into an egg. As the follicle grows, it produces estrogen, which thickens the uterine lining in preparation for a potential pregnancy."
+}

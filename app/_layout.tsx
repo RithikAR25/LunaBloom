@@ -53,6 +53,11 @@ function AppProviders({ children }: { children: React.ReactNode }) {
     void loadCycles();
     void loadContent();
     PrivacyService.initialize();
+    
+    // Load knowledge index in background
+    import('@/application/services/RAGService')
+      .then(({ RAGService }) => RAGService.loadIndex())
+      .catch(console.error);
   }, [loadProfile, loadCycles, loadContent]);
 
   // Sync notifications whenever profile or cycles change
@@ -124,6 +129,16 @@ function AppContent() {
             animation: 'slide_from_right',
           }}
         />
+
+      {/* Chat AI Modal */}
+      <Stack.Screen
+        name="chat"
+        options={{
+          headerShown: false,
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
+        }}
+      />
 
       {/* 404 fallback */}
       <Stack.Screen name="+not-found" />

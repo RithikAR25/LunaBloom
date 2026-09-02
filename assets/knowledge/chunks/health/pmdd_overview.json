@@ -1,0 +1,18 @@
+{
+  "id": "pmdd_overview",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "pmdd",
+    "premenstrual dysphoric disorder",
+    "severe",
+    "depression"
+  ],
+  "title": "PMDD — Premenstrual Dysphoric Disorder",
+  "source": "Mayo Clinic",
+  "sourceUrl": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/expert-answers/pmdd/faq-20058315",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "Premenstrual dysphoric disorder (PMDD) is a severe, sometimes disabling extension of PMS. While PMS involves physical and emotional symptoms, PMDD causes extreme mood shifts, severe depression, irritability, or anxiety that can disrupt daily life and relationships. Like PMS, it occurs during the luteal phase and resolves after menstruation begins."
+}

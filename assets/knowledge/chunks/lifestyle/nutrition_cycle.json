@@ -1,0 +1,19 @@
+{
+  "id": "nutrition_cycle",
+  "version": 1,
+  "category": "lifestyle",
+  "keywords": [
+    "nutrition",
+    "diet",
+    "food",
+    "iron",
+    "magnesium"
+  ],
+  "title": "Nutrition and the Cycle",
+  "source": "Healthline (Medical Review)",
+  "sourceUrl": "https://www.healthline.com/health/womens-health/what-to-eat-during-period",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "Dietary needs can fluctuate with the menstrual cycle. During menstruation, iron-rich foods (like leafy greens and lean meats) help replenish iron lost through bleeding. In the luteal phase (before a period), magnesium-rich foods (like dark chocolate, nuts, and seeds) may help reduce cramping and improve mood. Staying hydrated is important throughout the cycle to minimize bloating."
+}

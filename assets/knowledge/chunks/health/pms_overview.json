@@ -1,0 +1,19 @@
+{
+  "id": "pms_overview",
+  "version": 1,
+  "category": "health",
+  "keywords": [
+    "pms",
+    "premenstrual syndrome",
+    "mood",
+    "bloating",
+    "cramps"
+  ],
+  "title": "PMS — Premenstrual Syndrome",
+  "source": "NHS",
+  "sourceUrl": "https://www.nhs.uk/conditions/pre-menstrual-syndrome/",
+  "sourceType": "curated_medical_reference",
+  "reviewed": true,
+  "reviewedAt": "2026-09-02",
+  "content": "Premenstrual syndrome (PMS) encompasses physical and emotional symptoms occurring in the days or weeks before a period. Common symptoms include bloating, breast tenderness, mood swings, fatigue, and irritability. These are linked to the natural rise and fall of hormones, particularly progesterone, during the luteal phase. Symptoms usually resolve shortly after the period starts."
+}

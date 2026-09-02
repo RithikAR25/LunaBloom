@@ -130,7 +130,7 @@ describe('TimelineBuilder - Active Cycle & Prediction Gating', () => {
       const referenceDate = addDays(baseDate, 4); // Day 5
       const cycles = [createCycle(baseDate, null, null)];
       const prediction = predictionService.predict(cycles, avgCycleLength, defaultPeriodDuration)!;
-      const { events, intervals } = builder.build(cycles, prediction, referenceDate, defaultPeriodDuration);
+      const { intervals } = builder.build(cycles, prediction, referenceDate, defaultPeriodDuration);
 
       const loggedIntervals = intervals.filter(i => i.phase === 'MENSTRUAL' && i.source === 'LOGGED');
       // Look for predicted menstrual for the CURRENT cycle (not the next one)
@@ -138,7 +138,7 @@ describe('TimelineBuilder - Active Cycle & Prediction Gating', () => {
       const follicularInterval = intervals.find(i => i.phase === 'FOLLICULAR');
 
       expect(loggedIntervals.length).toBe(1);
-      expect(loggedIntervals[0].endDate).toBe(addDays(baseDate, 4)); // Days 1-5
+      expect(loggedIntervals[0]!.endDate).toBe(addDays(baseDate, 4)); // Days 1-5
       
       expect(predictedMenstrualIntervals.length).toBe(0); // None for the current cycle
       
@@ -150,14 +150,14 @@ describe('TimelineBuilder - Active Cycle & Prediction Gating', () => {
       const referenceDate = addDays(baseDate, 5); // Day 6
       const cycles = [createCycle(baseDate, null, null)];
       const prediction = predictionService.predict(cycles, avgCycleLength, defaultPeriodDuration)!;
-      const { events, intervals } = builder.build(cycles, prediction, referenceDate, defaultPeriodDuration);
+      const { intervals } = builder.build(cycles, prediction, referenceDate, defaultPeriodDuration);
 
       const loggedIntervals = intervals.filter(i => i.phase === 'MENSTRUAL' && i.source === 'LOGGED');
       const predictedMenstrualIntervals = intervals.filter(i => i.phase === 'MENSTRUAL' && i.source === 'PREDICTED' && i.startDate < addDays(baseDate, 10));
       const follicularInterval = intervals.find(i => i.phase === 'FOLLICULAR');
 
       expect(loggedIntervals.length).toBe(1);
-      expect(loggedIntervals[0].endDate).toBe(addDays(baseDate, 5)); // Days 1-6
+      expect(loggedIntervals[0]!.endDate).toBe(addDays(baseDate, 5)); // Days 1-6
       
       expect(predictedMenstrualIntervals.length).toBe(0);
       
