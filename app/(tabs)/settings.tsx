@@ -33,7 +33,7 @@ export default function SettingsScreen() {
   };
 
   const handleConfirmTheme = () => {
-    updateProfile({ themePreference: themeValues[draftThemeIndex] });
+    updateProfile({ themePreference: themeValues[draftThemeIndex] as "SYSTEM" | "LIGHT" | "DARK" });
     setIsThemeModalVisible(false);
   };
 
@@ -78,7 +78,7 @@ export default function SettingsScreen() {
           <SettingsRow 
             icon="color-palette-outline" 
             label="App Theme" 
-            value={themeOptions[Math.max(0, currentThemeIndex)]}
+            value={themeOptions[Math.max(0, currentThemeIndex)] || ''}
             onPress={openThemeModal} 
           />
           <SettingsRow icon="notifications-outline" label="Notifications" onPress={() => router.push('/settings/notifications' as any)} />

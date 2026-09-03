@@ -113,8 +113,8 @@ export function OverviewTab({ stats }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: spacing.md,
-    gap: spacing.md,
+    padding: spacing.sm,
+    gap: spacing.sm,
   },
   card: {
     borderRadius: borderRadius.DEFAULT,

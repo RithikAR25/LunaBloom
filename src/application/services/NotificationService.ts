@@ -4,16 +4,7 @@ import type { CycleEntry } from '../../domain/models/Cycle';
 import type { UserProfile } from '../../domain/models/UserProfile';
 import { addDays, isAfter, todayISO } from '../../utils/dateUtils';
 
-// Mocked expo-notifications since Expo Go SDK 53+ throws an error when importing it
-const Notifications = {
-  AndroidImportance: { MAX: 5 },
-  setNotificationHandler: (_handler: any) => {},
-  setNotificationChannelAsync: async (_id: string, _options: any) => {},
-  getPermissionsAsync: async () => ({ status: 'granted' }),
-  requestPermissionsAsync: async () => ({ status: 'granted' }),
-  cancelAllScheduledNotificationsAsync: async () => {},
-  scheduleNotificationAsync: async (_options: any) => {},
-};
+import * as Notifications from 'expo-notifications';
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
@@ -21,6 +12,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -109,7 +102,11 @@ export class NotificationService {
             title: 'Daily intimacy reminder',
             body: "Take a moment to log today's intimacy.",
           },
-          trigger: { hour, minute, repeats: true },
+          trigger: { 
+            type: Notifications.SchedulableTriggerInputTypes.DAILY,
+            hour, 
+            minute
+          },
         });
       }
     }
@@ -123,7 +120,10 @@ export class NotificationService {
           title,
           body,
         },
-        trigger: triggerDate,
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date: triggerDate
+        },
       });
     }
   }

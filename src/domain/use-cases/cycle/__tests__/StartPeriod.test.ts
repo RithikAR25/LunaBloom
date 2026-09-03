@@ -17,6 +17,21 @@ class MockCycleRepository implements ICycleRepository {
   async save(cycle: CycleEntry): Promise<void> {
     this.cycles.push(cycle);
   }
+
+  async getById(id: string): Promise<CycleEntry | null> {
+    return this.cycles.find(c => c.id === id) || null;
+  }
+
+  async getLastN(n: number): Promise<CycleEntry[]> {
+    return this.cycles.slice(-n).reverse();
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const cycle = await this.getById(id);
+    if (cycle) {
+      cycle.deletedAt = new Date().toISOString();
+    }
+  }
   
   async update(id: string, data: Partial<CycleEntry>): Promise<void> {
     const cycle = this.cycles.find(c => c.id === id);
@@ -52,7 +67,6 @@ describe('StartPeriod Use Case', () => {
   const threeDaysAgo = addDays(today, -3);
   const fourDaysAgo = addDays(today, -4);
   const fiveDaysAgo = addDays(today, -5);
-  const sixDaysAgo = addDays(today, -6);
 
   it('1. Start today -> active', async () => {
     const cycle = await startPeriod.execute(today, 5);
