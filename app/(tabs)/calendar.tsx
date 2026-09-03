@@ -74,7 +74,7 @@ export default function CalendarScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <CycleCalendar
           cycles={cycles}
           selectedDate={selectedDate}
@@ -86,7 +86,7 @@ export default function CalendarScreen() {
 
         {viewMode === 'month' && (
           <>
-            <View style={[styles.actions, { paddingHorizontal: spacing[6] }]}>
+            <View style={[styles.actions, { paddingHorizontal: spacing[4] }]}>
             {selectedDate && (
               <View style={styles.selectedDateContainer}>
                 <Text style={[styles.selectedLabel, { color: colors.text.primary }]}>
@@ -196,7 +196,7 @@ export default function CalendarScreen() {
           </View>
           
           {phaseInfo?.pregnancyChance && phaseInfo.pregnancyChance !== 'UNKNOWN' && (
-            <View style={[styles.pregnancyChanceContainer, { paddingHorizontal: spacing[6] }]}>
+            <View style={[styles.pregnancyChanceContainer, { paddingHorizontal: spacing[4] }]}>
               <Text style={[styles.pregnancyChanceText, { color: colors.text.secondary }]}>
                 • {phaseInfo.pregnancyChance} chance of getting pregnant
               </Text>
@@ -273,12 +273,13 @@ export default function CalendarScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scroll: { flexGrow: 1 },
+  scroll: { flexGrow: 1, paddingHorizontal: spacing.xs },
   actions: { 
     flexDirection: 'row',
     alignItems: 'center', 
     justifyContent: 'space-between',
     paddingVertical: spacing.md,
+    
   },
   selectedDateContainer: {
     flexShrink: 1,

@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing.md * 0.9,
-    margin: spacing.xs * 0.9,
+    padding: spacing.md,
+    margin: spacing.xs,
   },
   icon: {
     marginBottom: spacing.xs,

@@ -170,7 +170,7 @@ export default function DashboardScreen() {
           </Pressable>
         )}
 
-        <View style={styles.quickActionsContainer}>
+        <View >
           <View style={styles.quickActionsRow}>
             <GridActionButton
               label="Start Period"
@@ -342,12 +342,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.DEFAULT,
     alignItems: 'center',
   },
-  quickActionsContainer: {
-    gap: spacing.xxs,
-  },
   quickActionsRow: {
     flexDirection: 'row',
-    gap: spacing.xxs,
+    
   },
   section: {
     marginTop: spacing.xxs,
