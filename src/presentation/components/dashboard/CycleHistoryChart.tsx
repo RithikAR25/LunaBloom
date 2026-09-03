@@ -16,8 +16,7 @@ export function CycleHistoryChart({ cycles }: CycleHistoryChartProps) {
   const completedCycles = [...cycles]
     .filter(c => c.endDate !== null && c.cycleLengthDays !== null)
     .sort((a, b) => (a.startDate < b.startDate ? 1 : -1)) // Sort descending
-    .slice(0, 4)
-    .reverse(); // Display oldest to newest from left to right
+    .slice(0, 4); // Display newest to oldest from left to right
 
   if (completedCycles.length === 0) {
     return (
