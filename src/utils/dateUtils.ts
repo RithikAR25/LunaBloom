@@ -21,15 +21,48 @@ export function nowISO(): string {
 }
 
 /**
- * Returns today's date as an ISO 8601 date string (YYYY-MM-DD).
- * Uses local calendar getters to ensure it represents the user's actual local day.
+ * Formats a JS Date object into an ISO date string (YYYY-MM-DD).
+ * Uses local calendar getters to ensure it represents the actual local day.
  */
-export function todayISO(): string {
-  const d = new Date();
+export function formatDateToISO(d: Date): string {
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+/**
+ * Converts a validated YYYY-MM-DD date string into a local JS Date.
+ * Callers must validate the string with isValidISODate() first.
+ */
+export function parseISODateLocal(isoString: string): Date {
+  const [y, m, d] = isoString.split('-').map(Number);
+  return new Date(y!, m! - 1, d!);
+}
+
+/**
+ * Strictly validates both the format AND semantic calendar correctness of an ISO string.
+ * Uses local getters to prevent rollover bugs (e.g., 2026-02-30 -> March 2).
+ */
+export function isValidISODate(dateStr: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+  
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const date = new Date(y!, m! - 1, d!);
+  
+  return (
+    date.getFullYear() === y &&
+    date.getMonth() === m! - 1 &&
+    date.getDate() === d
+  );
+}
+
+/**
+ * Returns today's date as an ISO 8601 date string (YYYY-MM-DD).
+ * Uses local calendar getters to ensure it represents the user's actual local day.
+ */
+export function todayISO(): string {
+  return formatDateToISO(new Date());
 }
 
 /**

@@ -16,6 +16,14 @@ import { useDailyLogStore } from '@/presentation/stores/useDailyLogStore';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
 import { useContentStore } from '@/presentation/stores/useContentStore';
 import type { FlowIntensity } from '@/domain/models';
+import { 
+  isValidISODate, 
+  isAfter, 
+  parseISODateLocal, 
+  formatDateToISO, 
+  todayISO, 
+  isBetween 
+} from '@/utils/dateUtils';
 
 import { FlowSelector } from '@/presentation/components/log/FlowSelector';
 import { SectionCard } from '@/presentation/components/log/SectionCard';
@@ -30,7 +38,7 @@ export default function LogScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ date?: string }>();
 
-  const { activeCycle } = useCycleStore();
+  const { cycles } = useCycleStore();
   const { currentLog, saveLogData, isLoading, error } = useDailyLogStore();
   const { symptomsData } = useContentStore();
 
@@ -42,24 +50,38 @@ export default function LogScreen() {
     useCallback(() => {
       let targetDate = new Date();
       
-      if (
-        params.date && 
-        typeof params.date === 'string' && 
-        /^\d{4}-\d{2}-\d{2}$/.test(params.date)
-      ) {
+      if (params.date && typeof params.date === 'string') {
         if (consumedDateParam.current !== params.date) {
-          targetDate = new Date(params.date);
+          if (!isValidISODate(params.date)) {
+            targetDate = new Date();
+          } else if (isAfter(params.date, todayISO())) {
+            targetDate = new Date();
+          } else {
+            targetDate = parseISODateLocal(params.date);
+          }
           consumedDateParam.current = params.date;
           router.setParams({ date: undefined });
         }
       }
       
-      const dateStr = targetDate.toISOString().split('T')[0] || '';
+      const dateStr = formatDateToISO(targetDate);
       
       setDate(targetDate);
       useDailyLogStore.getState().loadLogForDate(dateStr);
     }, [params.date, router])
   );
+
+  const isPeriodDay = useMemo(() => {
+    const today = todayISO();
+    const selectedDateISO = formatDateToISO(date);
+    
+    if (isAfter(selectedDateISO, today)) return false;
+
+    return cycles.some(cycle => {
+      const end = cycle.endDate ?? today; 
+      return isBetween(selectedDateISO, cycle.startDate, end);
+    });
+  }, [date, cycles]);
 
   // Local state for the form
   const [flow, setFlow] = useState<FlowIntensity | null>(null);
@@ -133,7 +155,7 @@ export default function LogScreen() {
 
   const handleSave = async () => {
     try {
-      const dateStr = date.toISOString().split('T')[0] || '';
+      const dateStr = formatDateToISO(date);
       await saveLogData(dateStr, {
         flowIntensity: flow,
         moods,
@@ -179,12 +201,13 @@ export default function LogScreen() {
             value={date}
             mode="date"
             display="default"
+            maximumDate={new Date()}
             onChange={(_, selectedDate) => {
               setShowDatePicker(Platform.OS === 'ios');
               if (selectedDate) {
                 setDate(selectedDate);
                 // In a real app, you would also trigger a loadLogForDate here
-                useDailyLogStore.getState().loadLogForDate(selectedDate.toISOString().split('T')[0] || '');
+                useDailyLogStore.getState().loadLogForDate(formatDateToISO(selectedDate));
               }
             }}
           />
@@ -198,8 +221,8 @@ export default function LogScreen() {
           </View>
         )}
 
-        {activeCycle && (
-          <SectionCard title="Menstrual Flow" style={{ marginBottom: spacing[4] }}>
+        {isPeriodDay && (
+          <SectionCard title="Menstrual Flow" description='Flow Intensity' style={{ marginBottom: spacing[4] }}>
             <FlowSelector value={flow} onChange={setFlow} />
           </SectionCard>
         )}

@@ -20,9 +20,7 @@ export function FlowSelector({ value, onChange }: FlowSelectorProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: colors.text.primary, marginBottom: spacing[2] }]}>
-        Flow Intensity
-      </Text>
+
       
       <View style={[styles.row, { gap: spacing[2] }]}>
         {options.map((opt) => {
@@ -66,10 +64,6 @@ export function FlowSelector({ value, onChange }: FlowSelectorProps) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-  },
-  title: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: fontFamily.semiBold,
   },
   row: {
     flexDirection: 'row',

@@ -219,13 +219,13 @@ export class ValidationService {
   public validateHistoricalDate(dateStr: string | null | undefined): ValidationResult {
     if (!dateStr) return { isValid: true }; // optional end date
 
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) {
+    // We import todayISO and isValidISODate dynamically to avoid circular dependencies
+    const { todayISO, isValidISODate } = require('../../utils/dateUtils');
+
+    if (!isValidISODate(dateStr)) {
       return { isValid: false, error: 'Invalid date format.' };
     }
-    
-    // We import todayISO at the top level
-    const { todayISO } = require('../../utils/dateUtils');
+
     const todayStr = todayISO();
 
     if (dateStr > todayStr) {

@@ -1,7 +1,8 @@
 import type { IDailyLogRepository } from '../../repositories/IDailyLogRepository';
 import type { DailyLog } from '../../models/DailyLog';
-import { generateId, nowISO, todayISO } from '../../../utils/dateUtils';
+import { generateId, nowISO, todayISO, isValidISODate, isAfter } from '../../../utils/dateUtils';
 import type { CycleEntry } from '../../models/Cycle';
+import { ValidationError } from '../../errors';
 
 export class SaveDailyLog {
   constructor(private dailyLogRepository: IDailyLogRepository) {}
@@ -11,6 +12,14 @@ export class SaveDailyLog {
     logData: Partial<DailyLog>,
     activeCycle: CycleEntry | null
   ): Promise<DailyLog> {
+    if (!isValidISODate(date)) {
+      throw new ValidationError('Invalid date format.', 'date');
+    }
+
+    if (isAfter(date, todayISO())) {
+      throw new ValidationError('Cannot log data for future dates.', 'date');
+    }
+
     const existingLog = await this.dailyLogRepository.getByDate(date);
     
     if (existingLog) {
