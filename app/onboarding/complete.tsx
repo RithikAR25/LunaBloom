@@ -46,7 +46,7 @@ export default function CompleteScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <Heading level="h1" style={{ color: colors.text.primary, marginBottom: spacing[2], textAlign: 'center' }}>
             You&apos;re all set!

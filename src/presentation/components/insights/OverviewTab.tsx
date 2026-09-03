@@ -37,7 +37,7 @@ export function OverviewTab({ stats }: Props) {
   };
 
   return (
-    <ScrollView 
+    <ScrollView showsVerticalScrollIndicator={false} 
       contentContainerStyle={styles.container}
       accessible={true}
       accessibilityLabel={`Overview Tab. Average cycle length is ${stats.averageCycleLength} days. Average period is ${stats.averagePeriodDuration} days. Consistency score is ${stats.regularityScore ?? 'unknown'}. Cycle length trend is ${getTrendText(stats.cycleLengthTrend)}.`}

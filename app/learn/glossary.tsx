@@ -63,7 +63,7 @@ export default function GlossaryScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <Heading level="h1" style={styles.title}>Medical Glossary</Heading>
         <Text variant="body" style={styles.subtitle}>

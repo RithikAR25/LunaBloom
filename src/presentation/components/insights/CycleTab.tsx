@@ -42,7 +42,7 @@ export function CycleTab({ stats }: Props) {
   });
 
   return (
-    <ScrollView 
+    <ScrollView showsVerticalScrollIndicator={false} 
       contentContainerStyle={styles.container}
       accessible={true}
       accessibilityLabel={`Cycle Tab. Average phase breakdown: Menstrual ${menstrual} days, Follicular ${follicular} days, Ovulatory ${ovulatory} days, Luteal ${luteal} days.`}

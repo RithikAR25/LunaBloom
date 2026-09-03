@@ -85,7 +85,7 @@ export function PatternsTab({ patterns }: Props) {
   );
 
   return (
-    <ScrollView 
+    <ScrollView showsVerticalScrollIndicator={false} 
       contentContainerStyle={styles.container}
       accessible={true}
       accessibilityLabel="Patterns Tab. Displays your longitudinal health trends over time."
@@ -104,7 +104,7 @@ export function PatternsTab({ patterns }: Props) {
           />
           
           {cycleView === 'bar' ? (
-            <ScrollView 
+            <ScrollView showsVerticalScrollIndicator={false} 
               horizontal 
               showsHorizontalScrollIndicator={false} 
               contentContainerStyle={[
@@ -165,7 +165,7 @@ export function PatternsTab({ patterns }: Props) {
           />
           
           {periodView === 'bar' ? (
-            <ScrollView 
+            <ScrollView showsVerticalScrollIndicator={false} 
               horizontal 
               showsHorizontalScrollIndicator={false} 
               contentContainerStyle={[
@@ -226,7 +226,7 @@ export function PatternsTab({ patterns }: Props) {
           />
           
           {painView === 'bar' ? (
-            <ScrollView 
+            <ScrollView showsVerticalScrollIndicator={false} 
               horizontal 
               showsHorizontalScrollIndicator={false} 
               contentContainerStyle={[

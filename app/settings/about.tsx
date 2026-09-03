@@ -19,7 +19,7 @@ export default function AboutScreen() {
           headerShadowVisible: false,
         }} 
       />
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView} contentContainerStyle={styles.content}>
         
         <View style={styles.header}>
           <Heading level="h1" style={{ color: colors.text.primary, textAlign: 'center' }}>

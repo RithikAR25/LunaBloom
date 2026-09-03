@@ -74,7 +74,7 @@ export default function CalendarScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <CycleCalendar
           cycles={cycles}
           selectedDate={selectedDate}

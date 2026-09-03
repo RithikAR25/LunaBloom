@@ -45,7 +45,7 @@ export default function NotificationsSettingsScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
+    <ScrollView showsVerticalScrollIndicator={false} style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
       
       <View style={styles.section}>
         <Text variant="caption" weight="bold" style={[styles.label, { color: colors.text.secondary }]}>

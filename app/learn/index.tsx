@@ -96,7 +96,7 @@ export default function LearnHomeScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <Heading level="h1" style={styles.title}>Learn</Heading>
         <Text variant="body" style={styles.subtitle}>

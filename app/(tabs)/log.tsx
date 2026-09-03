@@ -183,7 +183,7 @@ export default function LogScreen() {
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}>
         <View style={styles.datePickerContainer}>
           <Pressable accessibilityRole="button" 
             style={[styles.dateButton, { backgroundColor: colors.surface }]} 

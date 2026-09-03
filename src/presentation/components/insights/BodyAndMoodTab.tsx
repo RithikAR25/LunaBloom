@@ -79,7 +79,7 @@ export function BodyAndMoodTab({ trends, wellbeing, moods }: Props) {
 
   // Iterate over phases using trends as the base list
   return (
-    <ScrollView 
+    <ScrollView showsVerticalScrollIndicator={false} 
       contentContainerStyle={styles.container}
       accessible={true}
       accessibilityLabel="Body and Mood Tab. Shows top moods, average wellbeing metrics, and top symptoms grouped by cycle phase."

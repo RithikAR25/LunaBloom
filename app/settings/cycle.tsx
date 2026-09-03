@@ -68,7 +68,7 @@ export default function CycleSettingsScreen() {
       style={{ flex: 1 }} 
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
+      <ScrollView showsVerticalScrollIndicator={false} style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
         
         <View style={[styles.infoBox, { backgroundColor: colors.semantic.info + '20' }]}>
           <Text variant="caption" style={{ color: colors.semantic.info, lineHeight: fontSize.caption * lineHeight.normal }}>

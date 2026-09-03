@@ -51,7 +51,7 @@ export function OnboardingLayout({
         <View style={styles.backButtonPlaceholder} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} bounces={false}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent} bounces={false}>
         <View style={styles.titleContainer}>
           <Heading level="h1" style={{ color: colors.text.primary, marginBottom: spacing[2] }}>
             {title}

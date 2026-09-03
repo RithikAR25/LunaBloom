@@ -160,7 +160,7 @@ export default function InsightsScreen() {
         <Heading level="h2" style={{ color: colors.text.primary }} accessibilityRole="header">Insights</Heading>
       </View>
       
-      <ScrollView 
+      <ScrollView showsVerticalScrollIndicator={false} 
         horizontal 
         showsHorizontalScrollIndicator={false}
         style={{ flexGrow: 0 }}
