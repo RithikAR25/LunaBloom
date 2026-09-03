@@ -334,23 +334,23 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   scrollContent: {
-    padding: spacing.md * 0.1,
-    gap: spacing.md * 0.5,
+    paddingHorizontal: spacing.sm,
+    gap: spacing.sm,
   },
   emptyState: {
-    padding: spacing.lg * 0.9,
+    padding: spacing.lg,
     borderRadius: borderRadius.DEFAULT,
     alignItems: 'center',
   },
   quickActionsContainer: {
-    gap: spacing.sm * 0,
+    gap: spacing.xxs,
   },
   quickActionsRow: {
     flexDirection: 'row',
-    gap: spacing.sm * 0,
+    gap: spacing.xxs,
   },
   section: {
-    marginTop: spacing.xs * 0.5,
+    marginTop: spacing.xxs,
   },
   toggleContainer: {
     flexDirection: 'row',

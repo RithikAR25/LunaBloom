@@ -74,7 +74,7 @@ export function MinimalCycleHero({
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    paddingVertical: spacing.lg * 0.9,
+    paddingVertical: spacing.md,
   },
   phaseTitle: {
     fontFamily: fontFamily.headingBold,
@@ -87,14 +87,14 @@ const styles = StyleSheet.create({
     fontSize: 64,
     lineHeight: 72,
     textAlign: 'center',
-    marginVertical: spacing.sm * 0.9,
+    marginVertical: spacing.xs,
   },
   pillsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: spacing.md * 0.9,
-    marginTop: spacing.md * 0.9,
+    gap: spacing.sm,
+    marginTop: spacing.sm,
     paddingHorizontal: spacing.lg,
   },
   pill: {
