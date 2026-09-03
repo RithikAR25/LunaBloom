@@ -7,6 +7,8 @@ export interface Theme {
       primary: string;
       secondary: string;
       accent: string;
+      onPrimaryContainer: string;
+      secondaryContainer: string;
     };
     phase: {
       menstrual: string;
@@ -57,6 +59,8 @@ export const lightTheme: Theme = {
       primary: palette.sanguinePrimary,
       secondary: palette.sanguinePrimaryContainer,
       accent: palette.sanguineTertiary,
+      onPrimaryContainer: palette.sanguineOnPrimaryContainer,
+      secondaryContainer: palette.sanguineSecondaryContainer,
     },
     phase: {
       // Maintaining functional colors for phases, but slightly more muted where possible

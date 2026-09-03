@@ -11,6 +11,8 @@ export const darkTheme: Theme = {
       primary: palette.sanguineOnPrimaryContainer, // #ff816e (lighter for contrast)
       secondary: palette.sanguineSecondaryContainer, // #feb9a9
       accent: palette.sanguineTertiaryContainer, // #443a34
+      onPrimaryContainer: palette.sanguinePrimaryContainer, // Darker background for contrast with light text
+      secondaryContainer: palette.sanguineSecondary2, // Deep secondary mapping
     },
     phase: {
       menstrual: palette.rose700,

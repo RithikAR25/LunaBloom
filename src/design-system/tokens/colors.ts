@@ -14,6 +14,7 @@ export const palette = {
   sanguinePrimaryContainer: '#76160d',
   sanguineOnPrimaryContainer: '#ff816e',
   sanguineSecondary: '#855145',
+  sanguineSecondary2: '#5a0a03ff',
   sanguineOnSecondary: '#ffffff',
   sanguineSecondaryContainer: '#feb9a9',
   sanguineOnSecondaryContainer: '#7a473b',

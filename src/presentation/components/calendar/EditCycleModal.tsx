@@ -1,15 +1,16 @@
-import { useState } from 'react';
-import { View, StyleSheet, Modal, Platform, TouchableOpacity, ScrollView, Switch } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { useState, useEffect, useMemo } from 'react';
+import { View, StyleSheet, Modal, TouchableOpacity, ScrollView, Switch, Pressable } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { spacing, borderRadius, fontFamily, fontSize } from '@/design-system';
 import { Text } from '../ui/Text';
-import { Button } from '../ui/Button';
 import type { CycleEntry } from '@/domain/models/Cycle';
 import { ValidationService } from '@/domain/services/ValidationService';
 import { ConfirmModal } from '../ui/ConfirmModal';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
 import { useProfileStore } from '@/presentation/stores/useProfileStore';
+import { DateRangePickerGrid } from './DateRangePickerGrid';
+import { formatDateShort, isAfter, isBefore, daysBetween } from '@/utils/dateUtils';
 
 interface EditCycleModalProps {
   visible: boolean;
@@ -19,19 +20,26 @@ interface EditCycleModalProps {
   onDelete: (id: string) => Promise<void>;
 }
 
+type TabType = 'From' | 'To';
+
 export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: EditCycleModalProps) {
   const { colors } = useTheme();
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  // Local UI State
+  const [activeTab, setActiveTab] = useState<TabType>('From');
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   
-  const [showStartPicker, setShowStartPicker] = useState(false);
-  const [showEndPicker, setShowEndPicker] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  // Temporary Date Range State (stored as ISO strings: YYYY-MM-DD)
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
+  
   const [includeInPredictions, setIncludeInPredictions] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [startDateError, setStartDateError] = useState('');
   const [endDateError, setEndDateError] = useState('');
-  const validationService = new ValidationService();
+
+  const validationService = useMemo(() => new ValidationService(), []);
 
   interface WarningState {
     title: string;
@@ -41,29 +49,69 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
   }
   const [warningState, setWarningState] = useState<WarningState | null>(null);
 
-  const [prevVisible, setPrevVisible] = useState(false);
-  const [prevCycleId, setPrevCycleId] = useState<string | null>(null);
-
-  if (visible && (!prevVisible || (cycle && cycle.id !== prevCycleId))) {
-    setPrevVisible(true);
-    if (cycle) {
-      setPrevCycleId(cycle.id);
-      setStartDate(new Date(cycle.startDate + 'T00:00:00'));
-      setEndDate(cycle.endDate ? new Date(cycle.endDate + 'T00:00:00') : null);
+  // Initialize/Reset State when modal opens or cycle changes
+  useEffect(() => {
+    if (visible && cycle) {
+      setStartDate(cycle.startDate);
+      setEndDate(cycle.endDate || null);
       setIncludeInPredictions(!cycle.isExcludedFromPredictions);
+      setActiveTab('From');
+      
+      const parts = cycle.startDate.split('-');
+      if (parts.length >= 3) {
+        setCurrentMonth(new Date(parseInt(parts[0]!, 10), parseInt(parts[1]!, 10) - 1, 1));
+      } else {
+        setCurrentMonth(new Date());
+      }
+      
+      setStartDateError('');
+      setEndDateError('');
+    } else if (!visible) {
+      // Clear warnings and errors when closed
+      setWarningState(null);
+      setStartDateError('');
+      setEndDateError('');
     }
-  } else if (!visible && prevVisible) {
-    setPrevVisible(false);
-  }
+  }, [visible, cycle]);
 
   if (!cycle) return null;
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return 'Select Date';
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
+  const handleDateSelect = (dateStr: string) => {
+    setStartDateError('');
+    setEndDateError('');
+
+    if (activeTab === 'From') {
+      // Picking a new From date
+      if (endDate && isAfter(dateStr, endDate)) {
+        // new start > current end → clear temporary end, switch to To
+        setStartDate(dateStr);
+        setEndDate(null);
+        setActiveTab('To');
+      } else {
+        // new start <= current end → keep end, switch to To
+        setStartDate(dateStr);
+        setActiveTab('To');
+      }
+    } else {
+      // Picking a new To date
+      if (startDate && isBefore(dateStr, startDate)) {
+        // new end < current start → do not accept selection
+        // Guide user by switching back to From
+        setActiveTab('From');
+        setStartDate(dateStr);
+        setEndDate(null);
+      } else {
+        setEndDate(dateStr);
+      }
+    }
+  };
+
+  const handlePrevMonth = () => {
+    setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   };
 
   const handleSave = async () => {
@@ -71,22 +119,25 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
     setEndDateError('');
     let hasError = false;
 
-    const startStr = formatDate(startDate);
-    const endStr = endDate ? formatDate(endDate) : null;
+    if (!startDate) {
+      setStartDateError('Start date is required.');
+      return;
+    }
 
-    const startRes = validationService.validateHistoricalDate(startStr);
+    // UI-only checks before proceeding to domain
+    const startRes = validationService.validateHistoricalDate(startDate);
     if (!startRes.isValid) {
       setStartDateError(startRes.error!);
       hasError = true;
     }
 
-    if (endStr) {
-      const endRes = validationService.validateHistoricalDate(endStr);
+    if (endDate) {
+      const endRes = validationService.validateHistoricalDate(endDate);
       if (!endRes.isValid) {
         setEndDateError(endRes.error!);
         hasError = true;
       }
-      if (endStr < startStr) {
+      if (isBefore(endDate, startDate)) {
         setEndDateError('End date cannot be before start date.');
         hasError = true;
       }
@@ -94,9 +145,10 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
 
     if (hasError) return;
 
+    // Soft Warnings (preserved ownership)
     const { cycles } = useCycleStore.getState();
     const { profile } = useProfileStore.getState();
-    const warnings = validationService.getWarnings(startStr, endStr, cycles, profile?.avgCycleLength, cycle.id);
+    const warnings = validationService.getWarnings(startDate, endDate, cycles, profile?.avgCycleLength, cycle.id);
     
     if (warnings.length > 0) {
       const isMultiple = warnings.length > 1;
@@ -110,7 +162,7 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
         onConfirm: async () => {
           setIsSaving(true);
           try {
-            await onSave(cycle.id, startStr, endStr, cycle.notes, !includeInPredictions);
+            await onSave(cycle.id, startDate, endDate, cycle.notes, !includeInPredictions);
             onClose();
           } catch {
             // Error handled by store/parent
@@ -122,9 +174,10 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
       return;
     }
 
+    // Hard Domain validation and execution
     setIsSaving(true);
     try {
-      await onSave(cycle.id, startStr, endStr, cycle.notes, !includeInPredictions);
+      await onSave(cycle.id, startDate, endDate, cycle.notes, !includeInPredictions);
       onClose();
     } catch {
       // Error handled by the store and parent
@@ -139,140 +192,170 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
       await onDelete(cycle.id);
       onClose();
     } catch {
-      // Handled
+      // Handled by parent
     } finally {
       setIsSaving(false);
     }
   };
 
-  return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={[styles.overlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
-          <Text variant="body" weight="bold" style={[styles.title, { color: colors.text.primary }]}>
-            Edit Cycle
-          </Text>
+  const formatMonthYear = (date: Date) => {
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return `${months[date.getMonth()]} ${date.getFullYear()}`;
+  };
 
-          <ScrollView style={styles.form}>
-            {/* Start Date */}
-            <View style={styles.field}>
-              <Text style={{ color: colors.text.secondary, marginBottom: spacing[2] }}>Start Date</Text>
-              {Platform.OS === 'ios' ? (
-                <DateTimePicker
-                  value={startDate}
-                  mode="date"
-                  display="default"
-                  onChange={(_event, date) => { if (date) setStartDate(date); }}
-                  maximumDate={new Date()}
-                />
-              ) : (
-                <View>
-                  <Button
-                    variant="secondary"
-                    label={formatDate(startDate)}
-                    onPress={() => setShowStartPicker(true)}
-                  />
-                  {showStartPicker && (
-                    <DateTimePicker
-                      value={startDate}
-                      mode="date"
-                      display="default"
-                      onChange={(_event, date) => {
-                        setShowStartPicker(false);
-                        if (date) setStartDate(date);
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  )}
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={[styles.overlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+        <View style={[styles.card, { backgroundColor: colors.background }]}>
+          
+
+
+          {/* Header */}
+          <View style={styles.header}>
+            <Text weight="bold" style={{ color: colors.text.primary, fontFamily: fontFamily.bold, fontSize: 24, letterSpacing: -0.5 }}>
+              Edit Cycle
+            </Text>
+            <TouchableOpacity onPress={onClose} style={[styles.closeButton, { backgroundColor: colors.surface }]}>
+              <Text style={{ color: colors.text.secondary, fontSize: 16, fontWeight: 'bold' }}>✕</Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.form} bounces={false} showsVerticalScrollIndicator={false}>
+            {/* Date Range Cards */}
+            <View style={styles.dateCardsRow}>
+              {/* Start Date Card */}
+              <Pressable 
+                style={[
+                  styles.dateCard, 
+                  { backgroundColor: colors.background, borderColor: activeTab === 'From' ? colors.brand.primary : colors.border },
+                  activeTab === 'From' && { borderWidth: 2 }
+                ]}
+                onPress={() => setActiveTab('From')}
+              >
+                <View style={styles.dateCardHeader}>
+                  <Text style={[styles.dateCardLabel, { color: activeTab === 'From' ? colors.brand.primary : colors.text.secondary }]}>FROM</Text>
+                  <View style={[styles.dot, { backgroundColor: activeTab === 'From' ? colors.brand.primary : colors.border }]} />
                 </View>
-              )}
-              {!!startDateError && <Text variant="caption" style={{ color: colors.semantic.error, marginTop: spacing[1] }}>{startDateError}</Text>}
+                <Text style={[styles.dateCardValue, { color: colors.text.primary }]}>
+                  {startDate ? formatDateShort(startDate) : 'Select Date'}
+                </Text>
+                {startDate && (
+                  <Text style={[styles.dateCardSubtext, { color: colors.text.secondary }]}>
+                    Cycle Day 1
+                  </Text>
+                )}
+              </Pressable>
+
+              {/* End Date Card */}
+              <Pressable 
+                style={[
+                  styles.dateCard, 
+                  { backgroundColor: colors.background, borderColor: activeTab === 'To' ? colors.brand.primary : colors.border },
+                  activeTab === 'To' && { borderWidth: 2 }
+                ]}
+                onPress={() => setActiveTab('To')}
+              >
+                <View style={styles.dateCardHeader}>
+                  <Text style={[styles.dateCardLabel, { color: activeTab === 'To' ? colors.brand.primary : colors.text.secondary }]}>TO</Text>
+                  <View style={[styles.dot, { backgroundColor: activeTab === 'To' ? colors.brand.primary : colors.border }]} />
+                </View>
+                <Text style={[styles.dateCardValue, { color: colors.text.primary }]}>
+                  {endDate ? formatDateShort(endDate) : 'Ongoing'}
+                </Text>
+                {startDate && endDate && (
+                  <Text style={[styles.dateCardSubtext, { color: colors.text.secondary }]}>
+                    {daysBetween(startDate, endDate) + 1} Day Duration
+                  </Text>
+                )}
+              </Pressable>
             </View>
 
-            {/* End Date */}
-            <View style={styles.field}>
-              <Text style={{ color: colors.text.secondary, marginBottom: spacing[2] }}>End Date (Optional)</Text>
-              {Platform.OS === 'ios' ? (
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <DateTimePicker
-                    value={endDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(_event, date) => { if (date) setEndDate(date); }}
-                    maximumDate={new Date()}
-                  />
-                  <TouchableOpacity accessibilityRole="button" onPress={() => setEndDate(null)}>
-                    <Text style={{ color: colors.semantic.error }}>Clear</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <View>
-                  <Button
-                    variant="secondary"
-                    label={formatDate(endDate)}
-                    onPress={() => setShowEndPicker(true)}
-                  />
-                  {endDate && (
-                    <TouchableOpacity accessibilityRole="button" onPress={() => setEndDate(null)} style={{ marginTop: spacing[2] }}>
-                      <Text style={{ color: colors.semantic.error, textAlign: 'center' }}>Clear End Date</Text>
-                    </TouchableOpacity>
-                  )}
-                  {showEndPicker && (
-                    <DateTimePicker
-                      value={endDate || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(_event, date) => {
-                        setShowEndPicker(false);
-                        if (date) setEndDate(date);
-                      }}
-                      maximumDate={new Date()}
-                    />
-                  )}
-                </View>
+            {/* Clear End Date Pill */}
+            <View style={{ alignItems: 'center', marginBottom: spacing[5] }}>
+              {endDate && (
+                <TouchableOpacity 
+                  accessibilityRole="button" 
+                  onPress={() => setEndDate(null)} 
+                  style={[styles.clearEndPill, { backgroundColor: colors.brand.secondaryContainer }]}
+                >
+                  <Feather name="x-circle" size={14} color={colors.brand.primary} />
+                  <Text style={{ color: colors.brand.primary, fontSize: fontSize.caption, fontFamily: fontFamily.semiBold }}>
+                    Mark as Ongoing (Clear End Date)
+                  </Text>
+                </TouchableOpacity>
               )}
-              {!!endDateError && <Text variant="caption" style={{ color: colors.semantic.error, marginTop: spacing[1] }}>{endDateError}</Text>}
+            </View>
+
+            {/* Errors */}
+            {!!startDateError && <Text variant="caption" style={{ color: colors.semantic.error, marginBottom: spacing[2], textAlign: 'center' }}>{startDateError}</Text>}
+            {!!endDateError && <Text variant="caption" style={{ color: colors.semantic.error, marginBottom: spacing[2], textAlign: 'center' }}>{endDateError}</Text>}
+
+            {/* Calendar Card */}
+            <View style={[styles.calendarCard, { backgroundColor: colors.background, borderColor: colors.border }]}>
+              {/* Month Navigation */}
+              <View style={styles.monthNav}>
+                <TouchableOpacity onPress={handlePrevMonth} style={[styles.navButton]}>
+                  <Text style={{ color: colors.text.secondary, fontSize: 24, fontWeight: 'bold' }}>‹</Text>
+                </TouchableOpacity>
+                <Text style={{ color: colors.text.primary, fontFamily: fontFamily.bold, fontSize: fontSize.bodyLg }}>
+                  {formatMonthYear(currentMonth)}
+                </Text>
+                <TouchableOpacity onPress={handleNextMonth} style={[styles.navButton]}>
+                  <Text style={{ color: colors.text.secondary, fontSize: 24, fontWeight: 'bold' }}>›</Text>
+                </TouchableOpacity>
+              </View>
+
+              <DateRangePickerGrid
+                currentMonth={currentMonth}
+                startDate={startDate}
+                endDate={endDate}
+                onSelectDate={handleDateSelect}
+              />
             </View>
 
             {/* Prediction Exclusion Toggle */}
-            <View style={[styles.field, styles.toggleContainer]}>
+            <View style={[styles.toggleContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               <View style={styles.toggleTextContainer}>
-                <Text style={{ color: colors.text.primary, fontWeight: '600' }}>Include in Predictions</Text>
-                <Text style={{ color: colors.text.secondary, fontSize: 13, marginTop: 4, lineHeight: 18 }}>
-                  Turn this off if this cycle was unusually short or long so it doesn&apos;t skew your average cycle predictions.
+                <Text style={{ color: colors.text.primary, fontFamily: fontFamily.bold, fontSize: fontSize.labelMd }}>Include in Predictions</Text>
+                <Text style={{ color: colors.text.secondary, fontSize: 12, marginTop: 4, lineHeight: 18 }}>
+                  Turn this off if this cycle was unusually short or long so it doesn&apos;t skew your averages.
                 </Text>
               </View>
               <Switch
                 value={includeInPredictions}
                 onValueChange={setIncludeInPredictions}
-                trackColor={{ false: colors.surface, true: colors.brand.primary }}
-                thumbColor={Platform.OS === 'android' ? colors.background : undefined}
+                trackColor={{ false: colors.border, true: colors.brand.primary }}
+                thumbColor={colors.background}
               />
             </View>
           </ScrollView>
 
+          {/* Action Buttons */}
           <View style={styles.footer}>
-            <Button
-              variant="danger"
-              label="Delete"
+            <TouchableOpacity 
+              style={[styles.footerBtn, styles.deleteBtn, { backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.3)' }]} 
               onPress={handleDelete}
               disabled={isSaving}
-            />
-            <View style={styles.footerRight}>
-              <Button
-                variant="secondary"
-                label="Cancel"
-                onPress={onClose}
-                disabled={isSaving}
-              />
-              <Button
-                variant="primary"
-                label="Save"
-                onPress={handleSave}
-                loading={isSaving}
-                disabled={isSaving}
-              />
-            </View>
+            >
+              <Feather name="trash-2" size={16} color={colors.semantic.error} />
+              <Text style={[styles.footerBtnText, { color: colors.semantic.error }]}>Delete</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.footerBtn, styles.cancelBtn, { backgroundColor: colors.surface, borderColor: colors.border }]} 
+              onPress={onClose}
+              disabled={isSaving}
+            >
+              <Text style={[styles.footerBtnText, { color: colors.text.primary }]}>Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.footerBtn, styles.saveBtn, { backgroundColor: colors.brand.primary }]} 
+              onPress={handleSave}
+              disabled={isSaving}
+            >
+              <Text style={[styles.footerBtnText, { color: '#FFF' }]}>{isSaving ? 'Saving...' : 'Save Changes'}</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -297,44 +380,150 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center', 
+    alignItems: 'center',
+    padding: spacing[4],
   },
-  container: {
-    borderTopLeftRadius: borderRadius.xl,
-    borderTopRightRadius: borderRadius.xl,
+  card: {
+    width: '100%',
+    maxWidth: 400,
+    borderRadius: 32, // Match rounded-3xl from Stitch
     padding: spacing[6],
-    maxHeight: '80%',
+    paddingTop: spacing[4],
+    maxHeight: '90%',
   },
-  title: {
-    fontSize: 20,
-    marginBottom: spacing[6],
-  },
-  form: {
-    marginBottom: spacing[6],
-  },
-  field: {
-    marginBottom: spacing[6],
-  },
-  footer: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: spacing[8],
+    marginBottom: spacing[5],
   },
-  footerRight: {
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  form: {
+    flexShrink: 1,
+    marginBottom: spacing[2],
+  },
+  dateCardsRow: {
     flexDirection: 'row',
-    gap: spacing[2],
+    justifyContent: 'space-between',
+    marginBottom: spacing[3],
+    gap: spacing[3],
+  },
+  dateCard: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[1],
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  dateCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing[1],
+  },
+  dateCardLabel: {
+    fontFamily: fontFamily.semiBold,
+    fontSize: 10,
+    letterSpacing: 0.5,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  dateCardValue: {
+    fontFamily: fontFamily.bold,
+    fontSize: 20,
+  },
+  dateCardSubtext: {
+    fontFamily: fontFamily.medium,
+    fontSize: 12,
+    marginTop: 2,
+  },
+  clearEndPill: {
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[1],
+    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[1],
+  },
+  calendarCard: {
+    borderWidth: 1,
+    borderRadius: borderRadius.xl,
+    paddingTop: spacing[4],
+    paddingRight: spacing[4],
+    paddingBottom: spacing[2],
+    paddingLeft: spacing[4],
+    marginBottom: spacing[5],
+  },
+  monthNav: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing[4],
+    paddingHorizontal: spacing[2],
+  },
+  navButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   toggleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: spacing[4],
     paddingVertical: spacing[2],
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.05)',
+    borderWidth: 1,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing[1],
   },
   toggleTextContainer: {
     flex: 1,
     paddingRight: spacing[4],
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+    marginTop: spacing[4],
+  },
+  footerBtn: {
+    paddingVertical: spacing[2],
+    borderRadius: borderRadius.lg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing[1],
+  },
+  deleteBtn: {
+    flex: 3,
+    borderWidth: 1,
+  },
+  cancelBtn: {
+    flex: 4,
+    borderWidth: 1,
+  },
+  saveBtn: {
+    flex: 5,
+  },
+  footerBtnText: {
+    fontFamily: fontFamily.bold,
+    fontSize: fontSize.labelMd,
   }
 });
