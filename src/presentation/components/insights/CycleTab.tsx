@@ -1,66 +1,158 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { useState, useRef, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
-import { formatDateRangeWithYear, addDays } from '@/utils/dateUtils';
+import { useDailyLogStore } from '@/presentation/stores/useDailyLogStore';
+import { formatDateRangeWithYear, formatDateShort, todayISO } from '@/utils/dateUtils';
 import { Ionicons } from '@expo/vector-icons';
 import type { CycleStatistics } from '../../../domain/models/Insights';
+import { calculateCycleInsights, getFullCycleDateRange, CyclePhaseLengths } from '@/utils/cycleInsightsHelper';
 
 interface Props {
   stats: CycleStatistics;
 }
 
+// Reusable phase bar component for Average Phase Breakdown
+function CyclePhaseBar({ phaseLengths, colors }: { phaseLengths: CyclePhaseLengths, colors: any }) {
+  const total = phaseLengths.menstrual + phaseLengths.follicular + phaseLengths.ovulatory + phaseLengths.luteal;
+  if (total <= 0) return null;
+  
+  const menstrualPct = (phaseLengths.menstrual / total) * 100;
+  const follicularPct = (phaseLengths.follicular / total) * 100;
+  const ovulatoryPct = (phaseLengths.ovulatory / total) * 100;
+  const lutealPct = (phaseLengths.luteal / total) * 100;
+
+  const renderSegment = (pct: number, color: string, days: number, isLast: boolean = false) => {
+    if (pct <= 0) return null;
+    return (
+      <View style={[
+        styles.barSegment, 
+        { 
+          width: `${pct}%`, 
+          backgroundColor: color, 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          overflow: 'hidden',
+          borderTopRightRadius: isLast ? 8 : 0,
+          borderBottomRightRadius: isLast ? 8 : 0,
+        }
+      ]}>
+        <Text 
+          adjustsFontSizeToFit 
+          minimumFontScale={0.5} 
+          numberOfLines={1} 
+          style={{ color: 'white', fontSize: 10, fontFamily: fontFamily.bold }}
+        >
+          {days}
+        </Text>
+      </View>
+    );
+  };
+
+  return (
+    <View style={styles.chartContainer} accessible={true} accessibilityLabel="Horizontal bar chart showing cycle phases.">
+      {renderSegment(menstrualPct, colors.phase.menstrual, phaseLengths.menstrual)}
+      {renderSegment(follicularPct, colors.phase.follicular, phaseLengths.follicular)}
+      {renderSegment(ovulatoryPct, colors.phase.ovulatory, phaseLengths.ovulatory)}
+      {renderSegment(lutealPct, colors.phase.luteal, phaseLengths.luteal, true)}
+    </View>
+  );
+}
+
 export function CycleTab({ stats }: Props) {
   const { colors } = useTheme();
   const { cycles } = useCycleStore();
+  const { logs, loadLogsForRange } = useDailyLogStore();
   
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+  
+  // Accordion state
+  const [expandedCycleId, setExpandedCycleId] = useState<string | null>(null);
+  const [isLoadingInsights, setIsLoadingInsights] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const currentExpandedCycleIdRef = useRef<string | null>(null);
 
   if (stats.averageCycleLength === null || stats.averagePeriodDuration === null) {
     return null;
   }
 
-  // Calculate phase durations based on the CyclePhaseService logic
   const total = stats.averageCycleLength;
   const menstrual = stats.averagePeriodDuration;
-  const luteal = 14; // Default Luteal
+  const luteal = 14; 
   const ovulatory = 4;
-  const follicular = Math.max(0, total - menstrual - luteal);
+  const follicular = Math.max(0, total - menstrual - luteal - ovulatory);
+  
+  const averagePhaseLengths: CyclePhaseLengths = {
+    menstrual, follicular, ovulatory, luteal
+  };
 
-  // Percentages for the stacked bar
-  const menstrualPct = (menstrual / total) * 100;
-  const follicularPct = (follicular / total) * 100;
-  const ovulatoryPct = (ovulatory / total) * 100;
-  const lutealPct = (luteal / total) * 100;
-
-  // Functional sort for cycle history
   const sortedCycles = [...cycles].sort((a, b) => {
     return sortOrder === 'desc' 
       ? b.startDate.localeCompare(a.startDate)
       : a.startDate.localeCompare(b.startDate);
   });
 
+  const handleExpand = async (cycle: any) => {
+    if (expandedCycleId === cycle.id) {
+      setExpandedCycleId(null);
+      currentExpandedCycleIdRef.current = null;
+      return;
+    }
+    
+    setExpandedCycleId(cycle.id);
+    currentExpandedCycleIdRef.current = cycle.id;
+    setFetchError(null);
+    setIsLoadingInsights(true);
+    
+    try {
+      const { start, end, isCurrent } = getFullCycleDateRange(cycle, cycles);
+      const toDate = isCurrent ? todayISO() : (end ?? todayISO());
+      
+      await loadLogsForRange(start, toDate);
+    } catch (err) {
+      if (currentExpandedCycleIdRef.current === cycle.id) {
+        setFetchError('Failed to load insights.');
+      }
+    } finally {
+      if (currentExpandedCycleIdRef.current === cycle.id) {
+        setIsLoadingInsights(false);
+      }
+    }
+  };
+
+  const expandedInsights = useMemo(() => {
+    if (!expandedCycleId || isLoadingInsights || fetchError) return null;
+    const cycle = cycles.find(c => c.id === expandedCycleId);
+    if (!cycle) return null;
+    
+    const { start, end, isCurrent } = getFullCycleDateRange(cycle, cycles);
+    const toDate = isCurrent ? todayISO() : (end ?? todayISO());
+    
+    // Filter logs safely to just the cycle's full date range
+    const cycleLogs = Object.values(logs).filter(l => l.date >= start && l.date <= toDate);
+    
+    const insights = calculateCycleInsights(cycle, cycleLogs, stats.averageCycleLength ?? 28);
+    
+    return insights;
+  }, [expandedCycleId, isLoadingInsights, fetchError, cycles, logs, stats.averageCycleLength]);
+
+  const formatFlowDays = (label: string, days: number[]) => {
+    if (days.length === 0) return null;
+    const prefix = days.length === 1 ? 'day' : 'days';
+    return `${label} (${prefix} ${days.join(', ')})`;
+  };
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} 
       contentContainerStyle={styles.container}
-      accessible={true}
-      accessibilityLabel={`Cycle Tab. Average phase breakdown: Menstrual ${menstrual} days, Follicular ${follicular} days, Ovulatory ${ovulatory} days, Luteal ${luteal} days.`}
-      accessibilityHint="Provides a breakdown of your average cycle phases"
     >
       <View style={[styles.card, { backgroundColor: colors.surface }]}>
         <Text style={[styles.cardTitle, { color: colors.text.primary }]}>Average Phase Breakdown</Text>
         <Text style={[styles.cardSubtitle, { color: colors.text.secondary }]}>Based on your {total}-day average cycle</Text>
 
-        {/* Stacked Bar Chart */}
-        <View style={styles.chartContainer} accessible={true} accessibilityLabel="Horizontal bar chart showing cycle phases." accessibilityHint="Visual representation of the phase lengths">
-          <View style={[styles.barSegment, { width: `${menstrualPct}%`, backgroundColor: colors.phase.menstrual }]} />
-          <View style={[styles.barSegment, { width: `${follicularPct}%`, backgroundColor: colors.phase.follicular }]} />
-          <View style={[styles.barSegment, { width: `${ovulatoryPct}%`, backgroundColor: colors.phase.ovulatory }]} />
-          <View style={[styles.barSegment, { width: `${lutealPct}%`, backgroundColor: colors.phase.luteal, borderTopRightRadius: 8, borderBottomRightRadius: 8 }]} />
-        </View>
+        <CyclePhaseBar phaseLengths={averagePhaseLengths} colors={colors} />
 
-        {/* Legend */}
         <View style={styles.legend}>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: colors.phase.menstrual }]} />
@@ -104,61 +196,115 @@ export function CycleTab({ stats }: Props) {
           
           <View style={styles.historyList}>
             {sortedCycles.map((cycle) => {
-              const isActive = cycle.endDate === null;
-              const periodEndDate = cycle.durationDays 
-                ? addDays(cycle.startDate, cycle.durationDays - 1) 
-                : cycle.startDate;
-              
+              const fullRange = getFullCycleDateRange(cycle, cycles);
+              const isActive = fullRange.isCurrent;
+              const dateRangeStr = isActive
+                ? `${formatDateShort(fullRange.start)} - Present`
+                : formatDateRangeWithYear(fullRange.start, fullRange.end!);
+
+              const isExpanded = expandedCycleId === cycle.id;
+
               return (
-                <Pressable 
-                  key={cycle.id} 
-                  style={[
-                    styles.cycleCard, 
-                    { backgroundColor: isActive ? colors.brand.secondary : colors.surfaceElevated }
-                  ]}
-                >
-                  <View style={styles.cycleCardLeft}>
-                    <View style={styles.cycleCardDateRow}>
-                      <Text style={[
-                        styles.cycleCardDate, 
-                        { color: isActive ? colors.brand.primary : colors.text.primary }
-                      ]}>
-                        {formatDateRangeWithYear(cycle.startDate, periodEndDate)}
-                      </Text>
-                      {isActive && (
-                        <View style={[styles.activeBadge, { backgroundColor: 'rgba(215, 61, 89, 0.15)' }]}>
-                           <Text style={[styles.activeBadgeText, { color: colors.brand.primary }]}>CURRENT CYCLE</Text>
-                        </View>
-                      )}
-                    </View>
-                    
-                    <View style={styles.historyMetrics}>
-                      <View style={styles.historyMetric}>
-                        <Text style={[styles.historyMetricLabel, { color: colors.text.secondary }]}>PERIOD</Text>
-                        <Text style={[styles.historyMetricValue, { color: colors.brand.primary }]}>
-                          {cycle.durationDays != null ? `${cycle.durationDays}d` : '\u2014'}
-                        </Text>
-                      </View>
-                      <View style={styles.historyMetric}>
-                        <Text style={[styles.historyMetricLabel, { color: colors.text.secondary }]}>CYCLE LENGTH</Text>
+                <View key={cycle.id} style={[
+                  styles.cycleCardWrapper, 
+                  { backgroundColor: isActive ? colors.brand.secondaryContainer : colors.surfaceElevated }
+                ]}>
+                  <Pressable 
+                    style={styles.cycleCard}
+                    onPress={() => handleExpand(cycle)}
+                  >
+                    <View style={styles.cycleCardLeft}>
+                      <View style={styles.cycleCardDateRow}>
                         <Text style={[
-                          styles.historyMetricValue, 
+                          styles.cycleCardDate, 
                           { color: isActive ? colors.brand.primary : colors.text.primary }
                         ]}>
-                          {isActive ? 'In progress' : (cycle.cycleLengthDays != null ? `${cycle.cycleLengthDays}d` : '\u2014')}
+                          {dateRangeStr}
                         </Text>
+                        {isActive && (
+                          <View style={[styles.activeBadge, { backgroundColor: 'rgba(215, 61, 89, 0.15)' }]}>
+                             <Text style={[styles.activeBadgeText, { color: colors.brand.primary }]}>CURRENT CYCLE</Text>
+                          </View>
+                        )}
+                      </View>
+                      
+                      <View style={styles.historyMetrics}>
+                        <View style={styles.historyMetric}>
+                          <Text style={[styles.historyMetricLabel, { color: colors.text.secondary }]}>PERIOD</Text>
+                          <Text style={[styles.historyMetricValue, { color: colors.brand.primary }]}>
+                            {cycle.durationDays != null ? `${cycle.durationDays}d` : '\u2014'}
+                          </Text>
+                        </View>
+                        <View style={styles.historyMetric}>
+                          <Text style={[styles.historyMetricLabel, { color: colors.text.secondary }]}>CYCLE LENGTH</Text>
+                          <Text style={[
+                            styles.historyMetricValue, 
+                            { color: isActive ? colors.brand.primary : colors.text.primary }
+                          ]}>
+                            {isActive ? 'In progress' : (cycle.cycleLengthDays != null ? `${cycle.cycleLengthDays}d` : '\u2014')}
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                  
-                  <View style={styles.cycleCardRight}>
-                    <Ionicons 
-                      name="chevron-forward" 
-                      size={20} 
-                      color={isActive ? colors.brand.primary : colors.text.secondary} 
-                    />
-                  </View>
-                </Pressable>
+                    
+                    <View style={styles.cycleCardRight}>
+                      <Ionicons 
+                        name={isExpanded ? "chevron-down" : "chevron-forward"} 
+                        size={20} 
+                        color={isActive ? colors.brand.primary : colors.text.secondary} 
+                      />
+                    </View>
+                  </Pressable>
+
+                  {/* Expanded Content */}
+                  {isExpanded && (
+                    <View style={[styles.expandedContent, { borderTopColor: colors.border }]}>
+                      {isLoadingInsights ? (
+                        <View style={styles.loadingContainer}>
+                          <ActivityIndicator size="small" color={colors.brand.primary} />
+                          <Text style={{ color: colors.text.secondary, marginTop: 8 }}>Loading logs...</Text>
+                        </View>
+                      ) : fetchError ? (
+                        <Text style={{ color: colors.brand.primary }}>{fetchError}</Text>
+                      ) : expandedInsights ? (
+                        <View style={styles.insightsGrid}>
+                          <View style={styles.insightSection}>
+                            <Text style={[styles.insightTitle, { color: colors.text.primary }]}>Phase Timeline</Text>
+                            <CyclePhaseBar phaseLengths={expandedInsights.phaseLengths} colors={colors} />
+                          </View>
+
+                          <View style={styles.insightSection}>
+                            <Text style={[styles.insightTitle, { color: colors.text.primary }]}>Flow Intensity</Text>
+                            <Text style={[styles.insightValue, { color: colors.text.secondary }]}>
+                              {[
+                                formatFlowDays('Very Heavy', expandedInsights.flowDays.very_heavy),
+                                formatFlowDays('Heavy', expandedInsights.flowDays.heavy),
+                                formatFlowDays('Medium', expandedInsights.flowDays.medium),
+                                formatFlowDays('Light', expandedInsights.flowDays.light),
+                                formatFlowDays('Spotting', expandedInsights.flowDays.spotting)
+                              ].filter(Boolean).join(' ') || 'No flow logged'}
+                            </Text>
+                          </View>
+
+                          <View style={styles.averagesRow}>
+                            <View style={styles.averageBox}>
+                              <Text style={[styles.insightTitle, { color: colors.text.primary }]}>Avg Pain</Text>
+                              <Text style={[styles.insightValueLarge, { color: colors.text.secondary }]}>
+                                {expandedInsights.avgPain != null ? `${expandedInsights.avgPain}/10` : 'No data'}
+                              </Text>
+                            </View>
+                            <View style={styles.averageBox}>
+                              <Text style={[styles.insightTitle, { color: colors.text.primary }]}>Avg Energy</Text>
+                              <Text style={[styles.insightValueLarge, { color: colors.text.secondary }]}>
+                                {expandedInsights.avgEnergy != null ? `${expandedInsights.avgEnergy}/5` : 'No data'}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                      ) : null}
+                    </View>
+                  )}
+                </View>
               );
             })}
           </View>
@@ -216,7 +362,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   historyTitle: {
-    fontSize: 20, // slightly larger than bodyMd for headline impact
+    fontSize: 20, 
     fontFamily: fontFamily.bold,
   },
   sortButton: {
@@ -236,9 +382,12 @@ const styles = StyleSheet.create({
   historyList: {
     gap: 12,
   },
+  cycleCardWrapper: {
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
   cycleCard: {
     flexDirection: 'row',
-    borderRadius: 16,
     padding: 16,
     alignItems: 'center',
   },
@@ -286,4 +435,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  expandedContent: {
+    padding: 16,
+    paddingTop: 8,
+    borderTopWidth: 1,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  insightsGrid: {
+    gap: 16,
+  },
+  insightSection: {
+    gap: 8,
+  },
+  insightTitle: {
+    fontSize: fontSize.labelMd,
+    fontFamily: fontFamily.semiBold,
+  },
+  insightValue: {
+    fontSize: fontSize.labelMd,
+    fontFamily: fontFamily.regular,
+  },
+  insightValueLarge: {
+    fontSize: fontSize.bodyLg,
+    fontFamily: fontFamily.semiBold,
+  },
+  averagesRow: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  averageBox: {
+    flex: 1,
+  }
 });
