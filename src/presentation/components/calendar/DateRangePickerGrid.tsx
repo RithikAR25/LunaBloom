@@ -1,14 +1,16 @@
-import { View, StyleSheet, Text, Pressable } from 'react-native';
+import { View, StyleSheet, Text, Pressable, PanResponder } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { spacing, fontSize, fontFamily } from '@/design-system';
 import { todayISO, isBetween, isAfter } from '@/utils/dateUtils';
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 
 interface DateRangePickerGridProps {
   currentMonth: Date;
   startDate: string | null;
   endDate: string | null;
   onSelectDate: (dateStr: string) => void;
+  onDragBoundary?: (draggedBoundary: 'start' | 'end', newDateStr: string) => void;
+  onDragEnd?: () => void;
 }
 
 export function DateRangePickerGrid({
@@ -16,6 +18,8 @@ export function DateRangePickerGrid({
   startDate,
   endDate,
   onSelectDate,
+  onDragBoundary,
+  onDragEnd,
 }: DateRangePickerGridProps) {
   const { colors } = useTheme();
   
@@ -47,6 +51,79 @@ export function DateRangePickerGrid({
     return result;
   }, [currentMonth]);
 
+  // Gesture & Measurement tracking
+  const gridRef = useRef<View>(null);
+  const gridMeasurement = useRef({ pageX: 0, pageY: 0, width: 0, height: 0 });
+  const initialBoundaryRef = useRef<'start' | 'end' | null>(null);
+
+  // We keep days in a ref so PanResponder callbacks don't have stale closures
+  const daysRef = useRef(days);
+  useEffect(() => {
+    daysRef.current = days;
+  }, [days]);
+
+  const measureGrid = () => {
+    gridRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
+      gridMeasurement.current = { pageX, pageY, width, height };
+    });
+  };
+
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => false, // Don't claim immediately
+        onMoveShouldSetPanResponder: (_evt, gestureState) => {
+          if (!initialBoundaryRef.current) return false;
+          // Claim gesture if moved past a small threshold
+          const dx = Math.abs(gestureState.dx);
+          const dy = Math.abs(gestureState.dy);
+          return dx > 8 || dy > 8;
+        },
+        onPanResponderGrant: () => {
+          measureGrid(); // Ensure accurate coordinates at start of drag
+        },
+        onPanResponderMove: (evt, _gestureState) => {
+          if (!initialBoundaryRef.current || !onDragBoundary) return;
+          
+          const { pageX, pageY } = evt.nativeEvent;
+          const m = gridMeasurement.current;
+          if (m.width === 0) return;
+          
+          // Calculate relative position within the grid
+          const relX = pageX - m.pageX;
+          const relY = pageY - m.pageY;
+          
+          const cellWidth = m.width / 7;
+          const rowHeight = cellWidth + 4; // Accounts for marginVertical: 2
+          
+          const col = Math.floor(relX / cellWidth);
+          const row = Math.floor(relY / rowHeight);
+          
+          const index = row * 7 + col;
+          
+          const currentDays = daysRef.current;
+          if (index >= 0 && index < currentDays.length) {
+            const day = currentDays[index];
+            if (day) {
+              const isDisabled = isAfter(day.dateStr, todayStr);
+              if (!isDisabled) {
+                onDragBoundary(initialBoundaryRef.current, day.dateStr);
+              }
+            }
+          }
+        },
+        onPanResponderRelease: () => {
+          initialBoundaryRef.current = null;
+          if (onDragEnd) onDragEnd();
+        },
+        onPanResponderTerminate: () => {
+          initialBoundaryRef.current = null;
+          if (onDragEnd) onDragEnd();
+        },
+      }),
+    [onDragBoundary, onDragEnd, todayStr]
+  );
+
   return (
     <View style={styles.container}>
       <View style={[styles.headerRow, { marginBottom: spacing[2] }]}>
@@ -57,7 +134,12 @@ export function DateRangePickerGrid({
         ))}
       </View>
       
-      <View style={styles.grid}>
+      <View 
+        style={styles.grid}
+        ref={gridRef}
+        onLayout={measureGrid}
+        {...panResponder.panHandlers}
+      >
         {days.map((day, index) => {
           if (!day) {
             return <View key={`empty-${index}`} style={styles.cellContainer} />;
@@ -84,7 +166,15 @@ export function DateRangePickerGrid({
               )}
               
               <Pressable
-                onPress={() => !isDisabled && onSelectDate(day.dateStr)}
+                onPressIn={() => {
+                  if (isStart) initialBoundaryRef.current = 'start';
+                  else if (isEnd) initialBoundaryRef.current = 'end';
+                  else initialBoundaryRef.current = null;
+                }}
+                onPress={() => {
+                  initialBoundaryRef.current = null;
+                  if (!isDisabled) onSelectDate(day.dateStr);
+                }}
                 style={[
                   styles.dayCircle,
                   isSelected && { backgroundColor: colors.brand.primary },

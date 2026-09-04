@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { View, StyleSheet, Modal, TouchableOpacity, ScrollView, Switch, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/presentation/hooks/useTheme';
@@ -39,6 +39,8 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
   const [startDateError, setStartDateError] = useState('');
   const [endDateError, setEndDateError] = useState('');
 
+  const draggingBoundaryRef = useRef<'start' | 'end' | null>(null);
+
   const validationService = useMemo(() => new ValidationService(), []);
 
   interface WarningState {
@@ -77,6 +79,27 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
   if (!cycle) return null;
 
   const handleDateSelect = (dateStr: string) => {
+    // 1. Intent Detection for existing boundaries
+    const isTappingExistingStart = Boolean(startDate && dateStr === startDate);
+    const isTappingExistingEnd = Boolean(endDate && dateStr === endDate);
+
+    // Handle 1-day cycles where Start == End
+    if (isTappingExistingStart && isTappingExistingEnd) {
+      return; // Keep current active tab and do not modify dates
+    }
+
+    // Switch to FROM if they tapped the start boundary
+    if (isTappingExistingStart && activeTab !== 'From') {
+      setActiveTab('From');
+      return; // Stop here, don't change any dates
+    }
+    
+    // Switch to TO if they tapped the end boundary
+    if (isTappingExistingEnd && activeTab !== 'To') {
+      setActiveTab('To');
+      return; // Stop here, don't change any dates
+    }
+
     setStartDateError('');
     setEndDateError('');
 
@@ -104,6 +127,42 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
         setEndDate(dateStr);
       }
     }
+  };
+
+  const handleDragBoundary = (draggedBoundary: 'start' | 'end', newDateStr: string) => {
+    setStartDateError('');
+    setEndDateError('');
+
+    const activeBoundary = draggingBoundaryRef.current || draggedBoundary;
+    if (!draggingBoundaryRef.current) {
+      draggingBoundaryRef.current = activeBoundary;
+    }
+
+    if (activeBoundary === 'start') {
+      if (endDate && isAfter(newDateStr, endDate)) {
+        // FLIP forward: dragging start past end
+        setStartDate(endDate);
+        setEndDate(newDateStr);
+        draggingBoundaryRef.current = 'end';
+        setActiveTab('To');
+      } else {
+        setStartDate(newDateStr);
+      }
+    } else {
+      if (startDate && isBefore(newDateStr, startDate)) {
+        // FLIP backward: dragging end before start
+        setEndDate(startDate);
+        setStartDate(newDateStr);
+        draggingBoundaryRef.current = 'start';
+        setActiveTab('From');
+      } else {
+        setEndDate(newDateStr);
+      }
+    }
+  };
+
+  const handleDragEnd = () => {
+    draggingBoundaryRef.current = null;
   };
 
   const handlePrevMonth = () => {
@@ -310,6 +369,8 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
                 startDate={startDate}
                 endDate={endDate}
                 onSelectDate={handleDateSelect}
+                onDragBoundary={handleDragBoundary}
+                onDragEnd={handleDragEnd}
               />
             </View>
 
