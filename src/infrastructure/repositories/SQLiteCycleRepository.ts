@@ -11,7 +11,7 @@ import { getDatabase } from '../database/database';
 import type { ICycleRepository } from '../../domain/repositories/ICycleRepository';
 import type { CycleEntry } from '../../domain/models/Cycle';
 import { RepositoryError, NotFoundError } from '../../domain/errors';
-import { nowISO } from '../../utils/dateUtils';
+import { nowISO, daysBetween } from '../../utils/dateUtils';
 
 type CycleRow = {
   id: string;
@@ -153,6 +153,102 @@ export class SQLiteCycleRepository implements ICycleRepository {
       );
     } catch (err) {
       throw new RepositoryError(`Failed to delete cycle ${id}`, err);
+    }
+  }
+
+  async mergeCycles(retainedCycleId: string, absorbedCycleIds: string[], mergedData: Partial<CycleEntry>): Promise<void> {
+    try {
+      const db = getDatabase();
+      const existing = await this.getById(retainedCycleId);
+      if (!existing) throw new NotFoundError('CycleEntry', retainedCycleId);
+
+      await db.withTransactionAsync(async () => {
+        // 1. Update the retained cycle
+        const newStartDate = mergedData.startDate !== undefined ? mergedData.startDate : existing.startDate;
+        const newEndDate = mergedData.endDate !== undefined ? mergedData.endDate : existing.endDate;
+        const newDuration = mergedData.durationDays !== undefined ? mergedData.durationDays : existing.durationDays;
+        const newNotes = mergedData.notes !== undefined ? mergedData.notes : existing.notes;
+        const newExcluded = mergedData.isExcludedFromPredictions !== undefined ? (mergedData.isExcludedFromPredictions ? 1 : 0) : (existing.isExcludedFromPredictions ? 1 : 0);
+        
+        await db.runAsync(
+          `UPDATE cycles SET
+            start_date = ?,
+            end_date = ?,
+            duration_days = ?,
+            notes = ?,
+            is_excluded_from_predictions = ?,
+            updated_at = ?,
+            sync_status = ?
+           WHERE id = ?`,
+          [
+            newStartDate,
+            newEndDate,
+            newDuration,
+            newNotes,
+            newExcluded,
+            nowISO(),
+            'LOCAL',
+            retainedCycleId,
+          ]
+        );
+
+        // 2. Migrate daily logs from absorbed cycles to the retained cycle
+        if (absorbedCycleIds.length > 0) {
+          const placeholders = absorbedCycleIds.map(() => '?').join(',');
+          await db.runAsync(
+            `UPDATE daily_logs 
+             SET cycle_entry_id = ?, updated_at = ?, sync_status = ?
+             WHERE cycle_entry_id IN (${placeholders})`,
+            [retainedCycleId, nowISO(), 'LOCAL', ...absorbedCycleIds]
+          );
+        }
+
+        // 3. Recalculate cycle_day for ALL logs in the retained cycle
+        const logs = await db.getAllAsync<{id: string, date: string}>(
+          'SELECT id, date FROM daily_logs WHERE cycle_entry_id = ?', 
+          [retainedCycleId]
+        );
+        for (const log of logs) {
+          const cycleDay = daysBetween(newStartDate, log.date) + 1;
+          await db.runAsync(
+            'UPDATE daily_logs SET cycle_day = ?, updated_at = ?, sync_status = ? WHERE id = ?',
+            [cycleDay, nowISO(), 'LOCAL', log.id]
+          );
+        }
+
+        // 4. Soft delete the absorbed cycles
+        for (const absorbedId of absorbedCycleIds) {
+          await db.runAsync(
+            'UPDATE cycles SET deleted_at = ?, updated_at = ?, sync_status = ? WHERE id = ?',
+            [nowISO(), nowISO(), 'LOCAL', absorbedId]
+          );
+        }
+
+        // 5. Recalculate cycle_length_days for ALL non-deleted cycles
+        const allCycles = await db.getAllAsync<CycleRow>(
+          'SELECT * FROM cycles WHERE deleted_at IS NULL ORDER BY start_date ASC'
+        );
+        
+        for (let i = 0; i < allCycles.length; i++) {
+          const current = allCycles[i]!;
+          let cycleLengthDays: number | null = null;
+          
+          if (i < allCycles.length - 1) {
+            const next = allCycles[i + 1]!;
+            cycleLengthDays = daysBetween(current.start_date, next.start_date);
+          }
+
+          if (current.cycle_length_days !== cycleLengthDays) {
+            await db.runAsync(
+              'UPDATE cycles SET cycle_length_days = ?, updated_at = ?, sync_status = ? WHERE id = ?',
+              [cycleLengthDays, nowISO(), 'LOCAL', current.id]
+            );
+          }
+        }
+      });
+    } catch (err) {
+      if (err instanceof NotFoundError) throw err;
+      throw new RepositoryError(`Failed to merge cycles into ${retainedCycleId}`, err);
     }
   }
 }

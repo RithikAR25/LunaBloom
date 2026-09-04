@@ -44,6 +44,10 @@ class MockCycleRepository implements ICycleRepository {
     this.cycles = this.cycles.filter(c => c.id !== id);
   }
 
+  async mergeCycles(_retainedCycleId: string, _absorbedCycleIds: string[], _mergedData: Partial<CycleEntry>): Promise<void> {
+    // Mock implementation
+  }
+
   // Helper for tests to set up initial state
   setCycles(cycles: CycleEntry[]) {
     this.cycles = cycles;

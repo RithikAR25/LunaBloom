@@ -14,4 +14,9 @@ export interface ICycleRepository {
   update(id: string, data: Partial<CycleEntry>): Promise<void>;
   /** Soft delete: sets deletedAt. Never calls DELETE. */
   softDelete(id: string): Promise<void>;
+  /** 
+   * Atomically merges multiple cycles into one. 
+   * Updates retained cycle, migrates daily logs, soft deletes absorbed cycles, and recalculates cycle lengths.
+   */
+  mergeCycles(retainedCycleId: string, absorbedCycleIds: string[], mergedData: Partial<CycleEntry>): Promise<void>;
 }

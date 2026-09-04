@@ -16,7 +16,7 @@ interface EditCycleModalProps {
   visible: boolean;
   cycle: CycleEntry | null;
   onClose: () => void;
-  onSave: (id: string, startDate: string, endDate: string | null, notes?: string | null, isExcludedFromPredictions?: boolean) => Promise<void>;
+  onSave: (id: string, startDate: string, endDate: string | null, notes?: string | null, isExcludedFromPredictions?: boolean, confirmMerge?: boolean) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }
 
@@ -204,6 +204,26 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
 
     if (hasError) return;
 
+    const executeSave = async (confirmMerge = false) => {
+      setIsSaving(true);
+      try {
+        await onSave(cycle.id, startDate, endDate, cycle.notes, !includeInPredictions, confirmMerge);
+        onClose();
+      } catch (err: any) {
+        if (err.name === 'MergeRequiredError') {
+          const N = err.overlappingCycleIds?.length || 1;
+          setWarningState({
+            title: 'Merge Periods',
+            message: `This change overlaps with ${N} existing logged period(s). They will be merged into a single continuous period. Existing notes and daily logs will be preserved.`,
+            confirmLabel: 'Merge',
+            onConfirm: () => executeSave(true)
+          });
+        }
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
     // Soft Warnings (preserved ownership)
     const { cycles } = useCycleStore.getState();
     const { profile } = useProfileStore.getState();
@@ -218,31 +238,13 @@ export function EditCycleModal({ visible, cycle, onClose, onSave, onDelete }: Ed
           ? 'These patterns can occur, but please confirm the dates are correct:\n\n' + warnings.map(w => `• ${w.message}`).join('\n')
           : firstWarning.message,
         confirmLabel: 'Save Anyway',
-        onConfirm: async () => {
-          setIsSaving(true);
-          try {
-            await onSave(cycle.id, startDate, endDate, cycle.notes, !includeInPredictions);
-            onClose();
-          } catch {
-            // Error handled by store/parent
-          } finally {
-            setIsSaving(false);
-          }
-        }
+        onConfirm: () => executeSave(false)
       });
       return;
     }
 
     // Hard Domain validation and execution
-    setIsSaving(true);
-    try {
-      await onSave(cycle.id, startDate, endDate, cycle.notes, !includeInPredictions);
-      onClose();
-    } catch {
-      // Error handled by the store and parent
-    } finally {
-      setIsSaving(false);
-    }
+    await executeSave(false);
   };
 
   const handleDelete = async () => {

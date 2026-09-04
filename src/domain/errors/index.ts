@@ -44,3 +44,12 @@ export class ConflictError extends Error {
     this.name = 'ConflictError';
   }
 }
+
+export class MergeRequiredError extends Error {
+  constructor(
+    public readonly overlappingCycleIds: string[]
+  ) {
+    super('This change overlaps with existing logged periods and requires merging.');
+    this.name = 'MergeRequiredError';
+  }
+}

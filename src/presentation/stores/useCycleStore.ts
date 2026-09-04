@@ -24,7 +24,7 @@ type CycleState = {
   loadCycles: () => Promise<void>;
   startPeriod: (startDate: string, isExcludedFromPredictions?: boolean) => Promise<void>;
   endPeriod: (endDate: string, isExcludedFromPredictions?: boolean) => Promise<void>;
-  editCycle: (id: string, startDate: string, endDate: string | null, notes: string | null, isExcludedFromPredictions?: boolean) => Promise<void>;
+  editCycle: (id: string, startDate: string, endDate: string | null, notes: string | null, isExcludedFromPredictions?: boolean, confirmMerge?: boolean) => Promise<void>;
   deleteCycle: (id: string) => Promise<void>;
   clearError: () => void;
 };
@@ -90,7 +90,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     }
   },
 
-  editCycle: async (id: string, startDate: string, endDate: string | null, notes: string | null, isExcludedFromPredictions?: boolean) => {
+  editCycle: async (id: string, startDate: string, endDate: string | null, notes: string | null, isExcludedFromPredictions?: boolean, confirmMerge?: boolean) => {
     const { _repository } = get();
     if (!_repository) throw new Error('[useCycleStore] Repository not injected');
 
@@ -98,7 +98,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     try {
       const validationService = new ValidationService();
       const editCycleUC = new EditCycleEntry(_repository, validationService);
-      await editCycleUC.execute(id, startDate, endDate, notes, isExcludedFromPredictions);
+      await editCycleUC.execute(id, startDate, endDate, notes, isExcludedFromPredictions, confirmMerge);
       await get().loadCycles();
     } catch (err) {
       throw err;

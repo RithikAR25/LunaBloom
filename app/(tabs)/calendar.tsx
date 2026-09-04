@@ -209,10 +209,13 @@ export default function CalendarScreen() {
           visible={isEditModalVisible}
           cycle={selectedCycle}
           onClose={() => setIsEditModalVisible(false)}
-          onSave={async (id, start, end, notes, isExcluded) => {
+          onSave={async (id, start, end, notes, isExcluded, confirmMerge) => {
             try {
-              await editCycle(id, start, end, notes ?? null, isExcluded);
+              await editCycle(id, start, end, notes ?? null, isExcluded, confirmMerge);
             } catch (err: any) {
+              if (err.name === 'MergeRequiredError') {
+                throw err; // Let EditCycleModal handle this specific error
+              }
               setAlertState({ visible: true, title: 'Error', message: err.message });
             }
           }}
