@@ -152,17 +152,20 @@ export function DateRangePickerGrid({
           const isDisabled = isAfter(day.dateStr, todayStr);
           const isSelected = isStart || isEnd;
           
+          const isFirstDayOfWeek = index % 7 === 0;
+          const isLastDayOfWeek = index % 7 === 6;
+          
           return (
             <View key={day.dateStr} style={[styles.cellContainer]}>
               {/* Range Highlights */}
               {isInRange && (
-                <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.brand.secondaryContainer }]} />
+                <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.brand.secondaryContainer, right: isLastDayOfWeek ? 0 : -1 }]} />
               )}
               {isStart && !isSameDay && endDate && isAfter(endDate, day.dateStr) && (
-                <View style={[{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '50%', backgroundColor: colors.brand.secondaryContainer }]} />
+                <View style={[{ position: 'absolute', right: isLastDayOfWeek ? 0 : -1, top: 0, bottom: 0, width: '50%', backgroundColor: colors.brand.secondaryContainer }]} />
               )}
               {isEnd && !isSameDay && startDate && isAfter(day.dateStr, startDate) && (
-                <View style={[{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '50%', backgroundColor: colors.brand.secondaryContainer }]} />
+                <View style={[{ position: 'absolute', left: isFirstDayOfWeek ? 0 : -1, top: 0, bottom: 0, width: '50%', backgroundColor: colors.brand.secondaryContainer }]} />
               )}
               
               <Pressable
