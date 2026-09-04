@@ -133,7 +133,7 @@ describe.skip('InsightsScreen', () => {
     expect(findText(tree.root, 'Follicular')).toBe(true);
   });
 
-  it('renders no-logs empty state on Symptoms tab when there are no logs', () => {
+  it('renders no-logs empty state on Body & Mood tab when there are no logs', () => {
     useInsightsStore.setState({
       cycleStats: {
         averageCycleLength: 28,
@@ -144,19 +144,19 @@ describe.skip('InsightsScreen', () => {
         regularityScore: 90,
       },
       symptomTrends: [],
-      wellbeingTrends: []
+      wellbeingTrends: [],
+      moodTrends: [],
     });
 
     const tree = renderer.create(<InsightsScreen />);
     
-    // Switch to Symptoms tab
-    const symTab = tree.root.findAllByType(TouchableOpacity).find(node => {
+    // Switch to Body & Mood tab
+    const bmTab = tree.root.findAllByType(TouchableOpacity).find(node => {
       const textNode = node.findAllByType(Text)[0];
-      return textNode && textNode.props.children === 'Symptoms';
+      return textNode && textNode.props.children === 'Body & Mood';
     });
-    symTab!.props.onPress();
+    bmTab!.props.onPress();
 
-    expect(findText(tree.root, 'No daily logs found')).toBe(true);
-    expect(findText(tree.root, /Start logging your daily symptoms/i)).toBe(true);
+    expect(findText(tree.root, 'No body or mood data logged yet.')).toBe(true);
   });
 });

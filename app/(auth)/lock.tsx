@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/presentation/hooks/useTheme';
 
-/** PIN Lock Screen — implemented in Phase 6. See docs/ui-prompts/08_pin-lock.md */
+/** PIN Lock Screen — implemented in Phase 6. */
 export default function PINLockScreen() {
   const { colors } = useTheme();
   return (
