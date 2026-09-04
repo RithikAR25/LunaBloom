@@ -3,6 +3,7 @@ import type { CycleEntry } from '../../models/Cycle';
 import { daysBetween, isBefore, addDays } from '../../../utils/dateUtils';
 import type { ValidationService } from '../../services/ValidationService';
 import { ValidationError, MergeRequiredError } from '../../errors';
+import { CycleDurationResolver } from '../../services/CycleDurationResolver';
 
 export class EditCycleEntry {
   constructor(
@@ -14,6 +15,7 @@ export class EditCycleEntry {
     id: string,
     startDate: string,
     endDate: string | null,
+    defaultDurationDays: number,
     notes: string | null = null,
     isExcludedFromPredictions?: boolean,
     confirmMerge?: boolean
@@ -39,6 +41,11 @@ export class EditCycleEntry {
 
     // Always fetch fresh state to prevent stale data
     const allCycles = await this.cycleRepository.getAll();
+
+    // 1. Normalize 'ongoing' requests
+    if (endDate === null) {
+      endDate = CycleDurationResolver.resolveEndDate(startDate, defaultDurationDays);
+    }
     
     // Find symmetric overlaps (gap <= 1 day)
     const overlapCandidates = allCycles.filter(c => {

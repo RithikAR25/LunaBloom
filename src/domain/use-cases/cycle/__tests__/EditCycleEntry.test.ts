@@ -1,6 +1,7 @@
 import { EditCycleEntry } from '../EditCycleEntry';
 import type { ICycleRepository } from '../../../repositories/ICycleRepository';
-import type { ValidationService } from '../../../services/ValidationService';
+import { ValidationService } from '../../../services/ValidationService';
+import { addDays, todayISO } from '../../../../utils/dateUtils';
 import { MergeRequiredError, ValidationError } from '../../../errors';
 import type { CycleEntry } from '../../../models/Cycle';
 
@@ -8,6 +9,8 @@ describe('EditCycleEntry', () => {
   let editCycleEntry: EditCycleEntry;
   let mockCycleRepository: jest.Mocked<ICycleRepository>;
   let mockValidationService: jest.Mocked<ValidationService>;
+
+  const defaultDuration = 5;
 
   beforeEach(() => {
     mockCycleRepository = {
@@ -50,7 +53,7 @@ describe('EditCycleEntry', () => {
       mockCycleRepository.getById.mockResolvedValue(existing);
       mockCycleRepository.getAll.mockResolvedValue([existing]);
 
-      await editCycleEntry.execute('cycle-1', '2023-08-02', '2023-08-06', 'New notes');
+      await editCycleEntry.execute('cycle-1', '2023-08-02', '2023-08-06', defaultDuration, 'New notes');
 
       expect(mockCycleRepository.update).toHaveBeenCalledWith('cycle-1', expect.objectContaining({
         startDate: '2023-08-02',
@@ -64,7 +67,7 @@ describe('EditCycleEntry', () => {
       mockCycleRepository.getById.mockResolvedValue(createMockCycle('1', '2023-08-01', '2023-08-05'));
       
       await expect(
-        editCycleEntry.execute('1', '2023-08-10', '2023-08-05')
+        editCycleEntry.execute('1', '2023-08-10', '2023-08-05', defaultDuration)
       ).rejects.toThrow(ValidationError);
     });
   });
@@ -79,7 +82,7 @@ describe('EditCycleEntry', () => {
 
       // Edit cycle-1 to touch cycle-2 (gap of 0 days)
       await expect(
-        editCycleEntry.execute('cycle-1', '2023-08-01', '2023-08-05', 'notes', false, false)
+        editCycleEntry.execute('cycle-1', '2023-08-01', '2023-08-05', defaultDuration, 'notes', false, false)
       ).rejects.toThrow(MergeRequiredError);
       
       expect(mockCycleRepository.mergeCycles).not.toHaveBeenCalled();
@@ -94,7 +97,7 @@ describe('EditCycleEntry', () => {
       mockCycleRepository.getById.mockResolvedValue(existing);
       mockCycleRepository.getAll.mockResolvedValue([existing, overlapping]);
 
-      await editCycleEntry.execute('cycle-1', '2023-08-01', '2023-08-05', 'Edited first note', false, true);
+      await editCycleEntry.execute('cycle-1', '2023-08-01', '2023-08-05', defaultDuration, 'Edited first note', false, true);
 
       expect(mockCycleRepository.mergeCycles).toHaveBeenCalledWith(
         'cycle-1',
@@ -115,7 +118,7 @@ describe('EditCycleEntry', () => {
       mockCycleRepository.getById.mockResolvedValue(existing);
       mockCycleRepository.getAll.mockResolvedValue([existing, future]);
 
-      await editCycleEntry.execute('cycle-1', '2023-08-01', '2023-08-05', 'notes', false, false);
+      await editCycleEntry.execute('cycle-1', '2023-08-01', '2023-08-05', defaultDuration, 'notes', false, false);
 
       expect(mockCycleRepository.update).toHaveBeenCalled();
       expect(mockCycleRepository.mergeCycles).not.toHaveBeenCalled();
@@ -129,7 +132,7 @@ describe('EditCycleEntry', () => {
       mockCycleRepository.getAll.mockResolvedValue([existing, active]);
 
       // User requests concrete end date '2023-08-29'
-      await editCycleEntry.execute('cycle-1', '2023-08-25', '2023-08-29', null, false, true);
+      await editCycleEntry.execute('cycle-1', '2023-08-25', '2023-08-29', defaultDuration, null, false, true);
 
       expect(mockCycleRepository.mergeCycles).toHaveBeenCalledWith(
         'cycle-1',
@@ -142,20 +145,22 @@ describe('EditCycleEntry', () => {
     });
 
     it('active cycle rule: null request maintains active cycle', async () => {
-      const existing = createMockCycle('cycle-1', '2023-08-01', '2023-08-05');
-      const future = createMockCycle('cycle-2', '2023-08-10', '2023-08-15');
+      // Need a recent date so that natural duration doesn't cap it
+      const recentStart = todayISO(); 
+      const existing = createMockCycle('cycle-1', recentStart, addDays(recentStart, 2));
+      const future = createMockCycle('cycle-2', addDays(recentStart, 4), addDays(recentStart, 9));
       
       mockCycleRepository.getById.mockResolvedValue(existing);
       mockCycleRepository.getAll.mockResolvedValue([existing, future]);
 
       // User sets end date to null, absorbing cycle-2
-      await editCycleEntry.execute('cycle-1', '2023-08-01', null, null, false, true);
+      await editCycleEntry.execute('cycle-1', recentStart, null, defaultDuration, null, false, true);
 
       expect(mockCycleRepository.mergeCycles).toHaveBeenCalledWith(
         'cycle-1',
         ['cycle-2'],
         expect.objectContaining({
-          startDate: '2023-08-01',
+          startDate: recentStart,
           endDate: null, // Null request wins, creating active cycle
         })
       );
@@ -169,7 +174,7 @@ describe('EditCycleEntry', () => {
       mockCycleRepository.getById.mockResolvedValue(cycle1);
       mockCycleRepository.getAll.mockResolvedValue([cycle1, cycle2, cycle3]);
 
-      await editCycleEntry.execute('c1', '2023-08-01', '2023-08-05', 'New note', false, true);
+      await editCycleEntry.execute('c1', '2023-08-01', '2023-08-05', defaultDuration, 'New note', false, true);
 
       // Order: c3 (empty), c1 (New note), c2 (Same note)
       expect(mockCycleRepository.mergeCycles).toHaveBeenCalledWith(

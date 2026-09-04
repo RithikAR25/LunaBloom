@@ -98,7 +98,11 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     try {
       const validationService = new ValidationService();
       const editCycleUC = new EditCycleEntry(_repository, validationService);
-      await editCycleUC.execute(id, startDate, endDate, notes, isExcludedFromPredictions, confirmMerge);
+      
+      const { profile } = useProfileStore.getState();
+      const defaultDuration = profile?.avgPeriodDuration ?? 5;
+      
+      await editCycleUC.execute(id, startDate, endDate, defaultDuration, notes, isExcludedFromPredictions, confirmMerge);
       await get().loadCycles();
     } catch (err) {
       throw err;

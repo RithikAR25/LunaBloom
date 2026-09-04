@@ -3,6 +3,7 @@ import type { CycleEntry } from '../../models/Cycle';
 import { generateId, nowISO, todayISO, daysBetween, addDays } from '../../../utils/dateUtils';
 import type { ValidationService } from '../../services/ValidationService';
 import { ValidationError } from '../../errors';
+import { CycleDurationResolver } from '../../services/CycleDurationResolver';
 
 export class StartPeriod {
   constructor(
@@ -31,12 +32,15 @@ export class StartPeriod {
     let targetEndDate: string | null = null;
     let targetDurationDays: number | null = null;
 
-    let calculatedEndDate = addDays(startDate, defaultDurationDays - 1);
     const today = todayISO();
+    const naturalEnd = CycleDurationResolver.resolveEndDate(startDate, defaultDurationDays);
 
     if (isHistoric) {
       // Action B: Create a bounded historical period capped by the next cycle.
       const nextCycleStart = subsequentCycles[0]!.startDate;
+      
+      // If it would have naturally reached today, we use the default length to shrink against nextCycleStart
+      let calculatedEndDate = naturalEnd === null ? addDays(startDate, defaultDurationDays - 1) : naturalEnd;
       
       // We must leave at least 1 day gap to prevent the "touching" overlap error
       // from ValidationService (which expands bounds by 1 day).
@@ -53,7 +57,7 @@ export class StartPeriod {
       targetDurationDays = daysBetween(startDate, targetEndDate) + 1;
     } else {
       // Action A: Create an active period OR a naturally concluded historical period.
-      if (calculatedEndDate >= today) {
+      if (naturalEnd === null) {
         // The period's natural window still includes today (or the future).
         // It is an ACTIVE period.
         const activeCycle = allCycles.find(c => c.endDate === null);
@@ -65,7 +69,7 @@ export class StartPeriod {
         targetDurationDays = null;
       } else {
         // The period naturally concluded before today.
-        targetEndDate = calculatedEndDate;
+        targetEndDate = naturalEnd;
         targetDurationDays = daysBetween(startDate, targetEndDate) + 1;
       }
     }
