@@ -1,6 +1,6 @@
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { useScaling, spacing, borderRadius } from '@/design-system';
 import { Text } from '../ui/Text';
 import { Heading } from '../ui/Heading';
 import type { CycleStatistics } from '../../../domain/models/Insights';
@@ -12,6 +12,7 @@ interface Props {
 
 export function OverviewTab({ stats }: Props) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
 
   // If there's no data at all, return null (handled by parent's EmptyState)
   if (stats.averageCycleLength === null) {
@@ -53,7 +54,7 @@ export function OverviewTab({ stats }: Props) {
             <Heading level="h2" style={{ color: colors.brand.primary }}>{stats.averageCycleLength}</Heading>
             <Text variant="caption" style={{ color: colors.text.secondary }}>Avg Cycle (days)</Text>
           </View>
-          <View style={[styles.divider, { backgroundColor: colors.surfaceNeutral }]} />
+          <View style={[styles.divider, { backgroundColor: colors.surfaceNeutral, height: scale(40) }]} />
           <View style={styles.statBox}>
             <Heading level="h2" style={{ color: colors.brand.secondary }}>{stats.averagePeriodDuration}</Heading>
             <Text variant="caption" style={{ color: colors.text.secondary }}>Avg Period (days)</Text>
@@ -73,12 +74,12 @@ export function OverviewTab({ stats }: Props) {
             </Heading>
             <Text variant="caption" style={{ color: colors.text.secondary }}>Regularity Score</Text>
           </View>
-          <View style={[styles.divider, { backgroundColor: colors.surfaceNeutral }]} />
+          <View style={[styles.divider, { backgroundColor: colors.surfaceNeutral, height: scale(40) }]} />
           <View style={styles.statBox}>
             <View style={styles.trendRow}>
               <Ionicons 
                 name={getTrendIcon(stats.cycleLengthTrend) as any} 
-                size={20} 
+                size={scale(20)} 
                 color={stats.cycleLengthTrend !== 'UNKNOWN' ? colors.brand.primary : colors.text.secondary} 
               />
               <Heading level="h3" style={{ color: stats.cycleLengthTrend !== 'UNKNOWN' ? colors.text.primary : colors.text.secondary }}>
@@ -100,7 +101,7 @@ export function OverviewTab({ stats }: Props) {
             <Heading level="h2" style={{ color: colors.text.primary }}>{stats.shortestCycle}</Heading>
             <Text variant="caption" style={{ color: colors.text.secondary }}>Shortest (days)</Text>
           </View>
-          <View style={[styles.divider, { backgroundColor: colors.surfaceNeutral }]} />
+          <View style={[styles.divider, { backgroundColor: colors.surfaceNeutral, height: scale(40) }]} />
           <View style={styles.statBox}>
             <Heading level="h2" style={{ color: colors.text.primary }}>{stats.longestCycle}</Heading>
             <Text variant="caption" style={{ color: colors.text.secondary }}>Longest (days)</Text>
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: 1,
-    height: 40,
+    // height: scaled inline
     backgroundColor: 'transparent',
   },
   trendRow: {

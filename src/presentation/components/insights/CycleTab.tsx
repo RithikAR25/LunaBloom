@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import { fontSize, fontFamily } from '@/design-system';
+import { useScaling, fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useCycleStore } from '@/presentation/stores/useCycleStore';
 import { useDailyLogStore } from '@/presentation/stores/useDailyLogStore';
@@ -62,8 +62,12 @@ function CyclePhaseBar({ phaseLengths, colors }: { phaseLengths: CyclePhaseLengt
 
 export function CycleTab({ stats }: Props) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const { cycles } = useCycleStore();
   const { logs, loadLogsForRange } = useDailyLogStore();
+  
+  const dotSize = scale(12);
+  const dotRadius = Math.round(dotSize / 2);
   
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   
@@ -155,22 +159,22 @@ export function CycleTab({ stats }: Props) {
 
         <View style={styles.legend}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: colors.phase.menstrual }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.phase.menstrual, width: dotSize, height: dotSize, borderRadius: dotRadius }]} />
             <Text style={[styles.legendText, { color: colors.text.primary }]}>Menstrual</Text>
             <Text style={[styles.legendDays, { color: colors.text.secondary }]}>{menstrual}d</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: colors.phase.follicular }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.phase.follicular, width: dotSize, height: dotSize, borderRadius: dotRadius }]} />
             <Text style={[styles.legendText, { color: colors.text.primary }]}>Follicular</Text>
             <Text style={[styles.legendDays, { color: colors.text.secondary }]}>{follicular}d</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: colors.phase.ovulatory }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.phase.ovulatory, width: dotSize, height: dotSize, borderRadius: dotRadius }]} />
             <Text style={[styles.legendText, { color: colors.text.primary }]}>Ovulatory</Text>
             <Text style={[styles.legendDays, { color: colors.text.secondary }]}>{ovulatory}d</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: colors.phase.luteal }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.phase.luteal, width: dotSize, height: dotSize, borderRadius: dotRadius }]} />
             <Text style={[styles.legendText, { color: colors.text.primary }]}>Luteal</Text>
             <Text style={[styles.legendDays, { color: colors.text.secondary }]}>{luteal}d</Text>
           </View>
@@ -190,7 +194,7 @@ export function CycleTab({ stats }: Props) {
               <Text style={[styles.sortButtonText, { color: colors.brand.primary }]}>
                 {sortOrder === 'desc' ? 'Latest first' : 'Oldest first'}
               </Text>
-              <Ionicons name="chevron-down" size={16} color={colors.brand.primary} />
+              <Ionicons name="chevron-down" size={scale(16)} color={colors.brand.primary} />
             </Pressable>
           </View>
           
@@ -250,7 +254,7 @@ export function CycleTab({ stats }: Props) {
                     <View style={styles.cycleCardRight}>
                       <Ionicons 
                         name={isExpanded ? "chevron-down" : "chevron-forward"} 
-                        size={20} 
+                        size={scale(20)} 
                         color={isActive ? colors.brand.primary : colors.text.secondary} 
                       />
                     </View>
@@ -338,9 +342,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   legendDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
     marginRight: 8,
   },
   legendText: {

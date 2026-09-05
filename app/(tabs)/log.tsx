@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing } from '@/design-system';
+import { useScaling, spacing } from '@/design-system';
 import { Text } from '@/presentation/components/ui/Text';
 import { Heading } from '@/presentation/components/ui/Heading';
 import { Button } from '@/presentation/components/ui/Button';
@@ -34,6 +34,7 @@ import { DotRating } from '@/presentation/components/log/DotRating';
 
 export default function LogScreen() {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<{ date?: string }>();
@@ -177,10 +178,10 @@ export default function LogScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
       <View style={styles.header}>
         <Pressable accessibilityRole="button" onPress={() => router.back()} hitSlop={15}>
-          <Feather name="arrow-left" size={24} color={colors.text.primary} />
+          <Feather name="arrow-left" size={scale(24)} color={colors.text.primary} />
         </Pressable>
         <Heading level="h2" style={{ color: colors.text.primary }}>Daily Log</Heading>
-        <View style={{ width: 24 }} />
+        <View style={{ width: scale(24) }} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}>
@@ -189,7 +190,7 @@ export default function LogScreen() {
             style={[styles.dateButton, { backgroundColor: colors.surface }]} 
             onPress={() => setShowDatePicker(true)}
           >
-            <Feather name="calendar" size={18} color={colors.brand.primary} />
+            <Feather name="calendar" size={scale(18)} color={colors.brand.primary} />
             <Text variant="body" weight="bold" style={{ color: colors.text.primary, marginLeft: spacing[2] }}>
               {date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
             </Text>
@@ -216,7 +217,7 @@ export default function LogScreen() {
         {/* Error Message */}
         {error && (
           <View style={[styles.errorContainer, { backgroundColor: `${colors.semantic.error}20` }]}>
-            <Feather name="alert-circle" size={16} color={colors.semantic.error} style={{ marginRight: spacing[2] }} />
+            <Feather name="alert-circle" size={scale(16)} color={colors.semantic.error} style={{ marginRight: spacing[2] }} />
             <Text variant="caption" style={{ color: colors.semantic.error }}>{error}</Text>
           </View>
         )}
@@ -319,7 +320,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[2],
-    borderRadius: 20,
+    // borderRadius: 20, (could scale, but left as is to avoid issues, or let's scale it using inline)
   },
   chipContainer: {
     flexDirection: 'row',

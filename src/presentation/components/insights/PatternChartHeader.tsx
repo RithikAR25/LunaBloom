@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { fontSize, fontFamily } from '@/design-system';
+import { useScaling, fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 
 interface Props {
@@ -21,6 +21,7 @@ export function PatternChartHeader({
   onToggleSort,
 }: Props) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
 
   return (
     <View style={styles.headerRow}>
@@ -39,7 +40,7 @@ export function PatternChartHeader({
         >
           <Ionicons
             name={viewMode === 'bar' ? 'analytics-outline' : 'bar-chart-outline'}
-            size={18}
+            size={scale(18)}
             color={colors.text.secondary}
           />
         </Pressable>
@@ -53,7 +54,7 @@ export function PatternChartHeader({
         >
           <Ionicons
             name="swap-vertical-outline"
-            size={18}
+            size={scale(18)}
             color={colors.text.secondary}
           />
         </Pressable>

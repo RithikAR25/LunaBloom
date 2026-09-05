@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { useScaling, spacing, borderRadius } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
@@ -34,6 +34,7 @@ const CONDITIONS = [
 
 export default function HealthSettingsScreen() {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const router = useRouter();
   
   const profile = useProfileStore((state) => state.profile);
@@ -72,14 +73,14 @@ export default function HealthSettingsScreen() {
   };
 
   const renderRadio = (selected: boolean) => (
-    <View style={[styles.radio, selected && { borderColor: colors.brand.primary }]}>
-      {selected && <View style={[styles.radioInner, { backgroundColor: colors.brand.primary }]} />}
+    <View style={[styles.radio, selected && { borderColor: colors.brand.primary }, { width: scale(24), height: scale(24), borderRadius: scale(12) }]}>
+      {selected && <View style={[styles.radioInner, { backgroundColor: colors.brand.primary, width: scale(12), height: scale(12), borderRadius: scale(6) }]} />}
     </View>
   );
 
   const renderCheckbox = (selected: boolean) => (
-    <View style={[styles.checkbox, { borderColor: colors.borderSubtle }, selected && { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary }]}>
-      {selected && <Ionicons name="checkmark" size={16} color={colors.text.inverse} />}
+    <View style={[styles.checkbox, { borderColor: colors.borderSubtle, width: scale(24), height: scale(24), borderRadius: scale(6) }, selected && { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary }]}>
+      {selected && <Ionicons name="checkmark" size={scale(16)} color={colors.text.inverse} />}
     </View>
   );
 
@@ -94,7 +95,7 @@ export default function HealthSettingsScreen() {
           {GOALS.map((g, i) => (
             <Pressable accessibilityRole="button" 
               key={g.value}
-              style={[styles.row, i < GOALS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSubtle }]}
+              style={[styles.row, i < GOALS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSubtle }, { minHeight: Math.max(48, scale(56)) }]}
               onPress={() => setGoal(g.value)}
             >
               <Text variant="body" style={{ color: colors.text.primary }}>{g.label}</Text>
@@ -112,7 +113,7 @@ export default function HealthSettingsScreen() {
           {BIRTH_CONTROLS.map((bc, i) => (
             <Pressable accessibilityRole="button" 
               key={bc.value}
-              style={[styles.row, i < BIRTH_CONTROLS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSubtle }]}
+              style={[styles.row, i < BIRTH_CONTROLS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSubtle }, { minHeight: Math.max(48, scale(56)) }]}
               onPress={() => setBcType(bc.value as BirthControlType)}
             >
               <Text variant="body" style={{ color: colors.text.primary }}>{bc.label}</Text>
@@ -130,7 +131,7 @@ export default function HealthSettingsScreen() {
           {CONDITIONS.map((cond, i) => (
             <Pressable accessibilityRole="button" 
               key={cond.value}
-              style={[styles.row, i < CONDITIONS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSubtle }]}
+              style={[styles.row, i < CONDITIONS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSubtle }, { minHeight: Math.max(48, scale(56)) }]}
               onPress={() => toggleCondition(cond.value as MedicalCondition)}
             >
               <Text variant="body" style={{ color: colors.text.primary }}>{cond.label}</Text>
@@ -184,25 +185,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: spacing[4],
-    minHeight: 56,
+    // minHeight: 56,
   },
   radio: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    // width: 24,
+    // height: 24,
+    // borderRadius: 12,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   radioInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    // width: 12,
+    // height: 12,
+    // borderRadius: 6,
   },
   checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
+    // width: 24,
+    // height: 24,
+    // borderRadius: 6,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,6 +1,6 @@
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { useScaling, spacing, borderRadius } from '@/design-system';
 import { Text } from '../ui/Text';
 import * as Haptics from 'expo-haptics';
 
@@ -14,6 +14,7 @@ interface RangeSliderProps {
 
 export function RangeSlider({ value, onValueChange, min = 1, max = 10, color }: RangeSliderProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const activeColor = color || colors.brand.primary;
 
   const handlePress = (val: number) => {
@@ -34,7 +35,11 @@ export function RangeSlider({ value, onValueChange, min = 1, max = 10, color }: 
               onPress={() => handlePress(val)}
               style={[
                 styles.item,
-                { backgroundColor: isSelected ? activeColor : colors.surface },
+                { 
+                  backgroundColor: isSelected ? activeColor : colors.surface,
+                  width: scale(28),
+                  height: scale(36)
+                },
                 !isSelected && { borderWidth: 1, borderColor: colors.borderSubtle }
               ]}
               accessibilityRole="button"
@@ -67,8 +72,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing[2],
   },
   item: {
-    width: 28,
-    height: 36,
+    // scale sizes applied inline
     borderRadius: borderRadius.sm,
     alignItems: 'center',
     justifyContent: 'center',

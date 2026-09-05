@@ -1,6 +1,6 @@
 import { View, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
+import { useScaling, spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from './Text';
 import { Heading } from './Heading';
 import { Button } from './Button';
@@ -24,6 +24,11 @@ export function AlertModal({
   onDismiss,
 }: AlertModalProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
+
+  const iconSize = scale(24);
+  const containerSize = scale(48);
+  const containerRadius = Math.round(containerSize / 2);
 
   let iconName: React.ComponentProps<typeof Feather>['name'] = 'info';
   let color = colors.brand.primary;
@@ -50,16 +55,16 @@ export function AlertModal({
           <View style={styles.header}>
             <View style={[
               styles.iconContainer, 
-              { backgroundColor: bgColor }
+              { backgroundColor: bgColor, width: containerSize, height: containerSize, borderRadius: containerRadius }
             ]}>
               <Feather 
                 name={iconName} 
-                size={24} 
+                size={iconSize} 
                 color={color} 
               />
             </View>
             <TouchableOpacity accessibilityRole="button" onPress={onDismiss} style={styles.closeButton}>
-              <Feather name="x" size={24} color={colors.text.secondary} />
+              <Feather name="x" size={iconSize} color={colors.text.secondary} />
             </TouchableOpacity>
           </View>
 
@@ -110,9 +115,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing[4],
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -404,4 +404,14 @@ Cycle phases use both color AND unique icons (see Section 7.3).
 
 ---
 
+## 12. Responsive Scaling vs Design Tokens
+
+LunaBloom implements a robust **Responsive Scaling Architecture** that is mathematically relative to a Pixel 10 (412x917) baseline. 
+
+**Critical Rule:** Design tokens (like `spacing.md = 24pt`) are explicitly **fixed**. They do not scale. Scaling is reserved only for raw component geometry (e.g., width of a card) to preserve the integrity of the design grid.
+
+For the comprehensive technical reference on how the math works, how to use `useScaling()`, and how it interacts with these tokens, see: **[20_Responsive_Scaling.md](./20_Responsive_Scaling.md)**.
+
+---
+
 *Design System v1.0.0 — Source of truth for all LunaBloom visual decisions.*

@@ -1,7 +1,7 @@
 import { StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, borderRadius, fontFamily } from '@/design-system';
+import { useScaling, spacing, borderRadius, fontFamily } from '@/design-system';
 import { Text } from '../ui/Text';
 
 interface GridActionButtonProps {
@@ -22,6 +22,7 @@ export function GridActionButton({
   accessibilityHint
 }: GridActionButtonProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
 
   const isPrimary = variant === 'primary';
   const bgColor = isPrimary ? colors.brand.primary : colors.surface;
@@ -39,7 +40,7 @@ export function GridActionButton({
       accessibilityLabel={accessibilityLabel || label}
       accessibilityHint={accessibilityHint}
     >
-      <Feather name={icon} size={24} color={fgColor} style={styles.icon} />
+      <Feather name={icon} size={scale(24)} color={fgColor} style={styles.icon} />
       <Text style={[styles.label, { color: fgColor }]}>
         {label}
       </Text>

@@ -443,6 +443,9 @@ Verify the application is inclusive and usable for all individuals.
 - Interactive touch targets are comfortably sized (minimum 44x44).
 - Color contrast between text and backgrounds remains highly legible.
 
+### Responsive Scaling QA
+To verify that the application scales correctly across small and large viewports, you must execute the full Responsive QA Checklist found in Section 30 of the **[Responsive Scaling Documentation](./20_Responsive_Scaling.md)**.
+
 **Edge Cases**
 - Extremely large accessibility text sizing.
 

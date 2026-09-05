@@ -8,11 +8,12 @@ import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, SCREEN_HORIZONTAL_PADDING } from '../../src/design-system';
+import { useScaling, spacing, SCREEN_HORIZONTAL_PADDING } from '../../src/design-system';
 
 export default function CompleteScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const { completeOnboardingFlow } = useProfileStore();
   const onboardingState = useOnboardingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,7 +57,7 @@ export default function CompleteScreen() {
           </Text>
         </View>
 
-        <View style={[styles.disclaimerBox, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
+        <View style={[styles.disclaimerBox, { backgroundColor: colors.surface, borderColor: colors.borderSubtle, borderRadius: scale(16) }]}>
           <Heading level="h3" style={{ color: colors.text.primary, marginBottom: spacing[3] }}>
             Medical Disclaimer
           </Heading>
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
   },
   disclaimerBox: {
     padding: spacing[6],
-    borderRadius: 16,
+    // borderRadius: 16,
     borderWidth: 1,
   },
   footer: {

@@ -1,0 +1,1882 @@
+{
+  "results": [
+    {
+      "file": "app\\(auth)\\lock.tsx",
+      "prop": "gap",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(auth)\\lock.tsx",
+      "prop": "fontSize",
+      "val": "22",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(auth)\\lock.tsx",
+      "prop": "fontSize",
+      "val": "15",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\calendar.tsx",
+      "prop": "fontSize",
+      "val": "13",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\calendar.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\calendar.tsx",
+      "prop": "lineHeight",
+      "val": "18",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\calendar.tsx",
+      "prop": "fontSize",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\calendar.tsx",
+      "prop": "fontSize",
+      "val": "13",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\calendar.tsx",
+      "prop": "fontSize",
+      "val": "14",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\CalendarHeader.tsx",
+      "prop": "paddingHorizontal",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\CalendarHeader.tsx",
+      "prop": "paddingVertical",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\ViewModeSlider.tsx",
+      "prop": "paddingVertical",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\DayCell.tsx",
+      "prop": "padding",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\DayCell.tsx",
+      "prop": "fontSize",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\CalendarLegend.tsx",
+      "prop": "gap",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\CalendarLegend.tsx",
+      "prop": "gap",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\MiniMonthGrid.tsx",
+      "prop": "marginBottom",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\MiniMonthGrid.tsx",
+      "prop": "fontSize",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\MiniMonthGrid.tsx",
+      "prop": "marginBottom",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\MiniDayCell.tsx",
+      "prop": "padding",
+      "val": "1",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\MiniDayCell.tsx",
+      "prop": "fontSize",
+      "val": "9",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\Button.tsx",
+      "prop": "minHeight",
+      "val": "scale(48)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\Button.tsx",
+      "prop": "minHeight",
+      "val": "48",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\ConfirmModal.tsx",
+      "prop": "maxWidth",
+      "val": "400",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\ConfirmModal.tsx",
+      "prop": "width",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\ConfirmModal.tsx",
+      "prop": "height",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\AlertModal.tsx",
+      "prop": "maxWidth",
+      "val": "400",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\AlertModal.tsx",
+      "prop": "width",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\AlertModal.tsx",
+      "prop": "height",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "fontSize",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "fontSize",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "fontSize",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "fontSize",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "fontSize",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "lineHeight",
+      "val": "18",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "maxWidth",
+      "val": "400",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "borderRadius",
+      "val": "32",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "width",
+      "val": "32",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "height",
+      "val": "32",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "borderRadius",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "width",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "height",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "fontSize",
+      "val": "10",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "width",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "height",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "borderRadius",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "fontSize",
+      "val": "20",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "fontSize",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "marginTop",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "borderRadius",
+      "val": "20",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "width",
+      "val": "32",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "height",
+      "val": "32",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+      "prop": "borderRadius",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\DateRangePickerGrid.tsx",
+      "prop": "width",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\DateRangePickerGrid.tsx",
+      "prop": "height",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\DateRangePickerGrid.tsx",
+      "prop": "marginVertical",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\calendar\\DateRangePickerGrid.tsx",
+      "prop": "marginVertical",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\index.tsx",
+      "prop": "fontSize",
+      "val": "28",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\index.tsx",
+      "prop": "lineHeight",
+      "val": "32",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\index.tsx",
+      "prop": "fontSize",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\index.tsx",
+      "prop": "paddingBottom",
+      "val": "scale(100)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\(tabs)\\index.tsx",
+      "prop": "fontSize",
+      "val": "13",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\index.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\index.tsx",
+      "prop": "lineHeight",
+      "val": "18",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\MinimalCycleHero.tsx",
+      "prop": "fontSize",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\MinimalCycleHero.tsx",
+      "prop": "fontSize",
+      "val": "64",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\MinimalCycleHero.tsx",
+      "prop": "lineHeight",
+      "val": "72",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\MinimalCycleHero.tsx",
+      "prop": "fontSize",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\GridActionButton.tsx",
+      "prop": "fontSize",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\TodayLogCard.tsx",
+      "prop": "fontSize",
+      "val": "22",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\TodayLogCard.tsx",
+      "prop": "width",
+      "val": "scale(80)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\TodayLogCard.tsx",
+      "prop": "width",
+      "val": "scale(80)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\TodayLogCard.tsx",
+      "prop": "paddingVertical",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\dashboard\\CycleHistoryChart.tsx",
+      "prop": "width",
+      "val": "scale(40)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\InsightsEmptyState.tsx",
+      "prop": "padding",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\InsightsEmptyState.tsx",
+      "prop": "gap",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\InsightsEmptyState.tsx",
+      "prop": "marginBottom",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\OverviewTab.tsx",
+      "prop": "height",
+      "val": "scale(40)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\OverviewTab.tsx",
+      "prop": "height",
+      "val": "scale(40)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\OverviewTab.tsx",
+      "prop": "height",
+      "val": "scale(40)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\OverviewTab.tsx",
+      "prop": "width",
+      "val": "1",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "fontSize",
+      "val": "10",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginTop",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "padding",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "gap",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "borderRadius",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "padding",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginBottom",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginBottom",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "height",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "borderRadius",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginBottom",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "gap",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginRight",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginTop",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginBottom",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "paddingHorizontal",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "fontSize",
+      "val": "20",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "borderRadius",
+      "val": "100",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "paddingHorizontal",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "paddingVertical",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "gap",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "gap",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "borderRadius",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "padding",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginBottom",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginLeft",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "paddingHorizontal",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "paddingVertical",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "borderRadius",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "fontSize",
+      "val": "10",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "fontSize",
+      "val": "11",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginBottom",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "marginLeft",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "padding",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "paddingTop",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "paddingVertical",
+      "val": "20",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "gap",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "gap",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\CycleTab.tsx",
+      "prop": "gap",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "padding",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "gap",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "padding",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "borderRadius",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "padding",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "marginBottom",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "marginRight",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "marginTop",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "paddingTop",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "marginTop",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "marginBottom",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "gap",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "fontSize",
+      "val": "10",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "gap",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "paddingHorizontal",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "paddingVertical",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "borderRadius",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "gap",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "gap",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "gap",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "height",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "borderRadius",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+      "prop": "borderRadius",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "paddingVertical",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "marginBottom",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "marginBottom",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "marginBottom",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "padding",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "gap",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "borderRadius",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "padding",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "marginBottom",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "marginBottom",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "gap",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "paddingBottom",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "gap",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "fontSize",
+      "val": "10",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "fontSize",
+      "val": "9",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "marginBottom",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "marginBottom",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "height",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "borderRadius",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "marginBottom",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternsTab.tsx",
+      "prop": "borderRadius",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternChartHeader.tsx",
+      "prop": "paddingRight",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternChartHeader.tsx",
+      "prop": "marginBottom",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternChartHeader.tsx",
+      "prop": "gap",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\PatternChartHeader.tsx",
+      "prop": "padding",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+      "prop": "marginTop",
+      "val": "scale(24)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+      "prop": "marginTop",
+      "val": "scale(24)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+      "prop": "paddingVertical",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+      "prop": "paddingRight",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+      "prop": "height",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+      "prop": "lineHeight",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+      "prop": "height",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+      "prop": "fontSize",
+      "val": "10",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+      "prop": "fontSize",
+      "val": "10",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\log.tsx",
+      "prop": "width",
+      "val": "scale(24)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\(tabs)\\log.tsx",
+      "prop": "borderRadius",
+      "val": "20",
+      "isScaled": false
+    },
+    {
+      "file": "app\\(tabs)\\log.tsx",
+      "prop": "borderRadius",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\log\\FlowSelector.tsx",
+      "prop": "paddingVertical",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\log\\SectionCard.tsx",
+      "prop": "paddingTop",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\log\\RangeSlider.tsx",
+      "prop": "width",
+      "val": "scale(28)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\log\\RangeSlider.tsx",
+      "prop": "height",
+      "val": "scale(36)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\(tabs)\\settings.tsx",
+      "prop": "borderRadius",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\settings\\SettingsRow.tsx",
+      "prop": "minHeight",
+      "val": "scale(56)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\settings\\SettingsRow.tsx",
+      "prop": "width",
+      "val": "scale(28)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\settings\\SettingsRow.tsx",
+      "prop": "minHeight",
+      "val": "56",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\settings\\SettingsToggle.tsx",
+      "prop": "minHeight",
+      "val": "scale(56)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\settings\\SettingsToggle.tsx",
+      "prop": "width",
+      "val": "scale(28)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\settings\\SettingsToggle.tsx",
+      "prop": "minHeight",
+      "val": "56",
+      "isScaled": false
+    },
+    {
+      "file": "app\\+not-found.tsx",
+      "prop": "padding",
+      "val": "scale(20)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\+not-found.tsx",
+      "prop": "fontSize",
+      "val": "scale(20)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\+not-found.tsx",
+      "prop": "marginTop",
+      "val": "scale(16)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\+not-found.tsx",
+      "prop": "fontSize",
+      "val": "scale(15)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\LunaBloomLoader.tsx",
+      "prop": "width",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\LunaBloomLoader.tsx",
+      "prop": "height",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\LunaBloomLoader.tsx",
+      "prop": "width",
+      "val": "140",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\LunaBloomLoader.tsx",
+      "prop": "height",
+      "val": "140",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\LunaBloomLoader.tsx",
+      "prop": "marginBottom",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\LunaBloomLoader.tsx",
+      "prop": "fontSize",
+      "val": "32",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\learn\\MedicalDisclaimer.tsx",
+      "prop": "marginTop",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "app\\learn\\[phase].tsx",
+      "prop": "lineHeight",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\complete.tsx",
+      "prop": "borderRadius",
+      "val": "scale(16)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\complete.tsx",
+      "prop": "borderRadius",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+      "prop": "height",
+      "val": "scale(56)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+      "prop": "minWidth",
+      "val": "scale(60)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+      "prop": "width",
+      "val": "scale(60)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+      "prop": "width",
+      "val": "scale(60)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+      "prop": "paddingHorizontal",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\onboarding\\OnboardingProgress.tsx",
+      "prop": "height",
+      "val": "scale(8)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\onboarding\\OnboardingProgress.tsx",
+      "prop": "borderRadius",
+      "val": "scale(4)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\goal.tsx",
+      "prop": "width",
+      "val": "scale(24)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\goal.tsx",
+      "prop": "height",
+      "val": "scale(24)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\goal.tsx",
+      "prop": "borderRadius",
+      "val": "scale(4)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\goal.tsx",
+      "prop": "fontSize",
+      "val": "scale(12)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\goal.tsx",
+      "prop": "width",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\goal.tsx",
+      "prop": "height",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\goal.tsx",
+      "prop": "borderRadius",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "padding",
+      "val": "scale(12)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "borderRadius",
+      "val": "scale(20)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "width",
+      "val": "scale(44)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "height",
+      "val": "scale(44)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "borderRadius",
+      "val": "scale(22)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "paddingBottom",
+      "val": "40",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "paddingHorizontal",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "marginTop",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "marginTop",
+      "val": "16",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "lineHeight",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "paddingHorizontal",
+      "val": "8",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "marginTop",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "padding",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "borderRadius",
+      "val": "20",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "width",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "width",
+      "val": "44",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "height",
+      "val": "44",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "borderRadius",
+      "val": "22",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "marginBottom",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "fontSize",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "marginBottom",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "fontSize",
+      "val": "14",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "lineHeight",
+      "val": "22",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "paddingHorizontal",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "paddingTop",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\index.tsx",
+      "prop": "height",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\onboarding\\last-period.tsx",
+      "prop": "borderRadius",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\TextInput.tsx",
+      "prop": "minHeight",
+      "val": "scale(48)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\TextInput.tsx",
+      "prop": "paddingLeft",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\TextInput.tsx",
+      "prop": "paddingRight",
+      "val": "0",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\TextInput.tsx",
+      "prop": "marginBottom",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\TextInput.tsx",
+      "prop": "minHeight",
+      "val": "48",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\ui\\TextInput.tsx",
+      "prop": "marginTop",
+      "val": "2",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\cycle.tsx",
+      "prop": "height",
+      "val": "scale(52)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\cycle.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\cycle.tsx",
+      "prop": "marginLeft",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\cycle.tsx",
+      "prop": "height",
+      "val": "scale(52)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\cycle.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\cycle.tsx",
+      "prop": "marginLeft",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\cycle.tsx",
+      "prop": "height",
+      "val": "52",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "width",
+      "val": "scale(24)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "height",
+      "val": "scale(24)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "borderRadius",
+      "val": "scale(12)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "width",
+      "val": "scale(12)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "height",
+      "val": "scale(12)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "borderRadius",
+      "val": "scale(6)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "width",
+      "val": "scale(24)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "height",
+      "val": "scale(24)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "borderRadius",
+      "val": "scale(6)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "minHeight",
+      "val": "56",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "width",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "height",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "borderRadius",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "width",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "height",
+      "val": "12",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "borderRadius",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "width",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "height",
+      "val": "24",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\health.tsx",
+      "prop": "borderRadius",
+      "val": "6",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\notifications.tsx",
+      "prop": "marginBottom",
+      "val": "scale(2)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\notifications.tsx",
+      "prop": "marginBottom",
+      "val": "scale(2)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\privacy.tsx",
+      "prop": "height",
+      "val": "52",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\profile.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\profile.tsx",
+      "prop": "marginLeft",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\profile.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\profile.tsx",
+      "prop": "marginLeft",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\profile.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\profile.tsx",
+      "prop": "marginLeft",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\profile.tsx",
+      "prop": "marginTop",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\profile.tsx",
+      "prop": "marginLeft",
+      "val": "4",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\profile.tsx",
+      "prop": "height",
+      "val": "52",
+      "isScaled": false
+    },
+    {
+      "file": "app\\settings\\_layout.tsx",
+      "prop": "marginLeft",
+      "val": "scale(8)",
+      "isScaled": true
+    },
+    {
+      "file": "app\\settings\\_layout.tsx",
+      "prop": "marginRight",
+      "val": "scale(16)",
+      "isScaled": true
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "width",
+      "val": "48",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "height",
+      "val": "48",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "paddingTop",
+      "val": "80",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "width",
+      "val": "20",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "height",
+      "val": "20",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "borderRadius",
+      "val": "10",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "minHeight",
+      "val": "420",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "paddingBottom",
+      "val": "60",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "width",
+      "val": "72",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "height",
+      "val": "72",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "borderRadius",
+      "val": "36",
+      "isScaled": false
+    },
+    {
+      "file": "src\\presentation\\components\\privacy\\LockScreen.tsx",
+      "prop": "fontSize",
+      "val": "28",
+      "isScaled": false
+    }
+  ],
+  "scalingUsage": [
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\calendar\\CalendarLegend.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\presentation\\components\\ui\\ConfirmModal.tsx",
+    "src\\presentation\\components\\ui\\AlertModal.tsx",
+    "src\\presentation\\components\\calendar\\DateRangePickerGrid.tsx",
+    "app\\(tabs)\\index.tsx",
+    "src\\presentation\\components\\dashboard\\GridActionButton.tsx",
+    "src\\presentation\\components\\dashboard\\TodayLogCard.tsx",
+    "src\\presentation\\components\\dashboard\\HealthTipCard.tsx",
+    "src\\presentation\\components\\dashboard\\CycleHistoryChart.tsx",
+    "src\\presentation\\components\\insights\\InsightsEmptyState.tsx",
+    "src\\presentation\\components\\insights\\OverviewTab.tsx",
+    "src\\presentation\\components\\insights\\CycleTab.tsx",
+    "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+    "src\\presentation\\components\\insights\\PatternsTab.tsx",
+    "src\\presentation\\components\\insights\\PatternChartHeader.tsx",
+    "src\\presentation\\components\\insights\\DynamicLineChart.tsx",
+    "app\\(tabs)\\log.tsx",
+    "src\\presentation\\components\\log\\SelectableChip.tsx",
+    "src\\presentation\\components\\log\\RangeSlider.tsx",
+    "src\\presentation\\components\\settings\\SettingsRow.tsx",
+    "src\\presentation\\components\\settings\\SettingsToggle.tsx",
+    "app\\+not-found.tsx",
+    "src\\presentation\\components\\ui\\LunaBloomLoader.tsx",
+    "src\\presentation\\components\\learn\\MedicalDisclaimer.tsx",
+    "app\\learn\\index.tsx",
+    "src\\presentation\\components\\learn\\PhaseCard.tsx",
+    "src\\presentation\\components\\learn\\ContentSection.tsx",
+    "app\\onboarding\\complete.tsx",
+    "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+    "src\\presentation\\components\\onboarding\\OnboardingProgress.tsx",
+    "src\\presentation\\components\\ui\\NumberStepper.tsx",
+    "app\\onboarding\\goal.tsx",
+    "app\\onboarding\\index.tsx",
+    "src\\presentation\\components\\ui\\TextInput.tsx",
+    "app\\settings\\cycle.tsx",
+    "app\\settings\\health.tsx",
+    "app\\settings\\notifications.tsx",
+    "app\\settings\\_layout.tsx"
+  ]
+}

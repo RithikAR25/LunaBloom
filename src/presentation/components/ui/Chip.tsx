@@ -15,7 +15,7 @@
 import { useState, useCallback } from 'react';
 import { Animated, Pressable, View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius, fontSize, spacing, fontFamily, palette } from '@/design-system';
+import { useScaling, borderRadius, fontSize, spacing, fontFamily, palette } from '@/design-system';
 
 export type ChipColorVariant =
   | 'primary'
@@ -69,6 +69,7 @@ export function Chip({
   readOnly = false,
 }: ChipProps) {
   const { colors, isDark } = useTheme();
+  const { scale } = useScaling();
   const [scaleAnim] = useState(() => new Animated.Value(1));
 
   const handlePressIn = useCallback(() => {
@@ -87,7 +88,7 @@ export function Chip({
   const borderWidth = selected ? 0 : 2;
 
   const chipContent = (
-    <View style={[styles.inner, { backgroundColor: bgColor, borderColor, borderWidth }]}>
+    <View style={[styles.inner, { backgroundColor: bgColor, borderColor, borderWidth, minHeight: scale(36) }]}>
       {icon !== undefined && <View style={styles.icon}>{icon}</View>}
       <Text
         style={[styles.label, { color: textColor }]}
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
-    minHeight: 36,
+    // minHeight: 36, // scaled inline
     gap: spacing.base,
   },
   icon: {

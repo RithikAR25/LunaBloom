@@ -1,0 +1,834 @@
+{
+  "app\\(auth)\\lock.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts"
+  ],
+  "src\\presentation\\hooks\\useTheme.ts": [
+    "src\\design-system/index.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\stores\\useProfileStore.ts"
+  ],
+  "src\\design-system/index.ts": [
+    "src\\design-system/index.ts",
+    "src\\presentation\\hooks\\useTheme.ts"
+  ],
+  "src\\presentation\\stores\\useProfileStore.ts": [
+    "src\\domain\\models\\UserProfile.ts",
+    "src\\domain\\repositories\\IUserProfileRepository.ts",
+    "src\\domain\\errors/index.ts",
+    "src\\domain\\use-cases\\profile\\CompleteOnboarding.ts",
+    "src\\domain\\use-cases\\profile\\UpdateProfile.ts",
+    "src\\domain\\repositories\\ICycleRepository.ts"
+  ],
+  "src\\domain\\models\\UserProfile.ts": [
+    "src\\domain\\models\\index.ts"
+  ],
+  "src\\domain\\models\\index.ts": [],
+  "src\\domain\\repositories\\IUserProfileRepository.ts": [
+    "src\\domain\\models\\UserProfile.ts"
+  ],
+  "src\\domain\\errors/index.ts": [],
+  "src\\domain\\use-cases\\profile\\CompleteOnboarding.ts": [
+    "src\\domain\\repositories\\IUserProfileRepository.ts",
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\models/index.ts",
+    "src\\domain\\models\\UserProfile.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\domain\\repositories\\ICycleRepository.ts": [
+    "src\\domain\\models\\Cycle.ts"
+  ],
+  "src\\domain\\models\\Cycle.ts": [
+    "src\\domain\\models\\index.ts"
+  ],
+  "src\\domain\\models/index.ts": [],
+  "src\\utils\\dateUtils.ts": [],
+  "src\\domain\\use-cases\\profile\\UpdateProfile.ts": [
+    "src\\domain\\repositories\\IUserProfileRepository.ts",
+    "src\\domain\\models/index.ts"
+  ],
+  "app\\(auth)\\_layout.tsx": [],
+  "app\\(tabs)\\calendar.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\stores\\useCycleStore.ts",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\components\\calendar\\CycleCalendar.tsx",
+    "src\\utils\\dateUtils.ts",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\presentation\\components\\ui\\ConfirmModal.tsx",
+    "src\\presentation\\components\\ui\\AlertModal.tsx",
+    "src\\presentation\\components\\calendar\\EditCycleModal.tsx",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\services\\ValidationService.ts",
+    "src\\domain\\prediction/index.ts",
+    "src\\presentation\\components\\calendar\\ViewModeSlider.tsx"
+  ],
+  "src\\presentation\\stores\\useCycleStore.ts": [
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\errors/index.ts",
+    "src\\domain\\use-cases\\cycle\\StartPeriod.ts",
+    "src\\domain\\use-cases\\cycle\\EndPeriod.ts",
+    "src\\domain\\use-cases\\cycle\\EditCycleEntry.ts",
+    "src\\domain\\use-cases\\cycle\\DeleteCycleEntry.ts",
+    "src\\domain\\services\\ValidationService.ts",
+    "src\\presentation\\stores\\useProfileStore.ts"
+  ],
+  "src\\domain\\use-cases\\cycle\\StartPeriod.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\services\\ValidationService.ts",
+    "src\\domain\\errors/index.ts",
+    "src\\domain\\services\\CycleDurationResolver.ts"
+  ],
+  "src\\domain\\services\\ValidationService.ts": [
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\domain\\services\\CycleDurationResolver.ts": [
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\domain\\use-cases\\cycle\\EndPeriod.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\services\\ValidationService.ts",
+    "src\\domain\\errors/index.ts"
+  ],
+  "src\\domain\\use-cases\\cycle\\EditCycleEntry.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\services\\ValidationService.ts",
+    "src\\domain\\errors/index.ts",
+    "src\\domain\\services\\CycleDurationResolver.ts"
+  ],
+  "src\\domain\\use-cases\\cycle\\DeleteCycleEntry.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\presentation\\components\\calendar\\CycleCalendar.tsx": [
+    "src\\presentation\\components\\calendar\\CalendarHeader.tsx",
+    "src\\presentation\\components\\calendar\\CalendarGrid.tsx",
+    "src\\presentation\\components\\calendar\\CalendarLegend.tsx",
+    "src\\presentation\\components\\calendar\\YearCalendar.tsx",
+    "src\\presentation\\components\\calendar\\ViewModeSlider.tsx",
+    "src\\presentation\\components\\calendar\\DayCell.tsx",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\prediction/index.ts"
+  ],
+  "src\\presentation\\components\\calendar\\CalendarHeader.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\calendar\\MonthYearPicker.tsx",
+    "src\\presentation\\components\\calendar\\ViewModeSlider.tsx"
+  ],
+  "src\\presentation\\components\\calendar\\MonthYearPicker.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\presentation\\components\\ui\\BottomPickerModal.tsx",
+    "src\\presentation\\components\\ui\\WheelPicker.tsx",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\ui\\BottomPickerModal.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\ui\\WheelPicker.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\calendar\\ViewModeSlider.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\calendar\\CalendarGrid.tsx": [
+    "src\\presentation\\components\\calendar\\DayCell.tsx",
+    "src\\presentation\\components\\calendar\\DayCell.tsx",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\domain\\prediction/index.ts"
+  ],
+  "src\\presentation\\components\\calendar\\DayCell.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\domain\\prediction/index.ts"
+  ],
+  "src\\domain\\prediction/index.ts": [],
+  "src\\presentation\\components\\calendar\\CalendarLegend.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\calendar\\YearCalendar.tsx": [
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\calendar\\MiniMonthGrid.tsx",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\prediction\\PredictionEngine.ts"
+  ],
+  "src\\presentation\\components\\calendar\\MiniMonthGrid.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\calendar\\MiniDayCell.tsx",
+    "src\\presentation\\components\\calendar\\DayCell.tsx",
+    "src\\domain\\prediction\\services\\PhaseResolver.ts",
+    "src\\domain\\prediction\\PredictionEngine.ts"
+  ],
+  "src\\presentation\\components\\calendar\\MiniDayCell.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\calendar\\DayCell.tsx",
+    "src\\domain\\prediction/index.ts"
+  ],
+  "src\\domain\\prediction\\services\\PhaseResolver.ts": [
+    "src\\domain\\prediction\\models\\TimelineEvent.ts",
+    "src\\domain\\prediction\\models\\PhaseInterval.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\domain\\prediction\\models\\TimelineEvent.ts": [],
+  "src\\domain\\prediction\\models\\PhaseInterval.ts": [
+    "src\\domain\\prediction\\models\\TimelineEvent.ts"
+  ],
+  "src\\domain\\prediction\\PredictionEngine.ts": [
+    "src\\domain\\prediction\\services\\CyclePredictionService.ts",
+    "src\\domain\\prediction\\services\\TimelineBuilder.ts",
+    "src\\domain\\prediction\\services\\PhaseResolver.ts",
+    "src\\domain\\prediction\\services\\TimelineIndexer.ts",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\prediction\\models\\TimelineEvent.ts",
+    "src\\domain\\prediction\\services\\DashboardMetricsBuilder.ts",
+    "src\\domain\\prediction\\models\\PredictionSummary.ts",
+    "src\\domain\\prediction\\models\\PhaseInterval.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\domain\\prediction\\services\\CyclePredictionService.ts": [
+    "src\\domain\\models\\Cycle.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\prediction\\models\\TimelineEvent.ts",
+    "src\\domain\\prediction\\models\\CyclePrediction.ts",
+    "src\\domain\\prediction\\models\\CycleBiology.ts",
+    "src\\domain\\prediction\\utils\\statisticsUtils.ts"
+  ],
+  "src\\domain\\prediction\\models\\CyclePrediction.ts": [
+    "src\\domain\\prediction\\models\\TimelineEvent.ts"
+  ],
+  "src\\domain\\prediction\\models\\CycleBiology.ts": [],
+  "src\\domain\\prediction\\utils\\statisticsUtils.ts": [],
+  "src\\domain\\prediction\\services\\TimelineBuilder.ts": [
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\prediction\\models\\CyclePrediction.ts",
+    "src\\domain\\prediction\\models\\PhaseInterval.ts",
+    "src\\domain\\prediction\\models\\TimelineEvent.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\prediction\\services\\CyclePredictionService.ts",
+    "src\\domain\\prediction\\models\\CycleBiology.ts"
+  ],
+  "src\\domain\\prediction\\services\\TimelineIndexer.ts": [
+    "src\\domain\\prediction\\models\\TimelineEvent.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\domain\\prediction\\services\\DashboardMetricsBuilder.ts": [
+    "src\\domain\\prediction\\models\\TimelineEvent.ts",
+    "src\\domain\\prediction\\models\\PredictionSummary.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\prediction\\models\\CyclePrediction.ts"
+  ],
+  "src\\domain\\prediction\\models\\PredictionSummary.ts": [
+    "src\\domain\\prediction\\models\\TimelineEvent.ts"
+  ],
+  "src\\presentation\\components\\ui\\Button.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\ui\\ConfirmModal.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx"
+  ],
+  "src\\presentation\\components\\ui\\Text.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\ui\\Heading.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\ui\\AlertModal.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx"
+  ],
+  "src\\presentation\\components\\calendar\\EditCycleModal.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\services\\ValidationService.ts",
+    "src\\presentation\\components\\ui\\ConfirmModal.tsx",
+    "src\\presentation\\stores\\useCycleStore.ts",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\components\\calendar\\DateRangePickerGrid.tsx",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\presentation\\components\\calendar\\DateRangePickerGrid.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "app\\(tabs)\\index.tsx": [
+    "src\\presentation\\stores\\useCycleStore.ts",
+    "src\\presentation\\stores\\useDailyLogStore.ts",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\dashboard\\MinimalCycleHero.tsx",
+    "src\\presentation\\components\\dashboard\\GridActionButton.tsx",
+    "src\\presentation\\components\\dashboard\\TodayLogCard.tsx",
+    "src\\presentation\\components\\dashboard\\HealthTipCard.tsx",
+    "src\\presentation\\components\\dashboard\\CycleHistoryChart.tsx",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\domain\\services\\ValidationService.ts",
+    "src\\domain\\prediction/index.ts",
+    "src\\presentation\\components\\ui\\ConfirmModal.tsx",
+    "src\\presentation\\components\\ui\\AlertModal.tsx"
+  ],
+  "src\\presentation\\stores\\useDailyLogStore.ts": [
+    "src\\domain\\models\\DailyLog.ts",
+    "src\\domain\\repositories\\IDailyLogRepository.ts",
+    "src\\domain\\errors/index.ts",
+    "src\\domain\\use-cases\\log\\SaveDailyLog.ts",
+    "src\\presentation\\stores\\useCycleStore.ts"
+  ],
+  "src\\domain\\models\\DailyLog.ts": [
+    "src\\domain\\models\\index.ts"
+  ],
+  "src\\domain\\repositories\\IDailyLogRepository.ts": [
+    "src\\domain\\models\\DailyLog.ts"
+  ],
+  "src\\domain\\use-cases\\log\\SaveDailyLog.ts": [
+    "src\\domain\\repositories\\IDailyLogRepository.ts",
+    "src\\domain\\models\\DailyLog.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\errors/index.ts"
+  ],
+  "src\\presentation\\components\\dashboard\\MinimalCycleHero.tsx": [
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\domain\\prediction\\models\\TimelineEvent.ts"
+  ],
+  "src\\presentation\\components\\dashboard\\GridActionButton.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx"
+  ],
+  "src\\presentation\\components\\dashboard\\TodayLogCard.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\domain\\models\\DailyLog.ts"
+  ],
+  "src\\presentation\\components\\dashboard\\HealthTipCard.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx"
+  ],
+  "src\\presentation\\components\\dashboard\\CycleHistoryChart.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\domain\\models\\Cycle.ts"
+  ],
+  "src\\presentation\\stores\\useContentStore.ts": [],
+  "app\\(tabs)\\insights.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\stores\\useInsightsStore.ts",
+    "src\\presentation\\components\\insights\\InsightsEmptyState.tsx",
+    "src\\presentation\\components\\insights\\OverviewTab.tsx",
+    "src\\presentation\\components\\insights\\CycleTab.tsx",
+    "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx",
+    "src\\presentation\\components\\insights\\PatternsTab.tsx"
+  ],
+  "src\\presentation\\stores\\useInsightsStore.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\repositories\\IDailyLogRepository.ts",
+    "src\\domain\\repositories\\IUserProfileRepository.ts",
+    "src\\domain\\use-cases\\insights\\GetCycleStatistics.ts",
+    "src\\domain\\use-cases\\insights\\GetSymptomTrends.ts",
+    "src\\domain\\use-cases\\insights\\GetMoodTrends.ts",
+    "src\\domain\\use-cases\\insights\\GetWellbeingTrends.ts",
+    "src\\domain\\use-cases\\insights\\GetPatternInsights.ts"
+  ],
+  "src\\domain\\use-cases\\insights\\GetCycleStatistics.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\models\\Insights.ts",
+    "src\\domain\\services\\CycleAnalysisService.ts"
+  ],
+  "src\\domain\\models\\Insights.ts": [],
+  "src\\domain\\services\\CycleAnalysisService.ts": [
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\models\\Insights.ts"
+  ],
+  "src\\domain\\use-cases\\insights\\GetSymptomTrends.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\repositories\\IDailyLogRepository.ts",
+    "src\\domain\\repositories\\IUserProfileRepository.ts",
+    "src\\domain\\models\\Insights.ts",
+    "src\\domain\\services\\InsightEngine.ts"
+  ],
+  "src\\domain\\services\\InsightEngine.ts": [
+    "src\\domain\\models\\DailyLog.ts",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\services\\CyclePhaseService.ts"
+  ],
+  "src\\domain\\services\\CyclePhaseService.ts": [
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\models\\Insights.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\domain\\use-cases\\insights\\GetMoodTrends.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\repositories\\IDailyLogRepository.ts",
+    "src\\domain\\repositories\\IUserProfileRepository.ts",
+    "src\\domain\\models\\Insights.ts",
+    "src\\domain\\services\\InsightEngine.ts"
+  ],
+  "src\\domain\\use-cases\\insights\\GetWellbeingTrends.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\repositories\\IDailyLogRepository.ts",
+    "src\\domain\\repositories\\IUserProfileRepository.ts",
+    "src\\domain\\models\\Insights.ts",
+    "src\\domain\\services\\InsightEngine.ts"
+  ],
+  "src\\domain\\use-cases\\insights\\GetPatternInsights.ts": [
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\repositories\\IDailyLogRepository.ts",
+    "src\\domain\\models\\Insights.ts",
+    "src\\domain\\services\\InsightEngine.ts"
+  ],
+  "src\\presentation\\components\\insights\\InsightsEmptyState.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\insights\\OverviewTab.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\domain\\models\\Insights.ts"
+  ],
+  "src\\presentation\\components\\insights\\CycleTab.tsx": [
+    "src\\design-system/index.ts",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\presentation\\stores\\useCycleStore.ts",
+    "src\\presentation\\stores\\useDailyLogStore.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\models\\Insights.ts",
+    "src\\utils\\cycleInsightsHelper.ts"
+  ],
+  "src\\utils\\cycleInsightsHelper.ts": [
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\models\\DailyLog.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\presentation\\components\\insights\\BodyAndMoodTab.tsx": [
+    "src\\design-system/index.ts",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\domain\\models\\Insights.ts"
+  ],
+  "src\\presentation\\components\\insights\\PatternsTab.tsx": [
+    "src\\design-system/index.ts",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\domain\\models\\Insights.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\presentation\\components\\insights\\InsightsEmptyState.tsx",
+    "src\\presentation\\components\\insights\\PatternChartHeader.tsx",
+    "src\\presentation\\components\\insights\\DynamicLineChart.tsx"
+  ],
+  "src\\presentation\\components\\insights\\PatternChartHeader.tsx": [
+    "src\\design-system/index.ts",
+    "src\\presentation\\hooks\\useTheme.ts"
+  ],
+  "src\\presentation\\components\\insights\\DynamicLineChart.tsx": [
+    "src\\design-system/index.ts",
+    "src\\presentation\\hooks\\useTheme.ts"
+  ],
+  "app\\(tabs)\\log.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\presentation\\components\\ui\\AlertModal.tsx",
+    "src\\presentation\\stores\\useDailyLogStore.ts",
+    "src\\presentation\\stores\\useCycleStore.ts",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\domain\\models/index.ts",
+    "src\\presentation\\components\\log\\FlowSelector.tsx",
+    "src\\presentation\\components\\log\\SectionCard.tsx",
+    "src\\presentation\\components\\log\\SelectableChip.tsx",
+    "src\\presentation\\components\\log\\RangeSlider.tsx",
+    "src\\presentation\\components\\log\\DotRating.tsx"
+  ],
+  "src\\presentation\\components\\log\\FlowSelector.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\domain\\models/index.ts"
+  ],
+  "src\\presentation\\components\\log\\SectionCard.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\ui\\Text.tsx"
+  ],
+  "src\\presentation\\components\\log\\SelectableChip.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx"
+  ],
+  "src\\presentation\\components\\log\\RangeSlider.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx"
+  ],
+  "src\\presentation\\components\\log\\DotRating.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "app\\(tabs)\\settings.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\settings\\SettingsSection.tsx",
+    "src\\presentation\\components\\settings\\SettingsRow.tsx",
+    "src\\presentation\\components\\settings\\SettingsToggle.tsx",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\BottomPickerModal.tsx",
+    "src\\presentation\\components\\ui\\WheelPicker.tsx"
+  ],
+  "src\\presentation\\components\\settings\\SettingsSection.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx"
+  ],
+  "src\\presentation\\components\\settings\\SettingsRow.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx"
+  ],
+  "src\\presentation\\components\\settings\\SettingsToggle.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx"
+  ],
+  "app\\(tabs)\\_layout.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "app\\+not-found.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "app\\index.tsx": [
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\stores\\useCycleStore.ts",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\presentation\\components\\ui\\LunaBloomLoader.tsx"
+  ],
+  "src\\presentation\\components\\ui\\LunaBloomLoader.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Heading.tsx"
+  ],
+  "app\\learn\\glossary.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\presentation\\components\\learn\\MedicalDisclaimer.tsx"
+  ],
+  "src\\presentation\\components\\learn\\MedicalDisclaimer.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx"
+  ],
+  "app\\learn\\index.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\presentation\\components\\learn\\PhaseCard.tsx",
+    "src\\domain\\repositories\\IContentRepository.ts"
+  ],
+  "src\\presentation\\components\\learn\\PhaseCard.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\domain\\repositories\\IContentRepository.ts"
+  ],
+  "src\\domain\\repositories\\IContentRepository.ts": [],
+  "app\\learn\\[phase].tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\presentation\\components\\learn\\ContentSection.tsx",
+    "src\\presentation\\components\\learn\\MedicalDisclaimer.tsx",
+    "src\\presentation\\stores\\useProfileStore.ts"
+  ],
+  "src\\presentation\\components\\learn\\ContentSection.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\domain\\repositories\\IContentRepository.ts"
+  ],
+  "app\\learn\\_layout.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts"
+  ],
+  "app\\onboarding\\complete.tsx": [
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\stores\\useOnboardingStore.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\stores\\useOnboardingStore.ts": [
+    "src\\domain\\models\\index.ts"
+  ],
+  "app\\onboarding\\cycle.tsx": [
+    "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+    "src\\presentation\\stores\\useOnboardingStore.ts",
+    "src\\presentation\\components\\ui\\NumberStepper.tsx",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\onboarding\\OnboardingProgress.tsx",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx"
+  ],
+  "src\\presentation\\components\\onboarding\\OnboardingProgress.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\ui\\NumberStepper.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx"
+  ],
+  "app\\onboarding\\goal.tsx": [
+    "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+    "src\\presentation\\stores\\useOnboardingStore.ts",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\presentation\\components\\onboarding\\GoalCard.tsx",
+    "src\\domain\\models\\index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "src\\presentation\\components\\onboarding\\GoalCard.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx"
+  ],
+  "app\\onboarding\\index.tsx": [
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\stores\\useOnboardingStore.ts",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx"
+  ],
+  "app\\onboarding\\last-period.tsx": [
+    "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+    "src\\presentation\\stores\\useOnboardingStore.ts",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\design-system/index.ts"
+  ],
+  "app\\onboarding\\name.tsx": [
+    "src\\presentation\\components\\onboarding\\OnboardingLayout.tsx",
+    "src\\presentation\\stores\\useOnboardingStore.ts",
+    "src\\presentation\\components\\ui\\TextInput.tsx",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\design-system/index.ts",
+    "src\\domain\\services\\ValidationService.ts",
+    "src\\presentation\\hooks\\useTheme.ts"
+  ],
+  "src\\presentation\\components\\ui\\TextInput.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "app\\onboarding\\_layout.tsx": [],
+  "app\\settings\\about.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\settings\\SettingsSection.tsx"
+  ],
+  "app\\settings\\cycle.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\presentation\\components\\ui\\AlertModal.tsx",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\domain\\services\\ValidationService.ts"
+  ],
+  "app\\settings\\data.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\presentation\\components\\ui\\ConfirmModal.tsx",
+    "src\\presentation\\components\\ui\\AlertModal.tsx",
+    "src\\application\\services\\DataManagementService.ts",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\stores\\useCycleStore.ts",
+    "src\\infrastructure\\repositories\\SQLiteDailyLogRepository.ts"
+  ],
+  "src\\application\\services\\DataManagementService.ts": [
+    "src\\domain\\repositories\\IUserProfileRepository.ts",
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\repositories\\IDailyLogRepository.ts"
+  ],
+  "src\\infrastructure\\repositories\\SQLiteDailyLogRepository.ts": [
+    "src\\infrastructure\\database\\database.ts",
+    "src\\domain\\repositories\\IDailyLogRepository.ts",
+    "src\\domain\\models\\DailyLog.ts",
+    "src\\domain\\errors/index.ts",
+    "src\\utils\\dateUtils.ts",
+    "src\\domain\\models/index.ts"
+  ],
+  "src\\infrastructure\\database\\database.ts": [],
+  "app\\settings\\health.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\presentation\\components\\ui\\AlertModal.tsx",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\domain\\models\\index.ts"
+  ],
+  "app\\settings\\notifications.tsx": [
+    "src\\presentation\\components\\ui\\TimePickerModal.tsx",
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\application\\services\\NotificationService.ts",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\components\\ui\\AlertModal.tsx"
+  ],
+  "src\\presentation\\components\\ui\\TimePickerModal.tsx": [
+    "src\\presentation\\components\\ui\\BottomPickerModal.tsx",
+    "src\\presentation\\components\\ui\\WheelPicker.tsx",
+    "src\\design-system/index.ts"
+  ],
+  "src\\application\\services\\NotificationService.ts": [
+    "src\\domain\\prediction/index.ts",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\models\\UserProfile.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "app\\settings\\privacy.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\presentation\\components\\ui\\ConfirmModal.tsx",
+    "src\\presentation\\components\\ui\\AlertModal.tsx",
+    "src\\application\\services\\PrivacyService.ts"
+  ],
+  "src\\application\\services\\PrivacyService.ts": [],
+  "app\\settings\\profile.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Button.tsx",
+    "src\\presentation\\components\\ui\\AlertModal.tsx",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\domain\\services\\ValidationService.ts"
+  ],
+  "app\\settings\\_layout.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts"
+  ],
+  "app\\_layout.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\infrastructure\\database\\DatabaseProvider.tsx",
+    "src\\providers\\RepositoryProvider.tsx",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\stores\\useCycleStore.ts",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\presentation\\components\\privacy\\LockScreen.tsx",
+    "src\\application\\services\\PrivacyService.ts",
+    "src\\application\\services\\NotificationService.ts"
+  ],
+  "src\\infrastructure\\database\\DatabaseProvider.tsx": [
+    "src\\infrastructure\\database\\database.ts"
+  ],
+  "src\\providers\\RepositoryProvider.tsx": [
+    "src\\infrastructure\\database\\DatabaseProvider.tsx",
+    "src\\infrastructure\\repositories\\SQLiteCycleRepository.ts",
+    "src\\infrastructure\\repositories\\SQLiteUserProfileRepository.ts",
+    "src\\infrastructure\\repositories\\SQLiteDailyLogRepository.ts",
+    "src\\infrastructure\\repositories\\JsonContentRepository.ts",
+    "src\\presentation\\stores\\useCycleStore.ts",
+    "src\\presentation\\stores\\useProfileStore.ts",
+    "src\\presentation\\stores\\useDailyLogStore.ts",
+    "src\\presentation\\stores\\useContentStore.ts",
+    "src\\presentation\\stores\\useInsightsStore.ts"
+  ],
+  "src\\infrastructure\\repositories\\SQLiteCycleRepository.ts": [
+    "src\\infrastructure\\database\\database.ts",
+    "src\\domain\\repositories\\ICycleRepository.ts",
+    "src\\domain\\models\\Cycle.ts",
+    "src\\domain\\errors/index.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\infrastructure\\repositories\\SQLiteUserProfileRepository.ts": [
+    "src\\infrastructure\\database\\database.ts",
+    "src\\domain\\repositories\\IUserProfileRepository.ts",
+    "src\\domain\\models\\UserProfile.ts",
+    "src\\domain\\errors/index.ts",
+    "src\\utils\\dateUtils.ts"
+  ],
+  "src\\infrastructure\\repositories\\JsonContentRepository.ts": [],
+  "src\\presentation\\components\\privacy\\LockScreen.tsx": [
+    "src\\presentation\\hooks\\useTheme.ts",
+    "src\\design-system/index.ts",
+    "src\\presentation\\components\\ui\\Text.tsx",
+    "src\\presentation\\components\\ui\\Heading.tsx",
+    "src\\application\\services\\PrivacyService.ts"
+  ]
+}

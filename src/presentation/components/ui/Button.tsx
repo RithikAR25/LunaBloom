@@ -17,7 +17,7 @@ import {
   type PressableProps,
 } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius, fontSize, spacing, fontFamily, letterSpacing } from '@/design-system';
+import { useScaling, borderRadius, fontSize, spacing, fontFamily, letterSpacing } from '@/design-system';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -74,6 +74,7 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const [scaleAnim] = useState(() => new Animated.Value(1));
 
   const handlePressIn = useCallback(() => {
@@ -138,6 +139,7 @@ export function Button({
             paddingVertical: paddingVertical ?? sizeTokens.paddingVertical,
             paddingHorizontal: paddingHorizontal ?? sizeTokens.paddingHorizontal,
             opacity: isDisabled ? 0.4 : 1,
+            minHeight: scale(48),
             ...(borderRadius !== undefined ? { borderRadius } : {}),
             ...(minHeight !== undefined ? { minHeight } : {}),
           },
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm, // 8px
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48, // slightly taller for better touch target
+    // minHeight: 48, // slightly taller for better touch target (scaled inline)
   },
   fullWidth: {
     width: '100%',

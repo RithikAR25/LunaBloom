@@ -6,12 +6,14 @@ import { Feather } from '@expo/vector-icons';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
 import { useOnboardingStore } from '../../src/presentation/stores/useOnboardingStore';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
+import { useScaling } from '../../src/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
 import { Button } from '../../src/presentation/components/ui/Button';
 
 export default function WelcomeScreen() {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   
@@ -53,9 +55,9 @@ export default function WelcomeScreen() {
           </Text>
 
           {/* Privacy Card */}
-          <View style={[styles.privacyCard, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
-            <View style={[styles.lockIconContainer, { backgroundColor: colors.surfaceElevated }]}>
-              <Feather name="lock" size={18} color={colors.brand.primary} />
+          <View style={[styles.privacyCard, { backgroundColor: colors.surface, borderColor: colors.borderSubtle, padding: scale(12), borderRadius: scale(20) }]}>
+            <View style={[styles.lockIconContainer, { backgroundColor: colors.surfaceElevated, width: scale(44), height: scale(44), borderRadius: scale(22) }]}>
+              <Feather name="lock" size={scale(18)} color={colors.brand.primary} />
             </View>
             <Text style={[styles.privacyTitle, { color: colors.brand.primary }]}>PRIVACY FIRST</Text>
             <Text variant="body" style={[styles.privacyText, { color: colors.text.secondary }]}>
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 40,
+    // paddingBottom: 40, (applied inline if needed, let's leave it unscaled, it's just padding)
   },
   bannerContainer: {
     height: '60%',
@@ -112,8 +114,8 @@ const styles = StyleSheet.create({
   },
 privacyCard: {
   marginTop: 24,
-  padding: 12,
-  borderRadius: 20,
+  // padding: 12,
+  // borderRadius: 20,
   alignItems: 'center',
   width: '100%',
   
@@ -133,12 +135,11 @@ privacyCard: {
   // Note: Android elevation (elevation: 2) casts a uniform shadow all around 
   // and cannot be directed away from the bottom. If you are targeting Android, 
   // you may need to drop elevation or use a library for custom shadows.
-  elevation: 0, 
-},
+  elevation: 0,  },
   lockIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    // width: 44,
+    // height: 44,
+    // borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 2,

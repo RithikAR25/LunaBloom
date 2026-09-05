@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Switch, Pressable } from 'react-native';
 import { TimePickerModal } from '../../src/presentation/components/ui/TimePickerModal';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius, fontFamily } from '@/design-system';
+import { useScaling, spacing, borderRadius, fontFamily } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { NotificationService } from '../../src/application/services/NotificationService';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
@@ -10,6 +10,7 @@ import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
 
 export default function NotificationsSettingsScreen() {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   
   const { profile, updateProfile } = useProfileStore();
 
@@ -53,7 +54,7 @@ export default function NotificationsSettingsScreen() {
         </Text>
         <View style={[styles.card, styles.row, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
           <View style={styles.textContainer}>
-            <Text style={{ color: colors.text.primary, fontFamily: fontFamily.medium, marginBottom: 2 }}>Smart Predictions</Text>
+            <Text style={{ color: colors.text.primary, fontFamily: fontFamily.medium, marginBottom: scale(2) }}>Smart Predictions</Text>
             <Text variant="caption" style={{ color: colors.text.tertiary }}>
               Receive local, offline alerts 2 days before your period and when your fertile window starts.
             </Text>
@@ -75,7 +76,7 @@ export default function NotificationsSettingsScreen() {
         <View style={[styles.cardGroup, { backgroundColor: colors.surface, borderColor: colors.borderSubtle }]}>
           <View style={[styles.row, intimacyEnabled && styles.borderBottom, { borderBottomColor: colors.borderSubtle }]}>
             <View style={styles.textContainer}>
-              <Text style={{ color: colors.text.primary, fontFamily: fontFamily.medium, marginBottom: 2 }}>Log Intimacy</Text>
+              <Text style={{ color: colors.text.primary, fontFamily: fontFamily.medium, marginBottom: scale(2) }}>Log Intimacy</Text>
               <Text variant="caption" style={{ color: colors.text.tertiary }}>
                 Take a moment to log today's intimacy.
               </Text>

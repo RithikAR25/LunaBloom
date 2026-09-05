@@ -18,3 +18,13 @@ export { duration, iconSize } from './tokens/motion';
 export { lightTheme } from './themes/light';
 export { darkTheme } from './themes/dark';
 export type { Theme } from './themes/light';
+
+export {
+  BASE_WIDTH,
+  BASE_HEIGHT,
+  SCALE_CAP,
+  computeScaleFactors,
+  createStaticScaleFactors,
+  useScaling,
+} from './scaling';
+export type { ScaleFactors } from './scaling';

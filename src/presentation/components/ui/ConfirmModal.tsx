@@ -1,6 +1,6 @@
 import { View, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
+import { useScaling, spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from './Text';
 import { Heading } from './Heading';
 import { Button } from './Button';
@@ -30,6 +30,11 @@ export function ConfirmModal({
   children,
 }: ConfirmModalProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
+
+  const iconSize = scale(24);
+  const containerSize = scale(48);
+  const containerRadius = Math.round(containerSize / 2);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
@@ -39,16 +44,16 @@ export function ConfirmModal({
           <View style={styles.header}>
             <View style={[
               styles.iconContainer, 
-              { backgroundColor: isDestructive ? `${colors.semantic.error}20` : `${colors.brand.primary}20` }
+              { backgroundColor: isDestructive ? `${colors.semantic.error}20` : `${colors.brand.primary}20`, width: containerSize, height: containerSize, borderRadius: containerRadius }
             ]}>
               <Feather 
                 name={isDestructive ? 'alert-triangle' : 'info'} 
-                size={24} 
+                size={iconSize} 
                 color={isDestructive ? colors.semantic.error : colors.brand.primary} 
               />
             </View>
             <TouchableOpacity accessibilityRole="button" onPress={onCancel} style={styles.closeButton}>
-              <Feather name="x" size={24} color={colors.text.secondary} />
+              <Feather name="x" size={iconSize} color={colors.text.secondary} />
             </TouchableOpacity>
           </View>
 
@@ -114,9 +119,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing[4],
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },

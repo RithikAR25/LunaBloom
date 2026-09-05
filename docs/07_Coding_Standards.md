@@ -184,7 +184,8 @@ export function CyclePhaseCard({ phase, currentDay, onLearnMore }: CyclePhaseCar
 
 - **No business logic in components.** Components call Zustand store actions or hook functions — they never contain cycle math, date calculations, or data transformations.
 - **Props are typed.** Every component has an explicit `interface *Props` definition.
-- **No inline styles.** Use `StyleSheet.create()` or design system tokens.
+- **No inline styles for static bounds.** Use `StyleSheet.create()` or design system tokens.
+- **Use `useScaling()` for responsive geometry.** Never use raw `Dimensions.get('window')`. Layout structural sizes must scale, while borders, radius, and tokens remain static. See [docs/20_Responsive_Scaling.md](./20_Responsive_Scaling.md) for the exact rules of engagement.
 - **No hardcoded colors or font sizes.** Always use design tokens from `@/design-system/`.
 - **No hardcoded strings.** All user-facing text lives in constants or content JSON (i18n-readiness).
 - **Accessibility labels required.** All interactive elements must have `accessibilityLabel` and `accessibilityRole`.
