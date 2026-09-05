@@ -2,7 +2,7 @@ import type { IUserProfileRepository } from '../../repositories/IUserProfileRepo
 import type { ICycleRepository } from '../../repositories/ICycleRepository';
 import { UserProfile, CycleEntry , UserGoal } from '../../models';
 import { DEFAULT_PROFILE } from '../../models/UserProfile';
-import { generateId } from '../../../utils/dateUtils';
+import { generateId, addDays } from '../../../utils/dateUtils';
 
 export interface CompleteOnboardingParams {
   preferredName?: string | null;
@@ -47,9 +47,7 @@ export class CompleteOnboarding {
       let durationDays: number | null = null;
       if (!params.isPeriodActive) {
         // If not active, we assume it ended based on the average period duration
-        const start = new Date(params.lastPeriodDate);
-        start.setDate(start.getDate() + profile.avgPeriodDuration - 1);
-        endDate = start.toISOString().split('T')[0] ?? null;
+        endDate = addDays(params.lastPeriodDate, profile.avgPeriodDuration - 1);
         durationDays = profile.avgPeriodDuration;
       }
 

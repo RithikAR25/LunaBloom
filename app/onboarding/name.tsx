@@ -10,6 +10,7 @@ import { Button } from '../../src/presentation/components/ui/Button';
 import { spacing } from '../../src/design-system';
 import { ValidationService } from '../../src/domain/services/ValidationService';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
+import { formatDateToISO, parseISODateLocal } from '../../src/utils/dateUtils';
 
 export default function NameScreen() {
   const router = useRouter();
@@ -53,7 +54,7 @@ export default function NameScreen() {
   const onDateChange = (_event: any, selectedDate?: Date) => {
     setShowPicker(Platform.OS === 'ios');
     if (selectedDate) {
-      updateField('dateOfBirth', selectedDate.toISOString().split('T')[0] || null);
+      updateField('dateOfBirth', formatDateToISO(selectedDate));
       setDobError('');
     }
   };
@@ -86,7 +87,7 @@ export default function NameScreen() {
           <Text variant="body" weight="medium" style={styles.label}>Date of Birth (Optional)</Text>
           {Platform.OS === 'ios' ? (
             <DateTimePicker
-              value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
+              value={dateOfBirth ? parseISODateLocal(dateOfBirth) : new Date()}
               mode="date"
               display="default"
               onChange={onDateChange}
@@ -96,12 +97,12 @@ export default function NameScreen() {
             <View>
               <Button
                 variant="secondary"
-                label={dateOfBirth ? new Date(dateOfBirth).toLocaleDateString() : 'Select Date'}
+                label={dateOfBirth ? parseISODateLocal(dateOfBirth).toLocaleDateString() : 'Select Date'}
                 onPress={() => setShowPicker(true)}
               />
               {showPicker && (
                 <DateTimePicker
-                  value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
+                  value={dateOfBirth ? parseISODateLocal(dateOfBirth) : new Date()}
                   mode="date"
                   display="default"
                   onChange={onDateChange}

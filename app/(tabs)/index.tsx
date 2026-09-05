@@ -16,6 +16,7 @@ import { HealthTipCard } from '../../src/presentation/components/dashboard/Healt
 import { CycleHistoryChart } from '../../src/presentation/components/dashboard/CycleHistoryChart';
 import { useContentStore } from '../../src/presentation/stores/useContentStore';
 import { ValidationService } from '../../src/domain/services/ValidationService';
+import { todayISO } from '../../src/utils/dateUtils';
 import { PredictionEngine } from '../../src/domain/prediction';
 import { ConfirmModal } from '../../src/presentation/components/ui/ConfirmModal';
 import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
@@ -43,7 +44,7 @@ export default function DashboardScreen() {
   const { currentLog, loadLogForDate } = useDailyLogStore();
   const { healthTips } = useContentStore();
 
-  const todayStr = new Date().toISOString().split('T')[0] || '';
+  const todayStr = todayISO();
 
   const { timelineData, engine } = useMemo(() => {
     const engine = new PredictionEngine();

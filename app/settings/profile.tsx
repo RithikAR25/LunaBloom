@@ -8,6 +8,7 @@ import { spacing, borderRadius, fontSize } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
+import { formatDateToISO, parseISODateLocal } from '../../src/utils/dateUtils';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
 import { ValidationService } from '../../src/domain/services/ValidationService';
 
@@ -115,7 +116,7 @@ export default function ProfileSettingsScreen() {
   const onDateChange = (_event: any, selectedDate?: Date) => {
     setShowPicker(Platform.OS === 'ios');
     if (selectedDate) {
-      setDob(selectedDate.toISOString().split('T')[0] || '');
+      setDob(formatDateToISO(selectedDate));
       setDobError('');
     }
   };
@@ -150,7 +151,7 @@ export default function ProfileSettingsScreen() {
           {Platform.OS === 'ios' ? (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <DateTimePicker
-                value={dob ? new Date(dob) : new Date()}
+                value={dob ? parseISODateLocal(dob) : new Date()}
                 mode="date"
                 display="default"
                 onChange={onDateChange}
@@ -161,12 +162,12 @@ export default function ProfileSettingsScreen() {
             <View>
               <Button
                 variant="secondary"
-                label={dob ? new Date(dob).toLocaleDateString() : 'Select Date'}
+                label={dob ? parseISODateLocal(dob).toLocaleDateString() : 'Select Date'}
                 onPress={() => setShowPicker(true)}
               />
               {showPicker && (
                 <DateTimePicker
-                  value={dob ? new Date(dob) : new Date()}
+                  value={dob ? parseISODateLocal(dob) : new Date()}
                   mode="date"
                   display="default"
                   onChange={onDateChange}

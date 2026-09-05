@@ -1,6 +1,6 @@
 import type { CycleEntry } from '../models/Cycle';
 import { MIN_NORMAL_CYCLE_LENGTH_DAYS } from '../models/Cycle';
-import { daysBetween, addDays } from '../../utils/dateUtils';
+import { daysBetween, addDays, isValidISODate, parseISODateLocal } from '../../utils/dateUtils';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -155,10 +155,10 @@ export class ValidationService {
     if (!dobStr) {
       return { isValid: false, error: 'Date of birth is required.' };
     }
-    const dob = new Date(dobStr);
-    if (isNaN(dob.getTime())) {
+    if (!isValidISODate(dobStr)) {
       return { isValid: false, error: 'Invalid date format.' };
     }
+    const dob = parseISODateLocal(dobStr);
 
     const today = new Date();
     let age = today.getFullYear() - dob.getFullYear();

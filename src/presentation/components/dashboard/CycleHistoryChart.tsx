@@ -4,6 +4,7 @@ import { spacing, borderRadius, useScaling } from '@/design-system';
 import { Text } from '../ui/Text';
 import { Heading } from '../ui/Heading';
 import type { CycleEntry } from '@/domain/models/Cycle';
+import { parseISODateLocal } from '@/utils/dateUtils';
 
 interface CycleHistoryChartProps {
   cycles: CycleEntry[];
@@ -91,7 +92,7 @@ export function CycleHistoryChart({ cycles }: CycleHistoryChartProps) {
               </View>
 
               <Text variant="micro" style={{ color: colors.text.secondary, marginTop: spacing[1] }}>
-                {new Date(cycle.startDate).toLocaleDateString(undefined, { month: 'short' })}
+                {parseISODateLocal(cycle.startDate).toLocaleDateString(undefined, { month: 'short' })}
               </Text>
             </View>
           );

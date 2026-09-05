@@ -8,6 +8,7 @@ import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { spacing } from '../../src/design-system';
+import { todayISO, formatDateToISO, parseISODateLocal } from '../../src/utils/dateUtils';
 
 export default function LastPeriodScreen() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function LastPeriodScreen() {
   // Default to today if nothing is selected yet
   useEffect(() => {
     if (!lastPeriodDate) {
-      updateField('lastPeriodDate', new Date().toISOString().split('T')[0] || null);
+      updateField('lastPeriodDate', todayISO());
     }
   }, [lastPeriodDate, updateField]);
 
@@ -33,7 +34,7 @@ export default function LastPeriodScreen() {
   const onDateChange = (_event: any, selectedDate?: Date) => {
     setShowPicker(Platform.OS === 'ios');
     if (selectedDate) {
-      updateField('lastPeriodDate', selectedDate.toISOString().split('T')[0] ?? null);
+      updateField('lastPeriodDate', formatDateToISO(selectedDate));
     }
   };
 
@@ -53,7 +54,7 @@ export default function LastPeriodScreen() {
         <View style={styles.dateContainer}>
           {Platform.OS === 'ios' ? (
             <DateTimePicker
-              value={lastPeriodDate ? new Date(lastPeriodDate) : new Date()}
+              value={lastPeriodDate ? parseISODateLocal(lastPeriodDate) : new Date()}
               mode="date"
               display="inline"
               onChange={onDateChange}
@@ -63,12 +64,12 @@ export default function LastPeriodScreen() {
             <View>
               <Button
                 variant="primary"
-                label={lastPeriodDate ? new Date(lastPeriodDate).toLocaleDateString() : 'Select Date'}
+                label={lastPeriodDate ? parseISODateLocal(lastPeriodDate).toLocaleDateString() : 'Select Date'}
                 onPress={() => setShowPicker(true)}
               />
               {showPicker && (
                 <DateTimePicker
-                  value={lastPeriodDate ? new Date(lastPeriodDate) : new Date()}
+                  value={lastPeriodDate ? parseISODateLocal(lastPeriodDate) : new Date()}
                   mode="date"
                   display="default"
                   onChange={onDateChange}
