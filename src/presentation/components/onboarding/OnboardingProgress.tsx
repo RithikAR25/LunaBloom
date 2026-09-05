@@ -1,7 +1,7 @@
 
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing } from '@/design-system';
+import { useScaling, spacing } from '@/design-system';
 
 interface OnboardingProgressProps {
   currentStep: number;
@@ -10,6 +10,7 @@ interface OnboardingProgressProps {
 
 export function OnboardingProgress({ currentStep, totalSteps }: OnboardingProgressProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
 
   return (
     <View style={styles.container}>
@@ -25,7 +26,9 @@ export function OnboardingProgress({ currentStep, totalSteps }: OnboardingProgre
               {
                 backgroundColor: isActive || isPast ? colors.brand.primary : colors.border,
                 opacity: isPast ? 0.5 : 1,
-                width: isActive ? 24 : 8,
+                width: isActive ? scale(24) : scale(8),
+                height: scale(8),
+                borderRadius: scale(4)
               }
             ]}
           />
@@ -44,7 +47,6 @@ const styles = StyleSheet.create({
     marginVertical: spacing[4],
   },
   dot: {
-    height: 8,
-    borderRadius: 4,
+    // scale sizes applied inline
   },
 });

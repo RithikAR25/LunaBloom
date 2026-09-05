@@ -12,10 +12,12 @@ import Animated, {
   FadeOut,
 } from 'react-native-reanimated';
 import { useTheme } from '@/presentation/hooks/useTheme';
+import { useScaling } from '@/design-system';
 import { Heading } from '@/presentation/components/ui/Heading';
 
 export function LunaBloomLoader() {
   const { colors, isDark } = useTheme();
+  const { scale: responsiveScale } = useScaling();
   const reducedMotion = useReducedMotion();
 
   // Animation values
@@ -70,7 +72,7 @@ export function LunaBloomLoader() {
 
       {/* Centered Logo & Wordmark */}
       <View style={styles.centerContainer}>
-        <Animated.View style={[styles.logoContainer, animatedLogoStyle]}>
+        <Animated.View style={[styles.logoContainer, animatedLogoStyle, { width: responsiveScale(140), height: responsiveScale(140) }]}>
           <Image
             source={logoSource}
             style={[
@@ -135,8 +137,8 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   logoContainer: {
-    width: 140,
-    height: 140,
+    // width: 140, // scaled inline
+    // height: 140, // scaled inline
     marginBottom: 16,
   },
   logo: {

@@ -1,7 +1,7 @@
 import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
+import { useScaling, spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
 import { useContentStore } from '../../src/presentation/stores/useContentStore';
@@ -13,6 +13,7 @@ import { PhaseIdentifier } from '../../src/domain/repositories/IContentRepositor
 export default function LearnHomeScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const { scale } = useScaling();
   
   const loadLearnContent = useContentStore((state) => state.loadLearnContent);
   const learnContent = useContentStore((state) => state.learnContent);
@@ -89,7 +90,7 @@ export default function LearnHomeScreen() {
   if (error && !learnContent) {
     return (
       <View style={styles.center}>
-        <Ionicons name="alert-circle-outline" size={48} color={colors.semantic.error} />
+        <Ionicons name="alert-circle-outline" size={scale(48)} color={colors.semantic.error} />
         <Text variant="body" style={styles.errorText}>Failed to load content. Please try again later.</Text>
       </View>
     );
@@ -119,10 +120,10 @@ export default function LearnHomeScreen() {
         onPress={() => router.push('/learn/glossary' as any)}
       >
         <View style={styles.glossaryTextContainer}>
-          <Ionicons name="book-outline" size={20} color={colors.brand.primary} />
+          <Ionicons name="book-outline" size={scale(20)} color={colors.brand.primary} />
           <Text variant="body" weight="bold" style={styles.glossaryText}>Medical Glossary</Text>
         </View>
-        <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
+        <Ionicons name="chevron-forward" size={scale(20)} color={colors.text.secondary} />
       </Pressable>
     </ScrollView>
   );

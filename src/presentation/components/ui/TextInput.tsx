@@ -16,7 +16,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius, fontSize, spacing, fontFamily } from '@/design-system';
+import { useScaling, borderRadius, fontSize, spacing, fontFamily } from '@/design-system';
 
 export interface TextInputProps extends Omit<RNTextInputProps, 'style'> {
   /** Visible label above the input */
@@ -46,6 +46,7 @@ export function TextInput({
   ...rest
 }: TextInputProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const [focused, setFocused] = useState(false);
   // useId for associating label with input (a11y)
   const inputId = useId();
@@ -95,6 +96,7 @@ export function TextInput({
             borderColor,
             borderWidth,
             opacity: disabled ? 0.4 : 1,
+            minHeight: scale(48)
           },
         ]}
       >
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: borderRadius.sm,
     paddingHorizontal: spacing.sm,
-    minHeight: 48,
+    // minHeight: 48, // scaled inline
   },
   input: {
     fontSize: fontSize.bodyMd,

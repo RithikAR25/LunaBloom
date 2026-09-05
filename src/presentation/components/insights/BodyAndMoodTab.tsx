@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { fontSize, fontFamily } from '@/design-system';
+import { useScaling, fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useContentStore } from '../../stores/useContentStore';
 import type { PhaseSymptomTrends, PhaseWellbeingTrends, PhaseMoodTrends } from '../../../domain/models/Insights';
@@ -13,7 +13,11 @@ interface Props {
 
 export function BodyAndMoodTab({ trends, wellbeing, moods }: Props) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const { symptomsData } = useContentStore();
+
+  const dotSize = scale(12);
+  const dotRadius = Math.round(dotSize / 2);
 
   const getPhaseColor = (phase: string) => {
     switch (phase) {
@@ -49,7 +53,7 @@ export function BodyAndMoodTab({ trends, wellbeing, moods }: Props) {
         accessibilityLabel={`${label}. Average is ${avg} out of 5, based on ${samples} logs.`}
         accessibilityHint="Shows your average rating for this metric during this phase"
       >
-        <Ionicons name={icon as any} size={24} color={color} />
+        <Ionicons name={icon as any} size={scale(24)} color={color} />
         <Text style={[styles.metricValue, { color: colors.text.primary }]}>{avg.toFixed(1)}</Text>
         <Text style={[styles.metricLabel, { color: colors.text.secondary }]}>{label}</Text>
         <Text style={[styles.sampleCount, { color: colors.text.secondary }]}>({samples} logs)</Text>
@@ -101,7 +105,7 @@ export function BodyAndMoodTab({ trends, wellbeing, moods }: Props) {
         return (
           <View key={phase} style={[styles.card, { backgroundColor: colors.surface }]}>
             <View style={styles.cardHeader}>
-              <View style={[styles.phaseDot, { backgroundColor: getPhaseColor(phase) }]} />
+              <View style={[styles.phaseDot, { backgroundColor: getPhaseColor(phase), width: dotSize, height: dotSize, borderRadius: dotRadius }]} />
               <Text style={[styles.cardTitle, { color: colors.text.primary }]}>
                 {getPhaseName(phase)} Phase
               </Text>
@@ -176,7 +180,7 @@ const styles = StyleSheet.create({
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   card: { borderRadius: 16, padding: 16 },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
-  phaseDot: { width: 12, height: 12, borderRadius: 6, marginRight: 8 },
+  phaseDot: { marginRight: 8 },
   cardTitle: { fontSize: fontSize.bodyMd, fontFamily: fontFamily.semiBold },
   section: { marginTop: 8 },
   sectionWithTopDivider: { paddingTop: 16, marginTop: 16, borderTopWidth: StyleSheet.hairlineWidth },

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { fontSize, fontFamily } from '@/design-system';
+import { useScaling, fontSize, fontFamily } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 import type { PatternInsights } from '../../../domain/models/Insights';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +18,11 @@ const MAX_BAR_HEIGHT = 80;
 
 export function PatternsTab({ patterns }: Props) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
+
+  const maxBarHeight = scale(MAX_BAR_HEIGHT);
+  const barWidth = scale(24);
+  const barRadius = Math.round(barWidth / 2);
 
   const {
     cycleLengthHistory,
@@ -56,10 +61,9 @@ export function PatternsTab({ patterns }: Props) {
     return <InsightsEmptyState scenario="no-patterns" />;
   }
 
-  // Helper to calculate bar height
   const getBarHeight = (val: number, max: number) => {
     if (max === 0) return 0;
-    return (val / max) * MAX_BAR_HEIGHT;
+    return (val / max) * maxBarHeight;
   };
 
   const maxCycleLength = Math.max(0, ...cycleLengthHistory.map(d => d.cycleLengthDays));
@@ -115,7 +119,7 @@ export function PatternsTab({ patterns }: Props) {
               {displayCycleHistory.map((point) => (
                 <View key={point.cycleIndex} style={styles.barColumn}>
                   <Text style={[styles.barValue, { color: colors.text.primary }]}>{point.cycleLengthDays}d</Text>
-                  <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: MAX_BAR_HEIGHT }]}>
+                  <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: maxBarHeight, width: barWidth, borderRadius: barRadius }]}>
                     <View 
                       style={[
                         styles.barFillVertical, 
@@ -145,7 +149,7 @@ export function PatternsTab({ patterns }: Props) {
                 bottomLabelSecondary: `'${p.startDate.substring(2, 4)}`
               }))}
               color={colors.brand.primary}
-              height={MAX_BAR_HEIGHT}
+              height={maxBarHeight}
               valueFormatter={(value) => `${value}d`}
             />
           )}
@@ -176,7 +180,7 @@ export function PatternsTab({ patterns }: Props) {
               {displayPeriodHistory.map((point) => (
                 <View key={point.cycleIndex} style={styles.barColumn}>
                   <Text style={[styles.barValue, { color: colors.text.primary }]}>{point.durationDays}d</Text>
-                  <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: MAX_BAR_HEIGHT }]}>
+                  <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: maxBarHeight, width: barWidth, borderRadius: barRadius }]}>
                     <View 
                       style={[
                         styles.barFillVertical, 
@@ -206,7 +210,7 @@ export function PatternsTab({ patterns }: Props) {
                 bottomLabelSecondary: `'${p.startDate.substring(2, 4)}`
               }))}
               color={colors.phase.menstrual}
-              height={MAX_BAR_HEIGHT}
+              height={maxBarHeight}
               valueFormatter={(value) => `${value}d`}
             />
           )}
@@ -237,7 +241,7 @@ export function PatternsTab({ patterns }: Props) {
               {displayPainHistory.map((point) => (
                 <View key={point.yearMonth} style={styles.barColumn}>
                   <Text style={[styles.barValue, { color: colors.text.primary }]}>{point.averagePain.toFixed(1)}</Text>
-                  <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: MAX_BAR_HEIGHT }]}>
+                  <View style={[styles.barBackground, { backgroundColor: colors.surfaceNeutral, height: maxBarHeight, width: barWidth, borderRadius: barRadius }]}>
                     <View 
                       style={[
                         styles.barFillVertical, 
@@ -261,7 +265,7 @@ export function PatternsTab({ patterns }: Props) {
                 bottomLabelPrimary: p.label
               }))}
               color={colors.semantic.error}
-              height={MAX_BAR_HEIGHT}
+              height={maxBarHeight}
               valueFormatter={(value) => value.toFixed(1)}
             />
           )}
@@ -276,7 +280,7 @@ export function PatternsTab({ patterns }: Props) {
             The cycle day when your energy tends to be highest
           </Text>
           
-          <Ionicons name="flash-outline" size={48} color={colors.semantic.warning} style={{ marginBottom: 12 }} />
+          <Ionicons name="flash-outline" size={scale(48)} color={colors.semantic.warning} style={{ marginBottom: 12 }} />
           <Text style={[styles.peakDayText, { color: colors.brand.primary }]}>Day {energyPeakCycleDay}</Text>
           <Text style={[styles.peakSubText, { color: colors.text.secondary }]}>
             Avg {energyPeakAverage}/5 · {energyPeakSampleCount} observations
@@ -348,8 +352,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.semiBold,
   },
   barBackground: {
-    width: 24,
-    borderRadius: 12,
+    // scale sizes applied inline
     justifyContent: 'flex-end',
     overflow: 'hidden',
   },

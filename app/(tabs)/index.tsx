@@ -6,7 +6,7 @@ import { useCycleStore } from '../../src/presentation/stores/useCycleStore';
 import { useDailyLogStore } from '../../src/presentation/stores/useDailyLogStore';
 import { useProfileStore } from '../../src/presentation/stores/useProfileStore';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius, fontFamily } from '../../src/design-system';
+import { useScaling, spacing, borderRadius, fontFamily } from '../../src/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
 import { MinimalCycleHero } from '../../src/presentation/components/dashboard/MinimalCycleHero';
@@ -23,6 +23,7 @@ import { useState, useMemo, useCallback } from 'react';
 
 export default function DashboardScreen() {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
@@ -122,16 +123,16 @@ export default function DashboardScreen() {
         </View>
         <View style={styles.headerRight}>
           <Pressable accessibilityRole="button" onPress={() => router.push('/settings/notifications')}>
-            <Feather name="bell" size={22} color={colors.brand.primary} accessibilityLabel="Notifications" accessibilityHint="View your recent notifications" />
+            <Feather name="bell" size={scale(22)} color={colors.brand.primary} accessibilityLabel="Notifications" accessibilityHint="View your recent notifications" />
           </Pressable>
           <Pressable accessibilityRole="button" onPress={() => router.push('/settings/profile')}>
-            <Feather name="user" size={24} color={colors.brand.primary} accessibilityLabel="Profile" accessibilityHint="View and edit your profile settings" />
+            <Feather name="user" size={scale(24)} color={colors.brand.primary} accessibilityLabel="Profile" accessibilityHint="View and edit your profile settings" />
           </Pressable>
         </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} 
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: scale(100) }]}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand.primary} />}
       >
         {!latestCycle ? (
@@ -327,11 +328,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-  },
-  avatarPlaceholder: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
   },
   scrollContent: {
     paddingHorizontal: spacing.sm,

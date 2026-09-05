@@ -2,10 +2,11 @@ import { Stack , useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { fontFamily } from '@/design-system';
+import { useScaling, fontFamily } from '@/design-system';
 
 export default function SettingsLayout() {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const router = useRouter();
 
   return (
@@ -21,8 +22,8 @@ export default function SettingsLayout() {
         headerShadowVisible: false,
         animation: 'slide_from_right',
         headerLeft: () => (
-          <TouchableOpacity accessibilityRole="button" onPress={() => router.back()} style={{ marginLeft: 8, marginRight: 16 }}>
-            <Ionicons name="chevron-back" size={24} color={colors.text.primary} />
+          <TouchableOpacity accessibilityRole="button" onPress={() => router.back()} style={{ marginLeft: scale(8), marginRight: scale(16) }}>
+            <Ionicons name="chevron-back" size={scale(24)} color={colors.text.primary} />
           </TouchableOpacity>
         ),
       }}

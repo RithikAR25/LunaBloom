@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
+import { useScaling, spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../ui/Text';
 import { LearnSection } from '../../../domain/repositories/IContentRepository';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,6 +13,7 @@ interface ContentSectionProps {
 
 export const ContentSection = ({ section, iconName, showDetails }: ContentSectionProps) => {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   
   const styles = StyleSheet.create({
     container: {
@@ -55,7 +56,7 @@ export const ContentSection = ({ section, iconName, showDetails }: ContentSectio
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.iconContainer}>
-          <Ionicons name={iconName} size={20} color={colors.brand.primary} />
+          <Ionicons name={iconName} size={scale(20)} color={colors.brand.primary} />
         </View>
         <Text variant="body" weight="bold" style={styles.title}>{section.title}</Text>
       </View>

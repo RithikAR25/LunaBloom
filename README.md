@@ -186,6 +186,7 @@ We believe open source projects should be as well-documented as enterprise codeb
 | **[Troubleshooting](docs/16_Troubleshooting.md)**                         | Solutions for common Metro, Expo, and Node configuration issues.                 |
 | **[FAQ](docs/17_FAQ.md)**                                                 | Developer frequently asked questions (Why SQLite? Why Clean Architecture?).      |
 | **[Installation & Development](docs/18_Installation_And_Development.md)** | Single authoritative guide for setting up the project and beginning development. |
+| **[Responsive Scaling](docs/20_Responsive_Scaling.md)**                   | Mathematical foundation and architecture for layout scaling across viewports.    |
 
 ### 🧠 Architecture Decision Records (ADRs)
 

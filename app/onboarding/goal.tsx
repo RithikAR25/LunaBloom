@@ -8,7 +8,7 @@ import { UserGoal } from '../../src/domain/models/index';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Heading } from '../../src/presentation/components/ui/Heading';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '../../src/design-system';
+import { useScaling, spacing, borderRadius } from '../../src/design-system';
 
 const GOAL_OPTIONS = [
   { value: UserGoal.TrackCycle, title: 'Track My Cycle', description: 'Monitor my period, symptoms, and phases.' },
@@ -20,6 +20,7 @@ const GOAL_OPTIONS = [
 export default function GoalScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const { primaryGoal, conditions, updateField } = useOnboardingStore();
   const { medicalConditions: medicalConditionsData } = useContentStore();
 
@@ -86,10 +87,10 @@ export default function GoalScreen() {
               <View style={styles.checkboxContainer}>
                 <View style={[
                   styles.checkbox,
-                  { borderColor: isSelected ? colors.brand.primary : colors.borderSubtle },
+                  { borderColor: isSelected ? colors.brand.primary : colors.borderSubtle, width: scale(24), height: scale(24), borderRadius: scale(4) },
                   isSelected && { backgroundColor: colors.brand.primary }
                 ]}>
-                  {isSelected && <Text style={{ color: 'white', fontSize: 12 }}>✓</Text>}
+                  {isSelected && <Text style={{ color: 'white', fontSize: scale(12) }}>✓</Text>}
                 </View>
               </View>
               <View style={styles.conditionTextContainer}>
@@ -127,10 +128,10 @@ const styles = StyleSheet.create({
     marginRight: spacing[3],
   },
   checkbox: {
-    width: 24,
-    height: 24,
+    // width: 24,
+    // height: 24,
     borderWidth: 2,
-    borderRadius: 4,
+    // borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

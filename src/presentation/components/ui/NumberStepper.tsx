@@ -1,7 +1,7 @@
 
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { useScaling, spacing, borderRadius } from '@/design-system';
 import { Text } from './Text';
 import { Heading } from './Heading';
 
@@ -33,6 +33,8 @@ export function NumberStepper({
   incrementAccessibilityHint = 'Raises the current value by one step',
 }: NumberStepperProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
+  const controlSize = Math.max(48, scale(56));
 
   const handleDecrease = () => {
     if (value - step >= min) {
@@ -53,14 +55,14 @@ export function NumberStepper({
     <View style={styles.container}>
       {label && <Text variant="body" style={[styles.label, { color: colors.text.secondary }]}>{label}</Text>}
       
-      <View style={[styles.stepperContainer, { borderColor: colors.border, backgroundColor: colors.surface }]}>
+      <View style={[styles.stepperContainer, { borderColor: colors.border, backgroundColor: colors.surface, height: controlSize }]}>
         <Pressable 
           accessibilityRole="button"
           accessibilityLabel={decrementAccessibilityLabel}
           accessibilityHint={decrementAccessibilityHint}
           style={({ pressed }) => [
             styles.button,
-            { backgroundColor: pressed ? colors.borderSubtle : 'transparent' },
+            { width: controlSize, backgroundColor: pressed ? colors.borderSubtle : 'transparent' },
             isDecreaseDisabled && { opacity: 0.5 }
           ]}
           onPress={handleDecrease}
@@ -82,7 +84,7 @@ export function NumberStepper({
           accessibilityHint={incrementAccessibilityHint}
           style={({ pressed }) => [
             styles.button,
-            { backgroundColor: pressed ? colors.borderSubtle : 'transparent' },
+            { width: controlSize, backgroundColor: pressed ? colors.borderSubtle : 'transparent' },
             isIncreaseDisabled && { opacity: 0.5 }
           ]}
           onPress={handleIncrease}
@@ -109,10 +111,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: borderRadius.md,
     overflow: 'hidden',
-    height: 56,
   },
   button: {
-    width: 56,
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',

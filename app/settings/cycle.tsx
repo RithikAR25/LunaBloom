@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
+import { useScaling, spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { AlertModal } from '../../src/presentation/components/ui/AlertModal';
@@ -11,6 +11,7 @@ import { ValidationService } from '../../src/domain/services/ValidationService';
 
 export default function CycleSettingsScreen() {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const router = useRouter();
   
   const profile = useProfileStore((state) => state.profile);
@@ -83,7 +84,7 @@ export default function CycleSettingsScreen() {
           <TextInput 
             accessibilityLabel="Text input field"
             accessibilityHint="Enter your average cycle length in days"
-            style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: cycleError ? colors.semantic.error : colors.borderSubtle }]}
+            style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: cycleError ? colors.semantic.error : colors.borderSubtle, height: scale(52) }]}
             value={cycleLength}
             onChangeText={(text) => { setCycleLength(text); setCycleError(''); }}
             keyboardType="numeric"
@@ -98,7 +99,7 @@ export default function CycleSettingsScreen() {
           <TextInput 
             accessibilityLabel="Text input field"
             accessibilityHint="Enter your average period duration in days"
-            style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: periodError ? colors.semantic.error : colors.borderSubtle }]}
+            style={[styles.input, { backgroundColor: colors.surface, color: colors.text.primary, borderColor: periodError ? colors.semantic.error : colors.borderSubtle, height: scale(52) }]}
             value={periodDuration}
             onChangeText={(text) => { setPeriodDuration(text); setPeriodError(''); }}
             keyboardType="numeric"
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     marginLeft: spacing[1],
   },
   input: {
-    height: 52,
+    // height: 52,
     borderWidth: 1,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[4],

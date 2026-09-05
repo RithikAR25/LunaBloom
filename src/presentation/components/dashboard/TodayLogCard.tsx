@@ -1,7 +1,7 @@
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, borderRadius, fontFamily } from '@/design-system';
+import { useScaling, spacing, borderRadius, fontFamily } from '@/design-system';
 import { Text } from '../ui/Text';
 
 import type { DailyLog } from '@/domain/models/DailyLog';
@@ -13,12 +13,13 @@ interface TodayLogCardProps {
 
 export function TodayLogCard({ log, onEdit }: TodayLogCardProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
 
   if (!log) {
     return (
       <View style={[styles.container, { backgroundColor: colors.surface }]}>
         <View style={styles.emptyContent}>
-          <Feather name="file-text" size={32} color={colors.text.tertiary} style={{ marginBottom: spacing[2] }} />
+          <Feather name="file-text" size={scale(32)} color={colors.text.tertiary} style={{ marginBottom: spacing[2] }} />
           <Text variant="body" style={{ color: colors.text.secondary, textAlign: 'center', marginBottom: spacing[4] }}>
             You haven&apos;t logged any symptoms or moods today.
           </Text>
@@ -41,7 +42,7 @@ export function TodayLogCard({ log, onEdit }: TodayLogCardProps) {
           Today&apos;s Log
         </Text>
         <Pressable accessibilityRole="button" onPress={onEdit} hitSlop={10}>
-          <Feather name="plus-circle" size={22} color={colors.brand.primary} />
+          <Feather name="plus-circle" size={scale(22)} color={colors.brand.primary} />
         </Pressable>
       </View>
 
@@ -53,7 +54,7 @@ export function TodayLogCard({ log, onEdit }: TodayLogCardProps) {
         <View style={styles.summaryContainer}>
           {hasMoods && (
             <View style={styles.row}>
-              <Text variant="label" style={{ color: colors.text.secondary, width: 80 }}>Moods</Text>
+              <Text variant="label" style={{ color: colors.text.secondary, width: scale(80) }}>Moods</Text>
               <View style={styles.chipList}>
                 {log.moods.slice(0, 3).map((mood) => (
                   <View key={mood} style={[styles.miniChip, { backgroundColor: `${colors.brand.primary}20` }]}>
@@ -69,7 +70,7 @@ export function TodayLogCard({ log, onEdit }: TodayLogCardProps) {
 
           {hasSymptoms && (
             <View style={styles.row}>
-              <Text variant="label" style={{ color: colors.text.secondary, width: 80 }}>Symptoms</Text>
+              <Text variant="label" style={{ color: colors.text.secondary, width: scale(80) }}>Symptoms</Text>
               <View style={styles.chipList}>
                 {log.symptoms.slice(0, 3).map((symp) => (
                   <View key={symp} style={[styles.miniChip, { backgroundColor: `${colors.brand.secondary}20` }]}>
@@ -87,7 +88,7 @@ export function TodayLogCard({ log, onEdit }: TodayLogCardProps) {
             <View style={[styles.row, { marginTop: spacing[2] }]}>
               {log.energyLevel && (
                 <View style={styles.statItem}>
-                  <Feather name="zap" size={14} color={colors.text.secondary} />
+                  <Feather name="zap" size={scale(14)} color={colors.text.secondary} />
                   <Text variant="caption" style={{ color: colors.text.secondary, marginLeft: spacing[1] }}>
                     Energy: {log.energyLevel}/5
                   </Text>
@@ -95,7 +96,7 @@ export function TodayLogCard({ log, onEdit }: TodayLogCardProps) {
               )}
               {log.sleepQuality && (
                 <View style={styles.statItem}>
-                  <Feather name="moon" size={14} color={colors.text.secondary} />
+                  <Feather name="moon" size={scale(14)} color={colors.text.secondary} />
                   <Text variant="caption" style={{ color: colors.text.secondary, marginLeft: spacing[1] }}>
                     Sleep: {log.sleepQuality}/5
                   </Text>

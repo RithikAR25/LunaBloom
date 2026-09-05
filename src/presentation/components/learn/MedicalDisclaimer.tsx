@@ -1,11 +1,12 @@
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
+import { useScaling, spacing, borderRadius, fontSize, lineHeight } from '@/design-system';
 import { Text } from '../ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 
 export const MedicalDisclaimer = () => {
   const { colors } = useTheme();
+  const { scale } = useScaling();
 
   const styles = StyleSheet.create({
     container: {
@@ -39,7 +40,7 @@ export const MedicalDisclaimer = () => {
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <Ionicons name="medical-outline" size={16} color={colors.text.secondary} />
+        <Ionicons name="medical-outline" size={scale(16)} color={colors.text.secondary} />
       </View>
       <View style={styles.textContainer}>
         <Text variant="caption" weight="bold" style={styles.title}>Medical Disclaimer</Text>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, LayoutChangeEvent } from 'react-native';
 import Svg, { Polyline, Circle } from 'react-native-svg';
-import { fontSize, fontFamily } from '@/design-system';
+import { fontSize, fontFamily, useScaling } from '@/design-system';
 import { useTheme } from '../../hooks/useTheme';
 
 export type LineChartPoint = {
@@ -25,7 +25,12 @@ const Y_AXIS_WIDTH = 40;
 
 export function DynamicLineChart({ data, color, height, valueFormatter }: Props) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   const [containerWidth, setContainerWidth] = useState(0);
+
+  const minLabelSpacing = scale(MIN_LABEL_SPACING);
+  const pointRadius = scale(POINT_RADIUS);
+  const yAxisWidth = scale(Y_AXIS_WIDTH);
 
   const handleLayout = (e: LayoutChangeEvent) => {
     setContainerWidth(e.nativeEvent.layout.width);
@@ -53,11 +58,11 @@ export function DynamicLineChart({ data, color, height, valueFormatter }: Props)
   const paddedRange = chartMax - chartMin;
 
   // Coordinate Calculations
-  const paddingRight = 24;
-  const paddingLeft = Y_AXIS_WIDTH + 8; // 40px for axis + 8px gap
+  const paddingRight = scale(24);
+  const paddingLeft = yAxisWidth + scale(8); 
   const drawableWidth = Math.max(0, chartWidth - paddingLeft - paddingRight);
   const pointSpacing = data.length > 1 ? drawableWidth / (data.length - 1) : drawableWidth;
-  const labelStep = Math.max(1, Math.ceil(MIN_LABEL_SPACING / pointSpacing));
+  const labelStep = Math.max(1, Math.ceil(minLabelSpacing / pointSpacing));
 
   const getX = (index: number) => {
     if (data.length <= 1) {
@@ -82,7 +87,7 @@ export function DynamicLineChart({ data, color, height, valueFormatter }: Props)
     if (index === data.length - 1) {
       const lastIntermediateIndex = Math.floor((data.length - 2) / labelStep) * labelStep;
       const indexToCompare = lastIntermediateIndex > 0 ? lastIntermediateIndex : 0;
-      if ((index - indexToCompare) * pointSpacing < MIN_LABEL_SPACING) {
+      if ((index - indexToCompare) * pointSpacing < minLabelSpacing) {
         return false;
       }
       return true;
@@ -107,7 +112,7 @@ export function DynamicLineChart({ data, color, height, valueFormatter }: Props)
         <View style={{ width: chartWidth }}>
           
           {/* Y-Axis Layer */}
-          <View style={[StyleSheet.absoluteFill, { zIndex: 3, marginTop: 24, width: Y_AXIS_WIDTH }]}>
+          <View style={[StyleSheet.absoluteFill, { zIndex: 3, marginTop: scale(24), width: yAxisWidth }]}>
             {yLabels.map((val, i) => (
               <Text 
                 key={`y-axis-${i}`} 
@@ -117,7 +122,7 @@ export function DynamicLineChart({ data, color, height, valueFormatter }: Props)
                     color: colors.text.secondary,
                     position: 'absolute',
                     top: getY(val) - 8, // center vertically (height 16 / 2)
-                    width: Y_AXIS_WIDTH,
+                    width: yAxisWidth,
                   }
                 ]}
               >
@@ -131,7 +136,7 @@ export function DynamicLineChart({ data, color, height, valueFormatter }: Props)
             {data.map((point, index) => {
               const isVisible = shouldShowLabel(index);
               const xPos = getX(index);
-              const LABEL_WIDTH = 60; 
+              const LABEL_WIDTH = scale(60); 
 
               if (!isVisible) return null;
 
@@ -164,7 +169,7 @@ export function DynamicLineChart({ data, color, height, valueFormatter }: Props)
           </View>
 
           {/* SVG Graphics Layer */}
-          <View style={[StyleSheet.absoluteFill, { zIndex: 1, marginTop: 24 }]}>
+          <View style={[StyleSheet.absoluteFill, { zIndex: 1, marginTop: scale(24) }]}>
             <Svg width={chartWidth} height={height}>
               <Polyline
                 points={pointsString}
@@ -177,7 +182,7 @@ export function DynamicLineChart({ data, color, height, valueFormatter }: Props)
                   key={`circle-${point.id}`}
                   cx={getX(index)}
                   cy={getY(point.value)}
-                  r={POINT_RADIUS}
+                  r={pointRadius}
                   fill={color}
                 />
               ))}

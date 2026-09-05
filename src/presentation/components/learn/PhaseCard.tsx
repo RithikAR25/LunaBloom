@@ -1,6 +1,6 @@
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { useScaling, spacing, borderRadius } from '@/design-system';
 import { Text } from '../ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { PhaseIdentifier } from '../../../domain/repositories/IContentRepository';
@@ -14,6 +14,10 @@ interface PhaseCardProps {
 
 export const PhaseCard = ({ id, name, tagline, onPress }: PhaseCardProps) => {
   const { colors } = useTheme();
+  const { scale } = useScaling();
+  
+  const iconContainerSize = scale(48);
+  const iconRadius = Math.round(iconContainerSize / 2);
 
   // Determine icon and color based on phase
   let iconName: keyof typeof Ionicons.glyphMap = 'flower-outline';
@@ -54,9 +58,9 @@ export const PhaseCard = ({ id, name, tagline, onPress }: PhaseCardProps) => {
       backgroundColor: colors.background,
     },
     iconContainer: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
+      width: iconContainerSize,
+      height: iconContainerSize,
+      borderRadius: iconRadius,
       backgroundColor: colors.surfaceNeutral,
       justifyContent: 'center',
       alignItems: 'center',
@@ -86,14 +90,14 @@ export const PhaseCard = ({ id, name, tagline, onPress }: PhaseCardProps) => {
       accessibilityHint="Navigates to detailed educational content about this phase"
     >
       <View style={styles.iconContainer}>
-        <Ionicons name={iconName} size={24} color={color} />
+        <Ionicons name={iconName} size={scale(24)} color={color} />
       </View>
       <View style={styles.textContainer}>
         <Text variant="body" weight="bold" style={styles.name}>{name}</Text>
         <Text variant="caption" style={styles.tagline}>{tagline}</Text>
       </View>
       <View style={styles.chevron}>
-        <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
+        <Ionicons name="chevron-forward" size={scale(20)} color={colors.text.secondary} />
       </View>
     </Pressable>
   );

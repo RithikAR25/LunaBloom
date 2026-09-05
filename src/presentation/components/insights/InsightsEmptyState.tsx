@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
-import { fontSize, fontFamily, lineHeight } from '@/design-system';
+import { useScaling, fontSize, fontFamily, lineHeight } from '@/design-system';
 
 type EmptyStateScenario = 'no-cycles' | 'insufficient-cycles' | 'no-logs' | 'no-patterns';
 
@@ -11,6 +11,10 @@ interface Props {
 
 export function InsightsEmptyState({ scenario }: Props) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
+  
+  const iconContainerSize = scale(64);
+  const iconRadius = Math.round(iconContainerSize / 2);
 
   const getContent = () => {
     switch (scenario) {
@@ -45,8 +49,8 @@ export function InsightsEmptyState({ scenario }: Props) {
 
   return (
     <View style={styles.container} accessible={true} accessibilityLabel={`Empty state: ${title}. ${message}`} accessibilityHint="Indicates that more data is needed to generate insights">
-      <View style={[styles.iconContainer, { backgroundColor: colors.surface }]}>
-        <Ionicons name={icon} size={32} color={colors.brand.primary} />
+      <View style={[styles.iconContainer, { backgroundColor: colors.surface, width: iconContainerSize, height: iconContainerSize, borderRadius: iconRadius }]}>
+        <Ionicons name={icon} size={scale(32)} color={colors.brand.primary} />
       </View>
       <Text style={[styles.title, { color: colors.text.primary }]}>{title}</Text>
       <Text style={[styles.message, { color: colors.text.secondary }]}>{message}</Text>
@@ -63,9 +67,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    // scale sizes applied inline
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,

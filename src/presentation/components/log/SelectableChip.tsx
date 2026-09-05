@@ -1,7 +1,7 @@
 import { StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, borderRadius } from '@/design-system';
+import { useScaling, spacing, borderRadius } from '@/design-system';
 import { Text } from '../ui/Text';
 
 interface SelectableChipProps {
@@ -14,6 +14,7 @@ interface SelectableChipProps {
 
 export function SelectableChip({ label, icon, selected, onPress, variant }: SelectableChipProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
   
   const activeColor = variant === 'mood' ? colors.brand.primary : colors.brand.secondary;
   const backgroundColor = selected ? activeColor : 'transparent';
@@ -31,7 +32,7 @@ export function SelectableChip({ label, icon, selected, onPress, variant }: Sele
       accessibilityRole="button"
       accessibilityState={{ selected }}
     >
-      {icon && <Feather name={icon} size={16} color={iconColor} style={styles.icon} />}
+      {icon && <Feather name={icon} size={scale(16)} color={iconColor} style={styles.icon} />}
       <Text variant="label" style={{ color: textColor }}>
         {label}
       </Text>

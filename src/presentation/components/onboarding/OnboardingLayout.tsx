@@ -2,7 +2,7 @@
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, SCREEN_HORIZONTAL_PADDING } from '@/design-system';
+import { useScaling, spacing, SCREEN_HORIZONTAL_PADDING } from '@/design-system';
 import { OnboardingProgress } from './OnboardingProgress';
 import { Text } from '../ui/Text';
 import { Heading } from '../ui/Heading';
@@ -36,19 +36,20 @@ export function OnboardingLayout({
   onBack,
 }: OnboardingLayoutProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
-      <View style={styles.header}>
+      <View style={[styles.header, { height: scale(56) }]}>
         {onBack ? (
-          <View style={styles.backButton as any}>
+          <View style={[styles.backButton as any, { minWidth: scale(60) }]}>
             <Button variant="ghost" label="Back" onPress={onBack} />
           </View>
         ) : (
-          <View style={styles.backButtonPlaceholder} />
+          <View style={[styles.backButtonPlaceholder, { width: scale(60) }]} />
         )}
         <OnboardingProgress currentStep={currentStep} totalSteps={totalSteps} />
-        <View style={styles.backButtonPlaceholder} />
+        <View style={[styles.backButtonPlaceholder, { width: scale(60) }]} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent} bounces={false}>
@@ -98,15 +99,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SCREEN_HORIZONTAL_PADDING,
-    height: 56,
+    // height: scaled inline
   },
   backButton: {
     paddingHorizontal: 0,
-    minWidth: 60,
+    // minWidth: scaled inline
     alignItems: 'flex-start',
   },
   backButtonPlaceholder: {
-    width: 60,
+    // width: scaled inline
   },
   scrollContent: {
     flexGrow: 1,

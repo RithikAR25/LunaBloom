@@ -1,0 +1,306 @@
+
+d:\LunaBloom\src\presentation\components\calendar\CalendarHeader.tsx
+  paddingHorizontal: 16
+  paddingVertical: 8
+
+d:\LunaBloom\src\presentation\components\calendar\CalendarLegend.tsx
+  width: 12
+  height: 12
+  borderRadius: 6
+
+d:\LunaBloom\src\presentation\components\calendar\DateRangePickerGrid.tsx
+  marginVertical: 2
+
+d:\LunaBloom\src\presentation\components\calendar\DayCell.tsx
+  padding: 2
+
+d:\LunaBloom\src\presentation\components\calendar\EditCycleModal.tsx
+  maxWidth: 400
+  width: 32
+  height: 32
+  height: 2
+  width: 8
+  height: 8
+  marginTop: 4
+  marginTop: 2
+  borderRadius: 32
+  borderRadius: 16
+  borderRadius: 4
+  borderRadius: 20
+  size={14}
+  size={16}
+
+d:\LunaBloom\src\presentation\components\calendar\MiniMonthGrid.tsx
+  marginBottom: 4
+  marginBottom: 2
+
+d:\LunaBloom\src\presentation\components\calendar\ViewModeSlider.tsx
+  paddingVertical: 6
+
+d:\LunaBloom\src\presentation\components\dashboard\GridActionButton.tsx
+  size={24}
+
+d:\LunaBloom\src\presentation\components\dashboard\TodayLogCard.tsx
+  paddingVertical: 2
+
+d:\LunaBloom\src\presentation\components\insights\BodyAndMoodTab.tsx
+  width: 12
+  height: 12
+  height: 8
+  padding: 16
+  padding: 24
+  marginBottom: 16
+  marginRight: 8
+  marginTop: 8
+  paddingTop: 16
+  marginTop: 16
+  marginBottom: 12
+  paddingHorizontal: 12
+  paddingVertical: 6
+  borderRadius: 16
+  borderRadius: 6
+  borderRadius: 4
+  size={24}
+
+d:\LunaBloom\src\presentation\components\insights\CycleTab.tsx
+  height: 24
+  width: 12
+  height: 12
+  marginTop: 8
+  padding: 16
+  marginBottom: 4
+  marginBottom: 16
+  marginRight: 8
+  paddingHorizontal: 4
+  paddingHorizontal: 12
+  paddingVertical: 6
+  marginBottom: 12
+  marginLeft: 12
+  paddingHorizontal: 8
+  paddingVertical: 4
+  marginLeft: 16
+  paddingTop: 8
+  paddingVertical: 20
+  borderRadius: 16
+  borderRadius: 8
+  borderRadius: 6
+  borderRadius: 100
+  borderRadius: 12
+  size={16}
+  size={20}
+
+d:\LunaBloom\src\presentation\components\insights\DynamicLineChart.tsx
+  height: 16
+  height: 24
+  marginTop: 24
+  paddingVertical: 8
+  paddingRight: 4
+
+d:\LunaBloom\src\presentation\components\insights\InsightsEmptyState.tsx
+  width: 64
+  height: 64
+  padding: 24
+  marginBottom: 8
+  borderRadius: 32
+  size={32}
+
+d:\LunaBloom\src\presentation\components\insights\OverviewTab.tsx
+  height: 40
+  size={20}
+
+d:\LunaBloom\src\presentation\components\insights\PatternChartHeader.tsx
+  paddingRight: 8
+  marginBottom: 4
+  padding: 4
+  size={18}
+
+d:\LunaBloom\src\presentation\components\insights\PatternsTab.tsx
+  width: 24
+  height: 12
+  paddingVertical: 24
+  marginBottom: 4
+  marginBottom: 16
+  marginBottom: 12
+  padding: 16
+  paddingBottom: 8
+  marginTop: 4
+  marginBottom: 8
+  borderRadius: 16
+  borderRadius: 12
+  borderRadius: 6
+  size={48}
+
+d:\LunaBloom\src\presentation\components\learn\ContentSection.tsx
+  size={20}
+
+d:\LunaBloom\src\presentation\components\learn\MedicalDisclaimer.tsx
+  marginTop: 2
+  size={16}
+
+d:\LunaBloom\src\presentation\components\learn\PhaseCard.tsx
+  width: 48
+  height: 48
+  borderRadius: 24
+  size={24}
+  size={20}
+
+d:\LunaBloom\src\presentation\components\log\FlowSelector.tsx
+  paddingVertical: 12
+
+d:\LunaBloom\src\presentation\components\log\RangeSlider.tsx
+  width: 28
+  height: 36
+
+d:\LunaBloom\src\presentation\components\log\SelectableChip.tsx
+  size={16}
+
+d:\LunaBloom\src\presentation\components\onboarding\OnboardingLayout.tsx
+  height: 56
+  minWidth: 60
+  width: 60
+
+d:\LunaBloom\src\presentation\components\onboarding\OnboardingProgress.tsx
+  height: 8
+  borderRadius: 4
+
+d:\LunaBloom\src\presentation\components\privacy\LockScreen.tsx
+  width: 48
+  height: 48
+  width: 20
+  height: 20
+  minHeight: 420
+  width: 72
+  height: 72
+  paddingTop: 80
+  paddingBottom: 60
+  borderRadius: 10
+  borderRadius: 36
+  size={48}
+  size={32}
+  size={28}
+
+d:\LunaBloom\src\presentation\components\settings\SettingsRow.tsx
+  minHeight: 56
+  width: 28
+  size={20}
+
+d:\LunaBloom\src\presentation\components\settings\SettingsToggle.tsx
+  minHeight: 56
+  width: 28
+  size={20}
+
+d:\LunaBloom\src\presentation\components\ui\AlertModal.tsx
+  maxWidth: 400
+  height: 2
+
+d:\LunaBloom\src\presentation\components\ui\Button.tsx
+  minHeight: 48
+
+d:\LunaBloom\src\presentation\components\ui\Chip.tsx
+  minHeight: 36
+
+d:\LunaBloom\src\presentation\components\ui\ConfirmModal.tsx
+  maxWidth: 400
+  height: 2
+
+d:\LunaBloom\src\presentation\components\ui\LunaBloomLoader.tsx
+  width: 140
+  height: 140
+  marginBottom: 16
+
+d:\LunaBloom\src\presentation\components\ui\TextInput.tsx
+  minHeight: 48
+  marginBottom: 4
+  marginTop: 2
+
+d:\LunaBloom\app\(tabs)\calendar.tsx
+  marginTop: 4
+
+d:\LunaBloom\app\(tabs)\index.tsx
+  width: 32
+  height: 32
+  paddingBottom: 100
+  marginTop: 4
+  borderRadius: 16
+  size={22}
+  size={24}
+
+d:\LunaBloom\app\(tabs)\log.tsx
+  width: 24
+  borderRadius: 20
+  borderRadius: 8
+  size={24}
+  size={18}
+  size={16}
+
+d:\LunaBloom\app\(tabs)\settings.tsx
+  borderRadius: 8
+  left: 16
+  right: 16
+
+d:\LunaBloom\app\+not-found.tsx
+  padding: 20
+  marginTop: 16
+
+d:\LunaBloom\app\learn\index.tsx
+  size={48}
+  size={20}
+
+d:\LunaBloom\app\onboarding\complete.tsx
+  borderRadius: 16
+
+d:\LunaBloom\app\onboarding\goal.tsx
+  width: 24
+  height: 24
+  borderRadius: 4
+
+d:\LunaBloom\app\onboarding\index.tsx
+  width: 44
+  height: 44
+  height: 4
+  paddingBottom: 40
+  paddingHorizontal: 24
+  marginTop: 24
+  marginTop: 16
+  paddingHorizontal: 8
+  padding: 12
+  marginBottom: 2
+  marginBottom: 12
+  borderRadius: 20
+  borderRadius: 22
+  size={18}
+
+d:\LunaBloom\app\onboarding\last-period.tsx
+  borderRadius: 12
+
+d:\LunaBloom\app\settings\cycle.tsx
+  height: 52
+  marginTop: 4
+  marginLeft: 4
+
+d:\LunaBloom\app\settings\health.tsx
+  minHeight: 56
+  width: 24
+  height: 24
+  width: 12
+  height: 12
+  borderRadius: 12
+  borderRadius: 6
+  size={16}
+
+d:\LunaBloom\app\settings\notifications.tsx
+  marginBottom: 2
+
+d:\LunaBloom\app\settings\privacy.tsx
+  height: 52
+
+d:\LunaBloom\app\settings\profile.tsx
+  height: 52
+  marginTop: 4
+  marginLeft: 4
+  size={24}
+
+d:\LunaBloom\app\settings\_layout.tsx
+  marginLeft: 8
+  marginRight: 16
+  size={24}

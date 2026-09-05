@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text, Pressable, PanResponder } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { spacing, fontSize, fontFamily } from '@/design-system';
+import { useScaling, spacing, fontSize, fontFamily } from '@/design-system';
 import { todayISO, isBetween, isAfter } from '@/utils/dateUtils';
 import { useMemo, useRef, useEffect } from 'react';
 
@@ -22,6 +22,10 @@ export function DateRangePickerGrid({
   onDragEnd,
 }: DateRangePickerGridProps) {
   const { colors } = useTheme();
+  const { scale } = useScaling();
+  
+  const circleSize = scale(36);
+  const circleRadius = Math.round(circleSize / 2);
   
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const todayStr = todayISO();
@@ -180,6 +184,7 @@ export function DateRangePickerGrid({
                 }}
                 style={[
                   styles.dayCircle,
+                  { width: circleSize, height: circleSize, borderRadius: circleRadius },
                   isSelected && { backgroundColor: colors.brand.primary },
                 ]}
               >
@@ -229,9 +234,6 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   dayCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1, // ensure it renders above the range highlights

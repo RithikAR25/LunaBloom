@@ -10,7 +10,7 @@
 import { useEffect, useState } from 'react';
 import { View, Animated, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/hooks/useTheme';
-import { borderRadius } from '@/design-system';
+import { useScaling, borderRadius } from '@/design-system';
 
 export interface ProgressBarProps {
   /** 0.0 to 1.0 */
@@ -42,6 +42,7 @@ export function ProgressBar({
   accessibilityHint,
 }: ProgressBarProps) {
   const { colors } = useTheme();
+  const { verticalScale } = useScaling();
   const [widthAnim] = useState(() => new Animated.Value(0));
 
   const clampedProgress = Math.max(0, Math.min(1, progress));
@@ -65,7 +66,7 @@ export function ProgressBar({
 
   return (
     <View
-      style={[styles.track, { height, backgroundColor: bgColor, borderRadius: radius }, style]}
+      style={[styles.track, { height: verticalScale(height), backgroundColor: bgColor, borderRadius: radius }, style]}
       accessibilityRole="progressbar"
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}
