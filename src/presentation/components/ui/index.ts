@@ -74,3 +74,5 @@ export type { ErrorStateProps } from './ErrorState';
 export { AlertModal } from './AlertModal';
 export { BottomPickerModal } from './BottomPickerModal';
 export { TimePickerModal } from './TimePickerModal';
+
+export { DatePickerModal } from './DatePickerModal';

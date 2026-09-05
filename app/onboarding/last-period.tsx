@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, Platform, Switch } from 'react-native';
+import { View, StyleSheet, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
-import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { OnboardingLayout } from '../../src/presentation/components/onboarding/OnboardingLayout';
 import { useOnboardingStore } from '../../src/presentation/stores/useOnboardingStore';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
 import { Text } from '../../src/presentation/components/ui/Text';
 import { Button } from '../../src/presentation/components/ui/Button';
 import { spacing } from '../../src/design-system';
-import { todayISO, formatDateToISO, parseISODateLocal } from '../../src/utils/dateUtils';
+import { todayISO, parseISODateLocal } from '../../src/utils/dateUtils';
+import { DatePickerModal } from '../../src/presentation/components/ui';
 
 export default function LastPeriodScreen() {
   const router = useRouter();
@@ -31,11 +32,9 @@ export default function LastPeriodScreen() {
     router.back();
   };
 
-  const onDateChange = (_event: any, selectedDate?: Date) => {
-    setShowPicker(Platform.OS === 'ios');
-    if (selectedDate) {
-      updateField('lastPeriodDate', formatDateToISO(selectedDate));
-    }
+  const handleDateConfirm = (selectedDate: string) => {
+    setShowPicker(false);
+    updateField('lastPeriodDate', selectedDate);
   };
 
   const isContinueDisabled = !lastPeriodDate;
@@ -52,32 +51,20 @@ export default function LastPeriodScreen() {
     >
       <View style={styles.content}>
         <View style={styles.dateContainer}>
-          {Platform.OS === 'ios' ? (
-            <DateTimePicker
-              value={lastPeriodDate ? parseISODateLocal(lastPeriodDate) : new Date()}
-              mode="date"
-              display="inline"
-              onChange={onDateChange}
-              maximumDate={new Date()}
+          <View>
+            <Button
+              variant="primary"
+              label={lastPeriodDate ? parseISODateLocal(lastPeriodDate).toLocaleDateString() : 'Select Date'}
+              onPress={() => setShowPicker(true)}
             />
-          ) : (
-            <View>
-              <Button
-                variant="primary"
-                label={lastPeriodDate ? parseISODateLocal(lastPeriodDate).toLocaleDateString() : 'Select Date'}
-                onPress={() => setShowPicker(true)}
-              />
-              {showPicker && (
-                <DateTimePicker
-                  value={lastPeriodDate ? parseISODateLocal(lastPeriodDate) : new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={onDateChange}
-                  maximumDate={new Date()}
-                />
-              )}
-            </View>
-          )}
+            <DatePickerModal
+              visible={showPicker}
+              value={lastPeriodDate}
+              maxDate={todayISO()}
+              onConfirm={handleDateConfirm}
+              onCancel={() => setShowPicker(false)}
+            />
+          </View>
         </View>
 
         <View style={[styles.toggleContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>

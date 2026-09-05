@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { OnboardingLayout } from '../../src/presentation/components/onboarding/OnboardingLayout';
 import { useOnboardingStore } from '../../src/presentation/stores/useOnboardingStore';
 import { TextInput } from '../../src/presentation/components/ui/TextInput';
@@ -10,7 +10,8 @@ import { Button } from '../../src/presentation/components/ui/Button';
 import { spacing } from '../../src/design-system';
 import { ValidationService } from '../../src/domain/services/ValidationService';
 import { useTheme } from '../../src/presentation/hooks/useTheme';
-import { formatDateToISO, parseISODateLocal } from '../../src/utils/dateUtils';
+import { parseISODateLocal, todayISO } from '../../src/utils/dateUtils';
+import { DatePickerModal } from '../../src/presentation/components/ui';
 
 export default function NameScreen() {
   const router = useRouter();
@@ -51,12 +52,10 @@ export default function NameScreen() {
     router.back();
   };
 
-  const onDateChange = (_event: any, selectedDate?: Date) => {
-    setShowPicker(Platform.OS === 'ios');
-    if (selectedDate) {
-      updateField('dateOfBirth', formatDateToISO(selectedDate));
-      setDobError('');
-    }
+  const handleDateConfirm = (selectedDate: string) => {
+    setShowPicker(false);
+    updateField('dateOfBirth', selectedDate);
+    setDobError('');
   };
 
   return (
@@ -85,32 +84,20 @@ export default function NameScreen() {
 
         <View style={styles.dateContainer}>
           <Text variant="body" weight="medium" style={styles.label}>Date of Birth (Optional)</Text>
-          {Platform.OS === 'ios' ? (
-            <DateTimePicker
-              value={dateOfBirth ? parseISODateLocal(dateOfBirth) : new Date()}
-              mode="date"
-              display="default"
-              onChange={onDateChange}
-              maximumDate={new Date()}
+          <View>
+            <Button
+              variant="secondary"
+              label={dateOfBirth ? parseISODateLocal(dateOfBirth).toLocaleDateString() : 'Select Date'}
+              onPress={() => setShowPicker(true)}
             />
-          ) : (
-            <View>
-              <Button
-                variant="secondary"
-                label={dateOfBirth ? parseISODateLocal(dateOfBirth).toLocaleDateString() : 'Select Date'}
-                onPress={() => setShowPicker(true)}
-              />
-              {showPicker && (
-                <DateTimePicker
-                  value={dateOfBirth ? parseISODateLocal(dateOfBirth) : new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={onDateChange}
-                  maximumDate={new Date()}
-                />
-              )}
-            </View>
-          )}
+            <DatePickerModal
+              visible={showPicker}
+              value={dateOfBirth}
+              maxDate={todayISO()}
+              onConfirm={handleDateConfirm}
+              onCancel={() => setShowPicker(false)}
+            />
+          </View>
           {!!dobError && <Text variant="caption" style={{ color: colors.semantic.error, marginTop: spacing[1], marginLeft: spacing[1] }}>{dobError}</Text>}
         </View>
       </View>

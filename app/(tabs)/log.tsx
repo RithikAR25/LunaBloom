@@ -1,9 +1,9 @@
 import { useState, useCallback, useMemo, useRef } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { DatePickerModal } from '@/presentation/components/ui';
 
 import { useTheme } from '@/presentation/hooks/useTheme';
 import { useScaling, spacing } from '@/design-system';
@@ -20,7 +20,6 @@ import {
   isValidISODate, 
   isAfter, 
   parseISODateLocal, 
-  formatDateToISO, 
   todayISO, 
   isBetween 
 } from '@/utils/dateUtils';
@@ -43,38 +42,36 @@ export default function LogScreen() {
   const { currentLog, saveLogData, isLoading, error } = useDailyLogStore();
   const { symptomsData } = useContentStore();
 
-  const [date, setDate] = useState(new Date());
+  const [dateStr, setDateStr] = useState(todayISO());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const consumedDateParam = useRef<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
-      let targetDate = new Date();
+      let targetDateStr = todayISO();
       
       if (params.date && typeof params.date === 'string') {
         if (consumedDateParam.current !== params.date) {
           if (!isValidISODate(params.date)) {
-            targetDate = new Date();
+            targetDateStr = todayISO();
           } else if (isAfter(params.date, todayISO())) {
-            targetDate = new Date();
+            targetDateStr = todayISO();
           } else {
-            targetDate = parseISODateLocal(params.date);
+            targetDateStr = params.date;
           }
           consumedDateParam.current = params.date;
           router.setParams({ date: undefined });
         }
       }
       
-      const dateStr = formatDateToISO(targetDate);
-      
-      setDate(targetDate);
-      useDailyLogStore.getState().loadLogForDate(dateStr);
+      setDateStr(targetDateStr);
+      useDailyLogStore.getState().loadLogForDate(targetDateStr);
     }, [params.date, router])
   );
 
   const isPeriodDay = useMemo(() => {
     const today = todayISO();
-    const selectedDateISO = formatDateToISO(date);
+    const selectedDateISO = dateStr;
     
     if (isAfter(selectedDateISO, today)) return false;
 
@@ -82,7 +79,7 @@ export default function LogScreen() {
       const end = cycle.endDate ?? today; 
       return isBetween(selectedDateISO, cycle.startDate, end);
     });
-  }, [date, cycles]);
+  }, [dateStr, cycles]);
 
   // Local state for the form
   const [flow, setFlow] = useState<FlowIntensity | null>(null);
@@ -156,7 +153,6 @@ export default function LogScreen() {
 
   const handleSave = async () => {
     try {
-      const dateStr = formatDateToISO(date);
       await saveLogData(dateStr, {
         flowIntensity: flow,
         moods,
@@ -192,27 +188,22 @@ export default function LogScreen() {
           >
             <Feather name="calendar" size={scale(18)} color={colors.brand.primary} />
             <Text variant="body" weight="bold" style={{ color: colors.text.primary, marginLeft: spacing[2] }}>
-              {date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+              {parseISODateLocal(dateStr).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
             </Text>
           </Pressable>
         </View>
 
-        {showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display="default"
-            maximumDate={new Date()}
-            onChange={(_, selectedDate) => {
-              setShowDatePicker(Platform.OS === 'ios');
-              if (selectedDate) {
-                setDate(selectedDate);
-                // In a real app, you would also trigger a loadLogForDate here
-                useDailyLogStore.getState().loadLogForDate(formatDateToISO(selectedDate));
-              }
-            }}
-          />
-        )}
+        <DatePickerModal
+          visible={showDatePicker}
+          value={dateStr}
+          maxDate={todayISO()}
+          onConfirm={(selectedDate) => {
+            setShowDatePicker(false);
+            setDateStr(selectedDate);
+            useDailyLogStore.getState().loadLogForDate(selectedDate);
+          }}
+          onCancel={() => setShowDatePicker(false)}
+        />
 
         {/* Error Message */}
         {error && (
